@@ -1,0 +1,10 @@
+<script type="module" async>
+
+const instance = await WebAssembly.instantiateStreaming(
+  fetch('teclang.wasm'),
+  {
+
+  }
+);
+console.log(instance)
+</script>
