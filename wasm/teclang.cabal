@@ -67,7 +67,7 @@ library
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.22.0.0
+    build-depends:    base ^>=4.21.0.0
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -90,7 +90,7 @@ executable teclang
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.22.0.0,
+        base ^>=4.21.0.0,
         teclang
 
     -- Directories containing source files.
@@ -98,7 +98,10 @@ executable teclang
 
     -- Base language which the package is written in.
     default-language: GHC2024
-    -- ghc-options: --export=fib
+    ghc-options:
+        -no-hs-main
+        -optl-mexec-model=reactor
+        "-optl-Wl,--export=hs_init,--export=fib"
 
 test-suite teclang-test
     -- Import common warning flags.
@@ -124,5 +127,5 @@ test-suite teclang-test
 
     -- Test dependencies.
     build-depends:
-        base ^>=4.22.0.0,
+        base ^>=4.21.0.0,
         teclang

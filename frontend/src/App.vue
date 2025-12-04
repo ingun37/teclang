@@ -21,6 +21,9 @@ onMounted(async () => {
   let inst = await WebAssembly.instantiate(wasm, {
     wasi_snapshot_preview1: wasi.wasiImport,
   });
-  wasi.start(inst as any);
+  wasi.initialize(inst as any);
+  const exports = inst.exports as any;
+  exports.hs_init(0, 0);
+  (window as any).wasm = exports;
 });
 </script>
