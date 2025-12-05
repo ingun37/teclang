@@ -61,7 +61,7 @@ library
     exposed-modules:  MyLib
 
     -- Modules included in this library but not exported.
-    -- other-modules:
+    other-modules: TecType
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -69,15 +69,20 @@ library
     -- Other library packages from which modules are imported.
     build-depends:
         base ^>=4.21.0.0,
-        haskell-src-exts
-
+        haskell-src-exts,
+        template-haskell,
+        file-embed,
+        bytestring,
+        text,
+        filepath
+        
     -- Directories containing source files.
     hs-source-dirs:   src
 
     -- Base language which the package is written in.
     default-language: GHC2024
 
-executable teclang
+executable teclang-wasm
     -- Import common warning flags.
     import:           warnings
 
