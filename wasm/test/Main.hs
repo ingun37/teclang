@@ -1,19 +1,22 @@
 module Main (main) where
-import qualified MyLib
 
+import MyLib
 import Text.Pretty.Simple qualified as Simple
 
-code = "main :: IO()"
-
-code2 = "Logo"
+handle :: Parsed -> IO ()
+handle (Parsed {reconstructedCode = c, ast = a}) = do
+  putStrLn "---- Raw AST ----"
+  Simple.pPrintString =<< readFile "test/output.txt"
+  putStrLn "---- Final AST ----"
+  Simple.pPrint a
+  putStrLn "---- Reconstructed Code ----"
+  putStrLn c
 
 main :: IO ()
 main = do
-    content <- readFile "test/sample.txt"
-    (reconstructedCode, asts) <- MyLib.parseHaskellStr content
-    putStrLn "---- Raw AST ----"
-    Simple.pPrintString =<< readFile "test/output.txt"
-    putStrLn "---- Final AST ----"
-    Simple.pPrint asts
-    putStrLn "---- Reconstructed Code ----"
-    putStrLn reconstructedCode
+  content <- readFile "test/sample.txt"
+  let parsed = parseHaskellStr content
+  putStrLn "---- Raw AST ----"
+  Simple.pPrintString =<< readFile "test/output.txt"
+  mapM_ handle parsed
+  putStrLn "---- End ----"

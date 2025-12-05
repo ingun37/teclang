@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module MyLib (someFunc, parseHaskellStr, TecAST) where
+module MyLib (someFunc, parseHaskellStr, TecAST, Parsed (Parsed), reconstructedCode, ast) where
 
 import Data.ByteString qualified as BS
 import Data.FileEmbed qualified as Embed
@@ -41,16 +41,16 @@ extractDocExp _ = undefined
 tecCode :: BS.ByteString
 tecCode = $(Embed.embedFile "src/TecSyntax.hs")
 
-parseHaskellStr :: String -> IO (String, TecAST)
-parseHaskellStr code = do
+data Parsed = Parsed {reconstructedCode :: String, ast :: TecAST}
+
+parseHaskellStr :: String -> Either String Parsed
+parseHaskellStr code =
   let tecCodeTxt = TE.decodeUtf8 tecCode
-  let result = E.parseFileContents (T.unpack tecCodeTxt ++ "\n" ++ code)
-  case result of
-    E.ParseOk a -> do
-      writeFile "test/output.txt" (show a)
-      let rhs = extractDocExp a
-      let reconstructed = E.prettyPrint rhs
-      return (reconstructed, makeTecASTRhs rhs)
-    E.ParseFailed _ str -> do
-      print $ "noo" ++ str
-      undefined
+      result = E.parseFileContents (T.unpack tecCodeTxt ++ "\n" ++ code)
+   in case result of
+        E.ParseOk a ->
+          let rhs = extractDocExp a
+              reconstructed = E.prettyPrint rhs
+           in Right $ Parsed {reconstructedCode = reconstructed, ast = makeTecASTRhs rhs}
+        E.ParseFailed _ str ->
+          Left str
