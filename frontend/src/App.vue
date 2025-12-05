@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ConsoleStdout, File, OpenFile, WASI} from "@bjorn3/browser_wasi_shim";
+import { ConsoleStdout, File, OpenFile, WASI } from "@bjorn3/browser_wasi_shim";
 
 onMounted(async () => {
   let args = ["bin", "arg1", "arg2"];
