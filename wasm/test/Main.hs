@@ -11,9 +11,9 @@ main :: IO ()
 main = do
     content <- readFile "test/sample.txt"
     (reconstructedCode, asts) <- MyLib.parseHaskellStr content
-    putStrLn "---- Reconstructed Code ----"
-    putStrLn reconstructedCode
     putStrLn "---- Raw AST ----"
     Simple.pPrintString =<< readFile "test/output.txt"
     putStrLn "---- Final AST ----"
     Simple.pPrint asts
+    putStrLn "---- Reconstructed Code ----"
+    putStrLn reconstructedCode
