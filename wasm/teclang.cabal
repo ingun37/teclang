@@ -135,4 +135,5 @@ test-suite teclang-test
     -- Test dependencies.
     build-depends:
         base ^>=4.21.0.0,
-        teclang
+        teclang,
+        pretty-simple
