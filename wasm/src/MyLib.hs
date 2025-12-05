@@ -43,7 +43,7 @@ makeTecASTsModule (E.Module _ _ _ _ decls) =
 makeTecASTsModule _ = undefined
 
 tecCode :: BS.ByteString
-tecCode = $(Embed.embedFile "src/TecType.hs")
+tecCode = $(Embed.embedFile "src/TecSyntax.hs")
 
 parseHaskellStr :: String -> IO (String, [TecAST])
 parseHaskellStr code = do

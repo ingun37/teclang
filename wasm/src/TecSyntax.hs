@@ -1,2 +1,2 @@
-module TecType where
+module TecSyntax where
 data TecType = HStack [TecType] | VStack [TecType] | Logo
