@@ -46,7 +46,7 @@ data Parsed = Parsed {reconstructedCode :: String, ast :: TecAST}
 parseHaskellStr :: String -> Either String Parsed
 parseHaskellStr code =
   let tecCodeTxt = TE.decodeUtf8 tecCode
-      result = E.parseFileContents (T.unpack tecCodeTxt ++ "\n" ++ code)
+      result = E.parseFileContents (T.unpack tecCodeTxt ++ "\ndoc = " ++ code)
    in case result of
         E.ParseOk a ->
           let rhs = extractDocExp a
