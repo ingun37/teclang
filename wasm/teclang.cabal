@@ -142,4 +142,6 @@ test-suite teclang-test
         aeson-pretty,
         text,
         bytestring,
-        directory
+        directory,
+        mtl,
+        transformers

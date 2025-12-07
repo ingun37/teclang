@@ -1,6 +1,16 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module MyLib (parseHaskellStr, TecAST, Parsed (Parsed), makeHaskellCode, ast, rawASTShow) where
+module MyLib
+  ( parseHaskellStr,
+    TecAST,
+    Parsed (Parsed),
+    makeHaskellCode,
+    ast,
+    rawASTShow,
+    TecError(TecError),
+    tecError
+  )
+where
 
 import Data.Aeson
   ( FromJSON,
@@ -30,7 +40,6 @@ data TecAST
   = TecType {typeName :: String, index :: Index}
   | TecLayout {typeName :: String, children :: [TecAST]}
   | TecQuery {op :: String, left :: TecAST, right :: TecAST}
-  | TecError
   deriving (Show, Generic)
 
 instance ToJSON TecAST where
@@ -38,20 +47,30 @@ instance ToJSON TecAST where
 
 instance FromJSON TecAST
 
-makeTecAST :: E.Exp l -> TecAST
+data TecError = TecError String deriving (Show)
+
+tecError :: String -> Either TecError b
+tecError str = Left $ TecError str
+
+makeTecAST :: E.Exp l -> Either TecError TecAST
 makeTecAST (E.App _ (E.Con _ (E.UnQual _ (E.Ident _ conName))) exp) =
-  let handle (E.List _ exps) = TecLayout conName (map makeTecAST exps)
-      handle (E.Lit _ (E.Int _ val _)) = TecType conName (IndexN $ fromInteger val)
-      handle (E.Lit _ (E.String _ val _)) = TecType conName (IndexS val)
-      handle _ = undefined
+  let handle (E.List _ exps) = do
+        children <- traverse makeTecAST exps
+        Right $ TecLayout conName children
+      handle (E.Lit _ (E.Int _ val _)) = Right $ TecType conName (IndexN $ fromInteger val)
+      handle (E.Lit _ (E.String _ val _)) = Right $ TecType conName (IndexS val)
+      handle _ = tecError "handle failed"
    in handle exp
 makeTecAST (E.Con _ (E.UnQual _ (E.Ident _ conName))) =
-  TecType conName IndexU
-makeTecAST (E.InfixApp _ l (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) r) =
-  TecQuery op (makeTecAST l) (makeTecAST r)
-makeTecAST _ = TecError
+  Right $
+    TecType conName IndexU
+makeTecAST (E.InfixApp _ l (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) r) = do
+  left <- makeTecAST l
+  right <- makeTecAST r
+  Right $ TecQuery op left right
+makeTecAST _ = tecError "makeTecAST error"
 
-makeExp :: TecAST -> E.Exp ()
+makeExp :: TecAST -> Either TecError (E.Exp ())
 makeExp tecAst =
   let conN n = E.Con () (E.UnQual () (E.Ident () n))
       appN n = E.App () (conN n)
@@ -59,12 +78,16 @@ makeExp tecAst =
         let con = conN typeName
             app = appN typeName
          in case index of
-              IndexU -> con
-              IndexN {number} -> app (E.Lit () (E.Int () (toInteger number) (show number)))
-              IndexS {name} -> app (E.Lit () (E.String () name name))
-      eval (TecLayout {typeName, children}) = appN typeName (E.List () (map makeExp children))
-      eval (TecQuery {op, left, right}) = E.InfixApp () (makeExp left) (E.QConOp () (E.UnQual () (E.Symbol () op))) (makeExp right)
-      eval _ = undefined
+              IndexU -> Right con
+              IndexN {number} -> Right $ app (E.Lit () (E.Int () (toInteger number) (show number)))
+              IndexS {name} -> Right $ app (E.Lit () (E.String () name name))
+      eval (TecLayout {typeName, children}) = do
+        xs <- traverse makeExp children
+        Right $ appN typeName (E.List () xs)
+      eval (TecQuery {op, left, right}) = do
+        l <- makeExp left
+        r <- makeExp right
+        Right $ E.InfixApp () l (E.QConOp () (E.UnQual () (E.Symbol () op))) r
    in eval tecAst
 
 extractDocExp :: E.Module l -> E.Exp l
@@ -79,18 +102,18 @@ data Parsed = Parsed
     rawASTShow :: String
   }
 
-parseHaskellStr :: String -> Either String Parsed
+parseHaskellStr :: String -> Either TecError Parsed
 parseHaskellStr code =
   let tecCodeTxt = TE.decodeUtf8 tecCode
       result = E.parseFileContents (T.unpack tecCodeTxt ++ "\ndoc = " ++ code)
    in case result of
         E.ParseOk a ->
-          let exp = extractDocExp a
-           in Right $ Parsed {ast = makeTecAST exp, rawASTShow = show exp}
+          let e = extractDocExp a
+           in do
+                ast <- makeTecAST e
+                Right $ Parsed {ast = ast, rawASTShow = show e}
         E.ParseFailed _ str ->
-          Left str
+          tecError str
 
-makeHaskellCode :: TecAST -> String
-makeHaskellCode ast =
-  let e = makeExp ast
-   in E.prettyPrint e
+makeHaskellCode :: TecAST -> Either TecError String
+makeHaskellCode ast = fmap E.prettyPrint (makeExp ast)

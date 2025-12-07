@@ -7,6 +7,9 @@ import Data.Text qualified as T
 import Data.Text.Encoding qualified as E
 import MyLib
 import Text.Pretty.Simple qualified as Simple
+import Control.Monad.Except
+import Control.Monad.Trans
+import Control.Monad.Trans.Class
 
 handle :: Parsed -> IO ()
 handle (Parsed {ast = a, rawASTShow = r}) = do
@@ -23,20 +26,36 @@ handle (Parsed {ast = a, rawASTShow = r}) = do
   let testAst decoded = do
         print decoded
         putStrLn "---- Reconstructed Code ----"
-        putStrLn $ makeHaskellCode decoded
+        -- putStrLn $ makeHaskellCode decoded
   mapM_ testAst decodedMaybe
 
-testEntry :: String -> IO ()
-testEntry code = do
-  putStrLn "============== TESTING =============="
-  putStrLn "---- Original Code ----"
-  putStrLn code
-  let parsed = parseHaskellStr code
-  mapM_ handle parsed
+type TecErrM = ExceptT TecError IO
+
+testE :: String -> TecErrM ()
+testE code = do
+  lift $ putStrLn "============== TESTING =============="
+  lift $ putStrLn "---- Original Code ----"
+  lift $ putStrLn code
+  Parsed {ast, rawASTShow} <- liftEither $ parseHaskellStr code
+  lift $ putStrLn "---- Raw ----"
+  lift $ Simple.pPrintString rawASTShow
+  lift $ putStrLn "---- Final AST ----"
+  lift $ Simple.pPrint ast
+  lift $ putStrLn "---- Json AST ----"
+  let jsonBytes = B.toStrict $ JP.encodePretty ast
+  lift $ putStrLn "---- Json encoded ----"
+  lift $ putStrLn $ T.unpack $ E.decodeUtf8 jsonBytes
+  let decodedMaybe = Json.decodeStrict jsonBytes :: Maybe TecAST
+  tecAST <- liftEither $ maybe (tecError "decode fail") Right decodedMaybe
+  lift $ putStrLn "---- Reconstructed Code ----"
+  reconstructedCode <- liftEither $ makeHaskellCode tecAST
+  lift $ putStrLn reconstructedCode
 
 main :: IO ()
 main = do
-  mapM_ testEntry testData
+  let a = traverse testE testData
+  b <- runExceptT a
+  print b
 
 testData :: [String]
 testData =
