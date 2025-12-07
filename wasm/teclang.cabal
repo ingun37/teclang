@@ -91,7 +91,7 @@ executable teclang-wasm
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    -- other-modules:
+    -- other-modules: Wasm
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -109,7 +109,7 @@ executable teclang-wasm
     ghc-options:
         -no-hs-main
         -optl-mexec-model=reactor
-        "-optl-Wl,--export=hs_init,--export=fib"
+        "-optl-Wl,--export=hs_init,--export=fibo"
 
 test-suite teclang-test
     -- Import common warning flags.

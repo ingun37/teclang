@@ -18,4 +18,6 @@ cabal test
 
 ```sh
 cp ../wasm/dist-newstyle/build/wasm32-wasi/ghc-9.12.2.20251128/teclang-0.1.0.0/x/teclang/build/teclang/teclang.wasm ./public/
+
+pnpm run dev
 ```

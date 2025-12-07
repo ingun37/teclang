@@ -1,8 +1,11 @@
 module Main (main) where
 
-import qualified MyLib (someFunc)
+import qualified MyLib ()
 
 main :: IO ()
 main = do
   putStrLn "Hello, Haskell!"
-  MyLib.someFunc
+
+foreign export ccall fibo :: Int -> Int
+
+fibo n = n + 2

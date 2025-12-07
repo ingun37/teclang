@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module MyLib (someFunc, parseHaskellStr, TecAST, Parsed (Parsed), makeHaskellCode, ast, rawASTShow) where
+module MyLib (parseHaskellStr, TecAST, Parsed (Parsed), makeHaskellCode, ast, rawASTShow) where
 
 import Data.Aeson
   ( FromJSON,
@@ -14,14 +14,6 @@ import Data.Text qualified as T
 import Data.Text.Encoding qualified as TE
 import GHC.Generics (Generic)
 import Language.Haskell.Exts qualified as E
-import TecSyntax qualified as TS
-
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
-
-foreign export ccall fib :: Int -> Int
-
-fib n = n + 1
 
 data Index
   = IndexN {number :: Word}

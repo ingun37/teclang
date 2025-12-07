@@ -17,7 +17,7 @@ onMounted(async () => {
   ];
   let wasi = new WASI(args, env, fds);
 
-  let wasm = await WebAssembly.compileStreaming(fetch("teclang.wasm"));
+  let wasm = await WebAssembly.compileStreaming(fetch("teclang-wasm.wasm"));
   let inst = await WebAssembly.instantiate(wasm, {
     wasi_snapshot_preview1: wasi.wasiImport,
   });
