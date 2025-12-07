@@ -37,6 +37,7 @@ instance FromJSON Index
 data TecAST
   = TecType {typeName :: String, index :: Index}
   | TecLayout {typeName :: String, children :: [TecAST]}
+  | TecQuery {op :: String, left :: TecAST, right :: TecAST}
   | TecError
   deriving (Show, Generic)
 
@@ -54,6 +55,8 @@ makeTecAST (E.App _ (E.Con _ (E.UnQual _ (E.Ident _ conName))) exp) =
    in handle exp
 makeTecAST (E.Con _ (E.UnQual _ (E.Ident _ conName))) =
   TecType conName IndexU
+makeTecAST (E.InfixApp _ l (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) r) =
+  TecQuery op (makeTecAST l) (makeTecAST r)
 makeTecAST _ = TecError
 
 makeExp :: TecAST -> E.Exp ()
