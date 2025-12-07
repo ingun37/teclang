@@ -23,9 +23,20 @@ foreign export ccall fib :: Int -> Int
 
 fib n = n + 1
 
+data Index
+  = IndexN {number :: Word}
+  | IndexS {name :: String}
+  | IndexU
+  deriving (Show, Generic)
+
+instance ToJSON Index where
+  toEncoding = genericToEncoding defaultOptions
+
+instance FromJSON Index
+
 data TecAST
-  = TecType TS.TecType
-  | TecLayout String [TecAST]
+  = TecType {typeName :: String, index :: Index}
+  | TecLayout {typeName :: String, children :: [TecAST]}
   | TecError
   deriving (Show, Generic)
 
@@ -34,21 +45,19 @@ instance ToJSON TecAST where
 
 instance FromJSON TecAST
 
--- makeTecASTName :: E.Name l -> TecAST
--- makeTecASTName (E.Ident _ name) = TecType name
--- makeTecASTName _ = TecError
+makeTecAST :: E.Exp l -> TecAST
+makeTecAST (E.App _ (E.Con _ (E.UnQual _ (E.Ident _ conName))) exp) =
+  let handle (E.List _ exps) = TecLayout conName (map makeTecAST exps)
+      handle (E.Lit _ (E.Int _ val _)) = TecType conName (IndexN $ fromInteger val)
+      handle (E.Lit _ (E.String _ val _)) = TecType conName (IndexS val)
+      handle _ = undefined
+   in handle exp
+makeTecAST (E.Con _ (E.UnQual _ (E.Ident _ conName))) =
+  TecType conName IndexU
+makeTecAST _ = TecError
 
--- makeTecASTQName :: E.QName l -> TecAST
--- makeTecASTQName (E.UnQual _ name) = makeTecASTName name
--- makeTecASTQName _ = TecError
-
-makeTecASTExp :: E.Exp l -> TecAST
-makeTecASTExp (E.App _ (E.Con _ (E.UnQual _ (E.Ident _ conName))) exp) = case conName of
-  "Colorway" -> case exp of
-    (E.Lit _ (E.Int _ val _)) -> TecType (TS.Colorway (fromInteger val))
-    _ -> TecError
-  _ -> TecError
-makeTecASTExp _ = TecError
+makeExp :: TecAST -> E.Exp ()
+makeExp tecAST = undefined
 
 extractDocExp :: E.Module l -> E.Exp l
 extractDocExp (E.Module _ _ _ _ decls) = head [exp | x@(E.PatBind _ _ ((E.UnGuardedRhs _ exp)) _) <- decls]
@@ -71,6 +80,6 @@ parseHaskellStr code =
         E.ParseOk a ->
           let exp = extractDocExp a
               reconstructed = E.prettyPrint exp
-           in Right $ Parsed {reconstructedCode = reconstructed, ast = makeTecASTExp exp, rawASTShow = show exp}
+           in Right $ Parsed {reconstructedCode = reconstructed, ast = makeTecAST exp, rawASTShow = show exp}
         E.ParseFailed _ str ->
           Left str

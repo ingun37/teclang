@@ -6,7 +6,7 @@ import Data.Text qualified as T
 import Data.Text.Encoding qualified as E
 import MyLib
 import Text.Pretty.Simple qualified as Simple
-
+import System.Directory qualified as D
 handle :: Parsed -> IO ()
 handle (Parsed {reconstructedCode = c, ast = a, rawASTShow = r}) = do
   putStrLn "---- Raw ----"
@@ -23,10 +23,14 @@ handle (Parsed {reconstructedCode = c, ast = a, rawASTShow = r}) = do
   let decoded = Json.decodeStrict jsonBytes :: Maybe TecAST
   print =<< maybe (fail "") pure decoded
   
+testEntry :: String -> IO ()
+testEntry entry = do
+  putStrLn $ "============== TESTING: " ++ entry ++ " =============="
+  content <- readFile $ "test/samples/" ++ entry
+  let parsed = parseHaskellStr content
+  mapM_ handle parsed
 
 main :: IO ()
 main = do
-  content <- readFile "test/samples/2.txt"
-  let parsed = parseHaskellStr content
-  mapM_ handle parsed
-  putStrLn "---- End ----"
+  entries <- D.listDirectory "test/samples"
+  mapM_ testEntry entries

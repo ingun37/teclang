@@ -141,4 +141,5 @@ test-suite teclang-test
         aeson,
         aeson-pretty,
         text,
-        bytestring
+        bytestring,
+        directory
