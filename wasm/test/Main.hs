@@ -9,25 +9,6 @@ import MyLib
 import Text.Pretty.Simple qualified as Simple
 import Control.Monad.Except
 import Control.Monad.Trans
-import Control.Monad.Trans.Class
-
-handle :: Parsed -> IO ()
-handle (Parsed {ast = a, rawASTShow = r}) = do
-  putStrLn "---- Raw ----"
-  Simple.pPrintString r
-  putStrLn "---- Final AST ----"
-  Simple.pPrint a
-  putStrLn "---- Json AST ----"
-  let jsonBytes = B.toStrict $ JP.encodePretty a
-  putStrLn "---- Json encoded ----"
-  putStrLn $ T.unpack $ E.decodeUtf8 jsonBytes
-  putStrLn "---- Json decoded ----"
-  let decodedMaybe = Json.decodeStrict jsonBytes :: Maybe TecAST
-  let testAst decoded = do
-        print decoded
-        putStrLn "---- Reconstructed Code ----"
-        -- putStrLn $ makeHaskellCode decoded
-  mapM_ testAst decodedMaybe
 
 type TecErrM = ExceptT TecError IO
 
