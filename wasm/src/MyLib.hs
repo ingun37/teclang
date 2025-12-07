@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module MyLib (someFunc, parseHaskellStr, TecAST, Parsed (Parsed), reconstructedCode, ast, rawASTShow) where
+module MyLib (someFunc, parseHaskellStr, TecAST, Parsed (Parsed), makeHaskellCode, ast, rawASTShow) where
 
 import Data.Aeson
   ( FromJSON,
@@ -60,7 +60,14 @@ makeTecAST (E.InfixApp _ l (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) r) =
 makeTecAST _ = TecError
 
 makeExp :: TecAST -> E.Exp ()
-makeExp tecAST = undefined
+makeExp (TecType {typeName, index}) =
+  let unq = E.UnQual () (E.Ident () typeName)
+      app = E.App () (E.Con () unq)
+   in case index of
+        IndexU -> E.Con () unq
+        IndexN {number} -> app (E.Lit () (E.Int () (toInteger number) (show number)))
+        IndexS {name} -> app (E.Lit () (E.String () name name))
+makeExp _ = undefined
 
 extractDocExp :: E.Module l -> E.Exp l
 extractDocExp (E.Module _ _ _ _ decls) = head [exp | x@(E.PatBind _ _ ((E.UnGuardedRhs _ exp)) _) <- decls]
@@ -70,8 +77,7 @@ tecCode :: BS.ByteString
 tecCode = $(Embed.embedFile "src/TecSyntax.hs")
 
 data Parsed = Parsed
-  { reconstructedCode :: String,
-    ast :: TecAST,
+  { ast :: TecAST,
     rawASTShow :: String
   }
 
@@ -82,7 +88,11 @@ parseHaskellStr code =
    in case result of
         E.ParseOk a ->
           let exp = extractDocExp a
-              reconstructed = E.prettyPrint exp
-           in Right $ Parsed {reconstructedCode = reconstructed, ast = makeTecAST exp, rawASTShow = show exp}
+           in Right $ Parsed {ast = makeTecAST exp, rawASTShow = show exp}
         E.ParseFailed _ str ->
           Left str
+
+makeHaskellCode :: TecAST -> String
+makeHaskellCode ast =
+  let e = makeExp ast
+   in E.prettyPrint e
