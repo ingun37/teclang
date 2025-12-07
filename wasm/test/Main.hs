@@ -1,6 +1,6 @@
 module Main (main) where
-
-import Data.Aeson.Encode.Pretty qualified as J
+import Data.Aeson qualified as Json
+import Data.Aeson.Encode.Pretty qualified as JP
 import Data.ByteString qualified as B
 import Data.Text qualified as T
 import Data.Text.Encoding qualified as E
@@ -16,7 +16,13 @@ handle (Parsed {reconstructedCode = c, ast = a, rawASTShow = r}) = do
   putStrLn "---- Reconstructed Code ----"
   putStrLn c
   putStrLn "---- Json AST ----"
-  putStrLn $ T.unpack $ E.decodeUtf8 (B.toStrict $ J.encodePretty a)
+  let jsonBytes = B.toStrict $ JP.encodePretty a
+  putStrLn "---- Json encoded ----"
+  putStrLn $ T.unpack $ E.decodeUtf8 jsonBytes
+  putStrLn "---- Json decoded ----"
+  let decoded = Json.decodeStrict jsonBytes :: Maybe TecAST
+  print =<< maybe (fail "") pure decoded
+  
 
 main :: IO ()
 main = do
