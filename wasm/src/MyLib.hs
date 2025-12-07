@@ -60,14 +60,20 @@ makeTecAST (E.InfixApp _ l (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) r) =
 makeTecAST _ = TecError
 
 makeExp :: TecAST -> E.Exp ()
-makeExp (TecType {typeName, index}) =
-  let unq = E.UnQual () (E.Ident () typeName)
-      app = E.App () (E.Con () unq)
-   in case index of
-        IndexU -> E.Con () unq
-        IndexN {number} -> app (E.Lit () (E.Int () (toInteger number) (show number)))
-        IndexS {name} -> app (E.Lit () (E.String () name name))
-makeExp _ = undefined
+makeExp tecAst =
+  let conN n = E.Con () (E.UnQual () (E.Ident () n))
+      appN n = E.App () (conN n)
+      eval (TecType {typeName, index}) =
+        let con = conN typeName
+            app = appN typeName
+         in case index of
+              IndexU -> con
+              IndexN {number} -> app (E.Lit () (E.Int () (toInteger number) (show number)))
+              IndexS {name} -> app (E.Lit () (E.String () name name))
+      eval (TecLayout {typeName, children}) = appN typeName (E.List () (map makeExp children))
+      eval (TecQuery {op, left, right}) = E.InfixApp () (makeExp left) (E.QConOp () (E.UnQual () (E.Symbol () op))) (makeExp right)
+      eval _ = undefined
+   in eval tecAst
 
 extractDocExp :: E.Module l -> E.Exp l
 extractDocExp (E.Module _ _ _ _ decls) = head [exp | x@(E.PatBind _ _ ((E.UnGuardedRhs _ exp)) _) <- decls]

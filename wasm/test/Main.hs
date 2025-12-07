@@ -6,7 +6,6 @@ import Data.ByteString qualified as B
 import Data.Text qualified as T
 import Data.Text.Encoding qualified as E
 import MyLib
-import System.Directory qualified as D
 import Text.Pretty.Simple qualified as Simple
 
 handle :: Parsed -> IO ()
