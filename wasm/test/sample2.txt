@@ -1,1 +1,1 @@
-doc = HStack [VStack [Logo]]
+HStack [VStack [Logo]]

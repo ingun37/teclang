@@ -74,7 +74,8 @@ library
         file-embed,
         bytestring,
         text,
-        filepath
+        filepath,
+        aeson
         
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -136,4 +137,8 @@ test-suite teclang-test
     build-depends:
         base ^>=4.21.0.0,
         teclang,
-        pretty-simple
+        pretty-simple,
+        aeson,
+        aeson-pretty,
+        text,
+        bytestring
