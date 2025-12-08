@@ -45,8 +45,9 @@ processString ptr len = do
   (ptr,len) <- newCStringLen resultString
   return ptr
 
-foreign export javascript "jsTest" jsTest :: JSString -> IO ()
-jsTest :: JSString -> IO ()
+foreign export javascript "jsTest" jsTest :: JSString -> IO JSString
+jsTest :: JSString -> IO JSString
 jsTest jsval = do
   putStrLn "jsval called!"
   putStrLn $ fromJSString jsval
+  return $ toJSString "hello js i'm haskell"
