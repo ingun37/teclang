@@ -38,6 +38,10 @@ testE code = do
   lift $ putStrLn "---- Reconstructed Code ----"
   reconstructedCode <- liftEither $ mapLeft ErrTec $ makeHaskellCode tecAST
   lift $ putStrLn reconstructedCode
+  if reconstructedCode == code then
+    lift $ putStrLn "Success!!"
+  else
+    liftEither $ Left $ ErrStr "code and reconstructed code doesnt' match"
 
 main :: IO ()
 main = do

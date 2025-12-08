@@ -105,7 +105,7 @@ data Parsed = Parsed
 parseHaskellStr :: String -> Either TecError Parsed
 parseHaskellStr code =
   let tecCodeTxt = TE.decodeUtf8 tecCode
-      result = E.parseFileContents (T.unpack tecCodeTxt ++ "\ndoc = " ++ code)
+      result = E.parseFileContents ("\ndoc = " ++ code)
    in case result of
         E.ParseOk a ->
           let e = extractDocExp a

@@ -1,17 +1,26 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12" md="6">
-        <v-text-field
+      <v-col cols="12">
+        <v-textarea
           v-model="appStore.textValue"
           clearable
           label="Enter text"
+          rows="10"
           variant="outlined"
         />
       </v-col>
     </v-row>
 
-    <!-- Display the debounced value -->
+    <v-row cols="12">
+      <v-card>
+        <v-card-title>TecAST Visualization</v-card-title>
+        <v-card-text>
+          <TecAST v-if="tecAST" :ast="tecAST" />
+          <span v-else class="text-grey">No AST to display...</span>
+        </v-card-text>
+      </v-card>
+    </v-row>
     <v-row>
       <v-col cols="12" md="6">
         <v-card>
@@ -24,7 +33,6 @@
         </v-card>
       </v-col>
     </v-row>
-
     <!-- Display the JSON result -->
     <v-row>
       <v-col cols="12" md="6">
@@ -42,15 +50,6 @@
               >{{ jsonString }}</pre
             >
             <span v-else class="text-grey">No result yet...</span>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="6">
-        <v-card>
-          <v-card-title>TecAST Visualization</v-card-title>
-          <v-card-text>
-            <TecAST v-if="tecAST" :ast="tecAST" />
-            <span v-else class="text-grey">No AST to display...</span>
           </v-card-text>
         </v-card>
       </v-col>
