@@ -18,12 +18,13 @@ onMounted(async () => {
   ];
   let wasi = new WASI(args, env, fds);
   let __exports = {};
-  const js_url = "/teclang-wasm.js";
   let wasm = await WebAssembly.compileStreaming(fetch("teclang-wasm.wasm"));
   let inst = await WebAssembly.instantiate(wasm, {
     wasi_snapshot_preview1: wasi.wasiImport,
     ghc_wasm_jsffi: wasm_wrapper(__exports),
   });
+  Object.assign(__exports, inst.exports);
+
   wasi.initialize(inst as any);
   const exports = inst.exports as any;
   exports.hs_init(0, 0);
