@@ -5,6 +5,8 @@
 </template>
 
 <script lang="ts" setup>
+import { useAppStore } from "@/stores/app";
+
 import { ConsoleStdout, File, OpenFile, WASI } from "@bjorn3/browser_wasi_shim";
 import wasm_wrapper from "./teclang-wasm";
 
@@ -28,6 +30,9 @@ onMounted(async () => {
   wasi.initialize(inst as any);
   const exports = inst.exports as any;
   exports.hs_init(0, 0);
+
+  const appStore = useAppStore();
+  appStore.setWasmInstance(exports);
   (window as any).wasm = exports;
 });
 </script>

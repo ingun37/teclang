@@ -11,7 +11,7 @@
       </v-col>
     </v-row>
 
-    <!-- Display the throttled value -->
+    <!-- Display the debounced value -->
     <v-row>
       <v-col cols="12" md="6">
         <v-card>
@@ -19,7 +19,7 @@
             <strong>Current value:</strong> {{ appStore.textValue }}
           </v-card-text>
           <v-card-text>
-            <strong>Throttled value (500ms):</strong> {{ throttledValue }}
+            <strong>Debounced value (500ms):</strong> {{ debouncedValue }}
           </v-card-text>
         </v-card>
       </v-col>
@@ -29,27 +29,28 @@
 
 <script lang="ts" setup>
 import { useAppStore } from "@/stores/app";
-import { refThrottled, useThrottleFn } from "@vueuse/core";
-import { watch } from "vue";
-// Or use storeToRefs + computed for a throttled reactive value
+import { refDebounced, useDebounceFn } from "@vueuse/core";
 import { storeToRefs } from "pinia";
+import { watch } from "vue";
 
 const appStore = useAppStore();
-const throttleTime = 2000;
-// Subscribe to throttled changes
-const throttledCallback = useThrottleFn((value: string) => {
-  console.log("Throttled value changed:", value);
-  // Do something with the throttled value
-  // e.g., API call, expensive computation, etc.
-}, throttleTime);
+
+const debounceTime = 2000;
+// Option 1: Debounced callback function
+const debouncedCallback = useDebounceFn((value: string) => {
+  console.log("Debounced value changed:", value);
+  // Do something with the debounced value
+  // e.g., API call, search query, etc.
+}, debounceTime);
 
 watch(
   () => appStore.textValue,
   (newValue) => {
-    throttledCallback(newValue);
+    debouncedCallback(newValue);
   },
 );
 
+// Option 2: Debounced reactive ref (for display)
 const { textValue } = storeToRefs(appStore);
-const throttledValue = refThrottled(textValue, throttleTime);
+const debouncedValue = refDebounced(textValue, debounceTime);
 </script>
