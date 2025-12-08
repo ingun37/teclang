@@ -24,6 +24,28 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- Display the JSON result -->
+    <v-row>
+      <v-col cols="12" md="6">
+        <v-card>
+          <v-card-title>Parse Result</v-card-title>
+          <v-card-text>
+            <v-progress-circular
+              v-if="isLoading"
+              color="primary"
+              indeterminate
+            />
+            <pre
+              v-else-if="jsonString"
+              style="white-space: pre-wrap; word-break: break-word"
+              >{{ jsonString }}</pre
+            >
+            <span v-else class="text-grey">No result yet...</span>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -31,16 +53,34 @@
 import { useAppStore } from "@/stores/app";
 import { refDebounced, useDebounceFn } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { watch } from "vue";
+import { ref, watch } from "vue";
 
 const appStore = useAppStore();
 
 const debounceTime = 2000;
+const jsonString = ref<string>("");
+const isLoading = ref(false);
+
 // Option 1: Debounced callback function
-const debouncedCallback = useDebounceFn((value: string) => {
+const debouncedCallback = useDebounceFn(async (value: string) => {
   console.log("Debounced value changed:", value);
-  // Do something with the debounced value
-  // e.g., API call, search query, etc.
+
+  if (!value) {
+    jsonString.value = "";
+    return;
+  }
+
+  try {
+    isLoading.value = true;
+    const jsonStringTask: Promise<string> =
+      appStore.wasmInstance.parseHaskell(value);
+    jsonString.value = await jsonStringTask;
+  } catch (error) {
+    console.error("Error parsing:", error);
+    jsonString.value = `Error: ${error}`;
+  } finally {
+    isLoading.value = false;
+  }
 }, debounceTime);
 
 watch(
