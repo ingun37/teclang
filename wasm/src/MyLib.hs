@@ -7,8 +7,8 @@ module MyLib
     makeHaskellCode,
     ast,
     rawASTShow,
-    TecError(TecError),
-    tecError
+    TecError (TecError),
+    tecError,
   )
 where
 
@@ -104,8 +104,8 @@ data Parsed = Parsed
 
 parseHaskellStr :: String -> Either TecError Parsed
 parseHaskellStr code =
-  let tecCodeTxt = TE.decodeUtf8 tecCode
-      result = E.parseFileContents ("\ndoc = " ++ code)
+  let indented = unlines $ map ("  " ++) $ lines code
+      result = E.parseFileContents ("\ndoc = " ++ indented)
    in case result of
         E.ParseOk a ->
           let e = extractDocExp a
