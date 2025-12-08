@@ -1,5 +1,11 @@
 <script lang="ts" setup>
 import type { TecAST } from "@/schema/TecAST";
+import Logo from "@/components/Logo.vue";
+import Name from "@/components/Name.vue";
+import PageNumber from "@/components/PageNumber.vue";
+import HStack from "@/components/HStack.vue";
+import VStack from "@/components/VStack.vue";
+import Text from "@/components/Text.vue";
 
 interface Props {
   ast: TecAST;
@@ -10,36 +16,37 @@ const props = defineProps<Props>();
 
 <template>
   <v-card class="mb-2">
-    <v-card-title class="text-caption">
-      {{ ast.tag }}
-    </v-card-title>
     <v-card-text>
       <!-- TecType -->
-      <div v-if="ast.tag === 'TecType'">
-        <div><strong>Type Name:</strong> {{ ast.typeName }}</div>
-        <div><strong>Index:</strong> {{ ast.index.tag }}</div>
-        <div v-if="ast.index.tag === 'IndexN'">
-          <strong>Number:</strong> {{ ast.index.number }}
-        </div>
-        <div v-if="ast.index.tag === 'IndexS'">
-          <strong>Name:</strong> {{ ast.index.name }}
-        </div>
-      </div>
+      <v-sheet v-if="ast.tag === 'TecType'">
+        <v-sheet v-if="ast.typeName === 'Logo'">
+          <Logo />
+        </v-sheet>
+        <v-sheet v-if="ast.typeName === 'Code'">
+          <Code />
+        </v-sheet>
+        <v-sheet v-if="ast.typeName === 'Name'">
+          <Name />
+        </v-sheet>
+        <v-sheet v-if="ast.typeName === 'PageNumber'">
+          <PageNumber />
+        </v-sheet>
+        <v-sheet v-if="ast.typeName === 'Text'">
+          <v-sheet v-if="ast.index.tag === 'IndexS'">
+            <Text :text="ast.index.name" />
+          </v-sheet>
+        </v-sheet>
+      </v-sheet>
 
       <!-- TecLayout -->
-      <div v-else-if="ast.tag === 'TecLayout'">
-        <div><strong>Type Name:</strong> {{ ast.typeName }}</div>
-        <div v-if="ast.children.length > 0" class="mt-2">
-          <strong>Children:</strong>
-          <div class="ml-4 mt-2">
-            <TecAST
-              v-for="(child, index) in ast.children"
-              :key="index"
-              :ast="child"
-            />
-          </div>
-        </div>
-      </div>
+      <v-sheet v-else-if="ast.tag === 'TecLayout'">
+        <v-sheet v-if="ast.typeName === 'HStack'">
+          <HStack :items="ast.children" />
+        </v-sheet>
+        <v-sheet v-if="ast.typeName === 'VStack'">
+          <VStack :items="ast.children" />
+        </v-sheet>
+      </v-sheet>
 
       <!-- TecQuery -->
       <div v-else-if="ast.tag === 'TecQuery'">

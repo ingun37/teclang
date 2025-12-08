@@ -45,6 +45,15 @@
           </v-card-text>
         </v-card>
       </v-col>
+      <v-col cols="12" md="6">
+        <v-card>
+          <v-card-title>TecAST Visualization</v-card-title>
+          <v-card-text>
+            <TecAST v-if="tecAST" :ast="tecAST" />
+            <span v-else class="text-grey">No AST to display...</span>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -54,17 +63,32 @@ import { useAppStore } from "@/stores/app";
 import { refDebounced, useDebounceFn } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
-import { decodeTecAST } from "@/schema/TecAST.ts";
+import { decodeTecAST, type TecAST } from "@/schema/TecAST.ts";
 
 const appStore = useAppStore();
 
 const debounceTime = 2000;
 const jsonString = ref<string>("");
 const isLoading = ref(false);
+const tecAST = ref<TecAST | null>(null);
 
 watch(jsonString, (newValue) => {
-  const a = decodeTecAST(JSON.parse(newValue));
-  console.log(a);
+  if (!newValue) {
+    tecAST.value = null;
+    return;
+  }
+  try {
+    tecAST.value = decodeTecAST(JSON.parse(newValue));
+    console.log(tecAST.value);
+  } catch (error) {
+    console.error("Error decoding TecAST:", error);
+    tecAST.value = null;
+  }
+});
+
+watch(jsonString, (newValue) => {
+  const tecAST = decodeTecAST(JSON.parse(newValue));
+  console.log(tecAST);
 });
 // Option 1: Debounced callback function
 const debouncedCallback = useDebounceFn(async (value: string) => {

@@ -15,9 +15,12 @@ data TecType
   | TecType :- TecType
   | Logo
   | Code
+  | Name
+  | PageNumber
   | Colorway Word
   | Fabric String
   | Pantone String
+  | Text String
   deriving (Show, Generic)
 
 
