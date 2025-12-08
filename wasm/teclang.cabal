@@ -99,7 +99,11 @@ executable teclang-wasm
     -- Other library packages from which modules are imported.
     build-depends:
         base ^>=4.21.0.0,
-        teclang
+        teclang,
+        bytestring,
+        text,
+        ghc-internal,
+        ghc-experimental
 
     -- Directories containing source files.
     hs-source-dirs:   app
@@ -109,7 +113,7 @@ executable teclang-wasm
     ghc-options:
         -no-hs-main
         -optl-mexec-model=reactor
-        "-optl-Wl,--export=hs_init,--export=fibo"
+        "-optl-Wl,--export=hs_init,--export=fibo,--export=processString,--export=jsTest"
 
 test-suite teclang-test
     -- Import common warning flags.

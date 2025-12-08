@@ -1,11 +1,51 @@
 module Main (main) where
 
-import qualified MyLib ()
+import Data.ByteString qualified as B
+import Data.ByteString.Unsafe qualified as BU
+import Data.Text qualified as T
+import Data.Text.Encoding qualified as TE
+import Foreign.C (CString)
+import Foreign.C.String
+import Foreign.C.Types
+import Foreign.Ptr
+import MyLib qualified ()
+import GHC.Internal.Foreign.Marshal.Alloc qualified as Alloc
+import GHC.Wasm.Prim
 
 main :: IO ()
 main = do
   putStrLn "Hello, Haskell!"
 
-foreign export ccall fibo :: Int -> Int
+foreign import javascript unsafe "console.log($1)"
+  js_print :: JSString -> IO ()
 
-fibo n = n + 2
+foreign export ccall fibo :: Int -> IO Int
+
+fibo :: Int -> IO Int
+fibo n = do
+  return $ n + 2
+
+-- FFI wrapper to accept a C-style string pointer and length
+foreign export ccall processString :: Ptr CChar -> CInt -> IO (Ptr CChar)
+processString :: Ptr CChar -> CInt -> IO (Ptr CChar)
+processString ptr len = do
+  -- 1. Convert the C-style string (Ptr CChar + length) into a Haskell ByteString
+  bs <- B.packCStringLen (ptr, fromIntegral len)
+
+  -- 2. Decode the ByteString into Text
+  let input_text = TE.decodeUtf8 bs
+
+  -- 3. Run the main logic
+  let result_text = input_text
+
+  -- 4. Encode the result Text back to a ByteString
+  let resultString = T.unpack result_text
+  -- 5. Convert the ByteString to a NUL-terminated CString
+  --    (You MUST ensure this memory is managed/freed by the host later)
+  (ptr,len) <- newCStringLen resultString
+  return ptr
+
+foreign export javascript "jsTest" jsTest :: JSVal -> IO ()
+jsTest :: JSVal -> IO ()
+jsTest jsval = do
+  putStrLn "jsval called!"
