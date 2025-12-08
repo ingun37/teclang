@@ -91,7 +91,7 @@ executable teclang-wasm
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    -- other-modules: Wasm
+    other-modules: Util
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -102,8 +102,11 @@ executable teclang-wasm
         teclang,
         bytestring,
         text,
+        aeson,
         ghc-internal,
-        ghc-experimental
+        ghc-experimental,
+        mtl,
+        transformers
 
     -- Directories containing source files.
     hs-source-dirs:   app

@@ -11,6 +11,9 @@ import Foreign.Ptr
 import MyLib qualified ()
 import GHC.Internal.Foreign.Marshal.Alloc qualified as Alloc
 import GHC.Wasm.Prim
+import Data.Aeson qualified as J
+import Util qualified
+import qualified Util
 
 main :: IO ()
 main = do
@@ -51,3 +54,7 @@ jsTest jsval = do
   putStrLn "jsval called!"
   putStrLn $ fromJSString jsval
   return $ toJSString "hello js i'm haskell"
+
+foreign export javascript "parseHaskell" parseHaskell :: JSString -> IO JSString
+parseHaskell :: JSString -> IO JSString
+parseHaskell code = toJSString <$> Util.parseHaskell (fromJSString code)
