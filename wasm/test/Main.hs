@@ -10,14 +10,20 @@ import Text.Pretty.Simple qualified as Simple
 import Control.Monad.Except
 import Control.Monad.Trans
 
-type TecErrM = ExceptT TecError IO
+data TestErr = ErrStr String | ErrTec TecError deriving (Show)
 
-testE :: String -> TecErrM ()
+type ErrM = ExceptT TestErr IO
+
+mapLeft :: (a -> c) -> Either a b -> Either c b
+mapLeft f (Left a) = Left (f a)
+mapLeft _ (Right a) = Right a
+
+testE :: String -> ErrM ()
 testE code = do
   lift $ putStrLn "============== TESTING =============="
   lift $ putStrLn "---- Original Code ----"
   lift $ putStrLn code
-  Parsed {ast, rawASTShow} <- liftEither $ parseHaskellStr code
+  Parsed {ast, rawASTShow} <- liftEither $  mapLeft ErrTec $ parseHaskellStr code
   lift $ putStrLn "---- Raw ----"
   lift $ Simple.pPrintString rawASTShow
   lift $ putStrLn "---- Final AST ----"
@@ -27,9 +33,10 @@ testE code = do
   lift $ putStrLn "---- Json encoded ----"
   lift $ putStrLn $ T.unpack $ E.decodeUtf8 jsonBytes
   let decodedMaybe = Json.decodeStrict jsonBytes :: Maybe TecAST
-  tecAST <- liftEither $ maybe (tecError "decode fail") Right decodedMaybe
+  let decodedEither = maybe (Left $ ErrStr "decode fail") Right decodedMaybe
+  tecAST <- liftEither decodedEither
   lift $ putStrLn "---- Reconstructed Code ----"
-  reconstructedCode <- liftEither $ makeHaskellCode tecAST
+  reconstructedCode <- liftEither $ mapLeft ErrTec $ makeHaskellCode tecAST
   lift $ putStrLn reconstructedCode
 
 main :: IO ()
