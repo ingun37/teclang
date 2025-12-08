@@ -29,7 +29,7 @@
     <v-row>
       <v-col cols="12" md="6">
         <v-card>
-          <v-card-title>Parse Result</v-card-title>
+          <v-card-title>AST Json</v-card-title>
           <v-card-text>
             <v-progress-circular
               v-if="isLoading"
@@ -54,6 +54,7 @@ import { useAppStore } from "@/stores/app";
 import { refDebounced, useDebounceFn } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
+import { decodeTecAST } from "@/schema/TecAST.ts";
 
 const appStore = useAppStore();
 
@@ -61,6 +62,10 @@ const debounceTime = 2000;
 const jsonString = ref<string>("");
 const isLoading = ref(false);
 
+watch(jsonString, (newValue) => {
+  const a = decodeTecAST(JSON.parse(newValue));
+  console.log(a);
+});
 // Option 1: Debounced callback function
 const debouncedCallback = useDebounceFn(async (value: string) => {
   console.log("Debounced value changed:", value);
