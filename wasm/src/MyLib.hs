@@ -58,17 +58,21 @@ mapWholeExpShow x e = case e of
 tecError :: String -> Either TecError b
 tecError str = Left $ TecError str
 
+makeIndex :: (Show l) => E.Exp l -> Either TecError Index
+makeIndex (E.Lit _ (E.Int _ val _)) = Right $ IndexN $ fromInteger val
+makeIndex (E.Lit _ (E.String _ val _)) = Right $ IndexS val
+makeIndex (E.EnumFrom _ (E.Lit _ (E.Int _ val _))) = Right $ IndexR (fromInteger val) Nothing
+makeIndex (E.EnumFromTo _ (E.Lit _ (E.Int _ fromVal _)) (E.Lit _ (E.Int _ toVal _))) = Right $ IndexR (fromInteger fromVal) (Just $ fromInteger toVal)
+makeIndex unknownExp = Left $ TecErrorUnknownExp (show unknownExp) ""
+
 makeTecAST :: (Show l) => E.Exp l -> Either TecError TecAST
 makeTecAST (E.App _ (E.Con _ (E.UnQual _ (E.Ident _ conName))) exp) =
   let handle (E.List _ exps) = do
         children <- traverse makeTecAST exps
         Right $ TecLayout conName children
-      handle (E.Lit _ (E.Int _ val _)) = Right $ TecType conName (IndexN $ fromInteger val)
-      handle (E.Lit _ (E.String _ val _)) = Right $ TecType conName (IndexS val)
-      handle (E.EnumFrom _ (E.Lit _ (E.Int _ val _))) = Right $ TecType conName (IndexR (fromInteger val) Nothing)
-      handle (E.EnumFromTo _ (E.Lit _ (E.Int _ fromVal _)) (E.Lit _ (E.Int _ toVal _))) = Right $ TecType conName (IndexR (fromInteger fromVal) (Just $ fromInteger toVal))
-      handle unknownExp = Left $ TecErrorUnknownExp (show unknownExp) ""
+      handle indexE = TecType conName <$> makeIndex indexE
    in handle exp
+
 makeTecAST (E.Con _ (E.UnQual _ (E.Ident _ conName))) =
   Right $
     TecType conName IndexU
@@ -76,7 +80,7 @@ makeTecAST (E.InfixApp _ l (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) r) = do
   left <- makeTecAST l
   right <- makeTecAST r
   Right $ TecQuery op left right
-makeTecAST _ = tecError "makeTecAST error"
+makeTecAST unknownExp = Left $ TecErrorUnknownExp (show unknownExp) (show unknownExp)
 
 makeExp :: TecAST -> Either TecError (E.Exp ())
 makeExp tecAst =

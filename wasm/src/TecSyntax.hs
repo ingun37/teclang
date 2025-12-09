@@ -8,7 +8,7 @@ import Data.Aeson
     defaultOptions,
     genericToEncoding,
   )
-data Side = Front | Back | Left | Right deriving(Show, Generic)
+data Side = Front | Back | Left | Right deriving(Show, Generic, Enum)
 instance ToJSON Side where
   toEncoding = genericToEncoding defaultOptions
 
@@ -22,12 +22,13 @@ data TecType
   | Code
   | Name
   | PageNumber
-  | Colorway Word
+  | Colorway Int
   | Colorways [Int]
   | Fabric String
   | Pantone String
   | Text String
-  | Render Side
+  | Render Int Side
+  | Renders [Int] [Side]
   deriving (Show, Generic)
 
 
