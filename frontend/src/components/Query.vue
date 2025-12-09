@@ -21,9 +21,13 @@ function* iterateIDs(db: Graph, tt: TecType) {
       }
     }
   } else if (tt.index.tag === "IndexS") {
-    const id = `${tt.typeName}-${tt.index.name}`;
-    if (!db.hasNode(id)) return;
-    yield id;
+    if (tt.index.name === "*") {
+      yield* db.filterNodes((node) => node.startsWith(tt.typeName));
+    } else {
+      const id = `${tt.typeName}-${tt.index.name}`;
+      if (!db.hasNode(id)) return;
+      yield id;
+    }
   }
 }
 type NE<T> = Array.NonEmptyArray<T>;
