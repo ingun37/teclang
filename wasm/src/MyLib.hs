@@ -17,14 +17,21 @@ import Data.Aeson
     defaultOptions,
     genericToEncoding,
   )
-import Data.ByteString qualified as BS
-import Data.FileEmbed qualified as Embed
+import Data.Aeson qualified as J
+-- import Data.ByteString qualified as BS
+-- import Data.FileEmbed qualified as Embed
+import Data.Text qualified as T
+-- import Data.Text.Encoding qualified as TE
+
+
 import GHC.Generics (Generic)
 import Language.Haskell.Exts qualified as E
+import TecSyntax (Side)
 
 data Index
   = IndexN {number :: Word}
   | IndexS {name :: String}
+  | IndexE {name :: String, value :: Int}
   | IndexR {from :: Word, to :: Maybe Word}
   | IndexU
   deriving (Show, Generic)
@@ -63,6 +70,11 @@ makeIndex (E.Lit _ (E.Int _ val _)) = Right $ IndexN $ fromInteger val
 makeIndex (E.Lit _ (E.String _ val _)) = Right $ IndexS val
 makeIndex (E.EnumFrom _ (E.Lit _ (E.Int _ val _))) = Right $ IndexR (fromInteger val) Nothing
 makeIndex (E.EnumFromTo _ (E.Lit _ (E.Int _ fromVal _)) (E.Lit _ (E.Int _ toVal _))) = Right $ IndexR (fromInteger fromVal) (Just $ fromInteger toVal)
+makeIndex (E.Con _ (E.UnQual _ (E.Ident _ val))) = do
+  let decoded = J.decodeStrictText (T.pack $ "\"" ++ val ++ "\"") :: Maybe Side
+  case decoded of
+    Nothing -> Left $ TecError $ "Failed to parse " ++ val ++ " to Side"
+    Just side -> Right $ IndexE val (fromEnum side)
 makeIndex unknownExp = Left $ TecErrorUnknownExp (show unknownExp) ""
 
 makeTecAST :: (Show l) => E.Exp l -> Either TecError TecAST
@@ -72,7 +84,6 @@ makeTecAST (E.App _ (E.Con _ (E.UnQual _ (E.Ident _ conName))) exp) =
         Right $ TecLayout conName children
       handle indexE = TecType conName <$> makeIndex indexE
    in handle exp
-
 makeTecAST (E.Con _ (E.UnQual _ (E.Ident _ conName))) =
   Right $
     TecType conName IndexU
@@ -93,6 +104,7 @@ makeExp tecAst =
               IndexU -> Right con
               IndexN {number} -> Right $ app (E.Lit () (E.Int () (toInteger number) (show number)))
               IndexS {name} -> Right $ app (E.Lit () (E.String () name name))
+              IndexE {name, value = _} -> Right $ app (E.Con () (E.UnQual () (E.Ident () name)))
               IndexR {from = f, to = maybeTo} -> case maybeTo of
                 Nothing -> Right $ app (E.EnumFrom () (E.Lit () (E.Int () (toInteger f) (show f))))
                 Just t -> Right $ app (E.EnumFromTo () (E.Lit () (E.Int () (toInteger f) (show f))) (E.Lit () (E.Int () (toInteger t) (show t))))
@@ -109,8 +121,8 @@ extractDocExp :: E.Module l -> E.Exp l
 extractDocExp (E.Module _ _ _ _ decls) = head [exp | x@(E.PatBind _ _ ((E.UnGuardedRhs _ exp)) _) <- decls]
 extractDocExp _ = undefined
 
-tecCode :: BS.ByteString
-tecCode = $(Embed.embedFile "src/TecSyntax.hs")
+-- tecCode :: BS.ByteString
+-- tecCode = $(Embed.embedFile "src/TecSyntax.hs")
 
 data Parsed = Parsed
   { ast :: TecAST

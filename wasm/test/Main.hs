@@ -48,6 +48,7 @@ main = do
   b <- runExceptT a
   case b of
     (Left (ErrTec (TecErrorUnknownExp rawAstShow rawWholeAstShow))) -> do
+      putStrLn "\n\n---- Unknown AST show ----\n\n"
       Simple.pPrintString rawAstShow
       putStrLn "\n\n---- Entire AST show ----\n\n"
       Simple.pPrintString rawWholeAstShow
@@ -63,6 +64,7 @@ testData =
     "Logo :- Logo",
     "Logo :- Logo :- Pantone \"green\"",
     "Colorways [1 ..]",
-    "Colorways [1 .. 3]"
+    "Colorways [1 .. 3]",
+    "Render Front"
     -- "Render 0 Front"
   ]
