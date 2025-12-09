@@ -6,10 +6,17 @@ export type EdgeAttributes = {
   edgeNode: string;
   nodes: string[];
 };
-export type NodeAttributes = {
-  typeName: string;
-  attributes: any;
-};
+export type NodeAttributes =
+  | {
+      _tag: "TypeNode";
+      typeName: string;
+      attributes: any;
+    }
+  | {
+      _tag: "EdgeNode";
+      from: string;
+      to: string;
+    };
 export function createGraphDB(): TheGraph {
   const graph = new Graph<NodeAttributes, EdgeAttributes, any>();
 
@@ -18,6 +25,7 @@ export function createGraphDB(): TheGraph {
 
   function addNode(id: any, typeName: string, attributes: any = undefined) {
     return graph.addNode(`${typeName}-${id}`, {
+      _tag: "TypeNode",
       typeName,
       attributes,
     });
@@ -42,8 +50,13 @@ export function createGraphDB(): TheGraph {
       edgeNode,
       nodes: third ? [third] : [],
     };
-    graph.addEdge(from, to, edgeAtt);
-    graph.addNode(edgeNode);
+    graph.addUndirectedEdge(from, to, edgeAtt);
+    graph.addNode(edgeNode, {
+      _tag: "EdgeNode",
+      from,
+      to,
+    });
+
     edgeAtt.nodes.forEach((thirdNode) => graph.addEdge(edgeNode, thirdNode));
   }
 
