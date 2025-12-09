@@ -76,6 +76,13 @@ mapWholeExpShow x e = case e of
 tecError :: String -> Either TecError b
 tecError str = Left $ TecError str
 
+guessEnum :: String -> Either TecError TecEnum
+guessEnum label =
+  let decoded = J.decodeStrictText (T.pack $ "\"" ++ label ++ "\"") :: Maybe Side
+   in case decoded of
+        Nothing -> Left $ TecError $ "Failed to parse " ++ label ++ " to Side"
+        Just side -> Right $ TecEnum label (fromEnum side)
+
 makeIndex :: (Show l) => E.Exp l -> Either TecError Index
 makeIndex (E.Lit _ (E.Int _ val _)) = Right $ IndexN $ fromInteger val
 makeIndex (E.Lit _ (E.String _ val _)) = Right $ IndexS val
@@ -92,10 +99,8 @@ makeIndex (E.EnumFromTo _ (E.Lit _ (E.Int _ fromVal _)) (E.Lit _ (E.Int _ toVal 
         to = Just $ withoutLabel (fromInteger toVal)
       }
 makeIndex (E.Con _ (E.UnQual _ (E.Ident _ val))) = do
-  let decoded = J.decodeStrictText (T.pack $ "\"" ++ val ++ "\"") :: Maybe Side
-  case decoded of
-    Nothing -> Left $ TecError $ "Failed to parse " ++ val ++ " to Side"
-    Just side -> Right $ IndexE (TecEnum val (fromEnum side))
+  e <- guessEnum val
+  return $ IndexE e
 makeIndex unknownExp = Left $ TecErrorUnknownExp (show unknownExp) ""
 
 makeTecAST :: (Show l) => E.Exp l -> Either TecError TecAST
@@ -119,6 +124,10 @@ makeEnumExp (TecEnum label value) =
   case label of
     "" -> Right $ E.Lit () (E.Int () (toInteger value) (show value))
     l -> Right $ E.Con () (E.UnQual () (E.Ident () l))
+
+makeEnum :: (Show l) => E.Exp l -> Either TecError TecEnum
+makeEnum (E.Lit _ (E.Int _ valueInt valueStr)) = undefined
+makeEnum (E.Con _ (E.UnQual _ (E.Ident _ label))) = undefined
 
 makeExp :: TecAST -> Either TecError (E.Exp ())
 makeExp tecAst =

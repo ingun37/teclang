@@ -66,5 +66,6 @@ testData =
     "Colorways [1 ..]",
     "Colorways [1 .. 3]",
     "Render Front"
+    -- "Renders [Front .. Right]"
     -- "Render 0 Front"
   ]
