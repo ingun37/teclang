@@ -17,7 +17,6 @@ const props = defineProps<Props>();
 <template>
   <v-card class="mb-2">
     <v-card-text>
-      <!-- TecType -->
       <v-sheet v-if="ast.tag === 'TecType'">
         <v-sheet v-if="ast.typeName === 'Logo'">
           <Logo />
@@ -68,13 +67,4 @@ const props = defineProps<Props>();
   </v-card>
 </template>
 
-<style lang="sass" scoped>
-.ml-4
-  margin-left: 1rem
-
-.mt-2
-  margin-top: 0.5rem
-
-.mb-2
-  margin-bottom: 0.5rem
-</style>
+<style lang="sass" scoped></style>

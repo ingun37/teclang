@@ -1,9 +1,10 @@
 import { Schema } from "effect";
 
-const IndexN = Schema.Struct({
-  tag: Schema.tag("IndexN"),
-  number: Schema.Number,
+const TecEnum = Schema.Struct({
+  label: Schema.String,
+  value: Schema.Number,
 });
+
 const IndexS = Schema.Struct({
   tag: Schema.tag("IndexS"),
   name: Schema.String,
@@ -11,11 +12,21 @@ const IndexS = Schema.Struct({
 const IndexU = Schema.Struct({
   tag: Schema.tag("IndexU"),
 });
-const Index = Schema.Union(IndexN, IndexS, IndexU);
+const indexE = Schema.Struct({
+  tag: Schema.tag("IndexE"),
+  contents: TecEnum,
+});
+const IndexR = Schema.Struct({
+  tag: Schema.tag("IndexR"),
+  from: TecEnum,
+  to: Schema.NullOr(TecEnum),
+});
+const Index = Schema.Union(IndexS, IndexU, indexE, IndexR);
 const TecType = Schema.Struct({
   tag: Schema.tag("TecType"),
   typeName: Schema.String,
   index: Index,
+  index1: Schema.NullOr(Index),
 });
 export type TecType = typeof TecType.Type;
 export type TecAST = TecLayout | TecQuery | TecType;
