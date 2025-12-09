@@ -71,15 +71,7 @@ makeTecAST (E.InfixApp _ l (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) r) = do
   Right $ TecQuery op left right
 makeTecAST unknownExp = Left $ TecErrorUnknownExp (show unknownExp) (show unknownExp)
 
-makeEnumExp :: TecEnum -> Either TecError (E.Exp ())
-makeEnumExp (TecEnum label value) =
-  case label of
-    "" -> Right $ E.Lit () (E.Int () (toInteger value) (show value))
-    l -> Right $ E.Con () (E.UnQual () (E.Ident () l))
 
-makeEnum :: (Show l) => E.Exp l -> Either TecError TecEnum
-makeEnum (E.Lit _ (E.Int _ valueInt valueStr)) = undefined
-makeEnum (E.Con _ (E.UnQual _ (E.Ident _ label))) = undefined
 
 makeExp :: TecAST -> Either TecError (E.Exp ())
 makeExp tecAst =
@@ -90,17 +82,10 @@ makeExp tecAst =
             app = appN typeName
          in case index of
               IndexU -> Right con
-              IndexN {number} -> Right $ app (E.Lit () (E.Int () (toInteger number) (show number)))
-              IndexS {name} -> Right $ app (E.Lit () (E.String () name name))
-              IndexE (TecEnum {label, value = _}) -> Right $ app (E.Con () (E.UnQual () (E.Ident () label)))
-              IndexR {from = f, to = maybeTo} -> case maybeTo of
-                Nothing -> do
-                  _f <- makeEnumExp f
-                  return $ app (E.EnumFrom () _f)
-                Just t -> do
-                  _f <- makeEnumExp f
-                  _t <- makeEnumExp t
-                  return $ app (E.EnumFromTo () _f _t)
+              i -> do
+                iexp <- makeIndexExp i
+                Right $ app iexp
+              
       eval (TecLayout {typeName, children}) = do
         xs <- traverse makeExp children
         Right $ appN typeName (E.List () xs)
