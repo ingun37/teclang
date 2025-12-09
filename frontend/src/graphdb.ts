@@ -4,7 +4,7 @@ import { Array } from "effect";
 export type TheGraph = Graph<any, EdgeAttributes, any>;
 export type EdgeAttributes = {
   edgeNode: string;
-  nodes: string[];
+  thirdNodes: string[];
 };
 export type NodeAttributes =
   | {
@@ -48,7 +48,7 @@ export function createGraphDB(): TheGraph {
     const edgeNode = `${from}->${to}`;
     const edgeAtt: EdgeAttributes = {
       edgeNode,
-      nodes: third ? [third] : [],
+      thirdNodes: third ? [third] : [],
     };
     graph.addUndirectedEdge(from, to, edgeAtt);
     graph.addNode(edgeNode, {
@@ -57,7 +57,9 @@ export function createGraphDB(): TheGraph {
       to,
     });
 
-    edgeAtt.nodes.forEach((thirdNode) => graph.addEdge(edgeNode, thirdNode));
+    edgeAtt.thirdNodes.forEach((thirdNode) =>
+      graph.addEdge(edgeNode, thirdNode),
+    );
   }
 
   addEdge(colorwayNodes[0]!, fabricNodes[0]!, pantoneNodes[0]);
