@@ -17,43 +17,17 @@ import Data.Aeson
     defaultOptions,
     genericToEncoding,
   )
-import Data.Aeson qualified as J
+
 -- import Data.ByteString qualified as BS
 -- import Data.FileEmbed qualified as Embed
-
 -- import Data.Text.Encoding qualified as TE
 
-import Data.Functor ((<&>))
-import Data.Text qualified as T
 import GHC.Generics (Generic)
 import Language.Haskell.Exts qualified as E
-import TecSyntax (Side)
-
-data TecEnum = TecEnum {label :: String, value :: Int} deriving (Show, Generic)
-
-instance ToJSON TecEnum where
-  toEncoding = genericToEncoding defaultOptions
-
-instance FromJSON TecEnum
-
-withoutLabel :: Int -> TecEnum
-withoutLabel = TecEnum ""
-
-data Index
-  = IndexN {number :: Word}
-  | IndexS {name :: String}
-  | IndexE TecEnum
-  | IndexR {from :: TecEnum, to :: Maybe TecEnum}
-  | IndexU
-  deriving (Show, Generic)
-
-instance ToJSON Index where
-  toEncoding = genericToEncoding defaultOptions
-
-instance FromJSON Index
+import TecIndex
 
 data TecAST
-  = TecType {typeName :: String, index :: Index}
+  = TecType {typeName :: String, index :: Index, index1 :: Maybe Index}
   | TecLayout {typeName :: String, children :: [TecAST]}
   | TecQuery {op :: String, left :: TecAST, right :: TecAST}
   deriving (Show, Generic)
@@ -63,11 +37,6 @@ instance ToJSON TecAST where
 
 instance FromJSON TecAST
 
-data TecError
-  = TecError String
-  | TecErrorUnknownExp {expShow :: String, wholeExpShow :: String}
-  deriving (Show)
-
 mapWholeExpShow :: (Show l) => E.Exp l -> Either TecError a -> Either TecError a
 mapWholeExpShow x e = case e of
   (Left (TecErrorUnknownExp a _)) -> Left (TecErrorUnknownExp a (show x))
@@ -76,43 +45,26 @@ mapWholeExpShow x e = case e of
 tecError :: String -> Either TecError b
 tecError str = Left $ TecError str
 
-guessEnum :: String -> Either TecError TecEnum
-guessEnum label =
-  let decoded = J.decodeStrictText (T.pack $ "\"" ++ label ++ "\"") :: Maybe Side
-   in case decoded of
-        Nothing -> Left $ TecError $ "Failed to parse " ++ label ++ " to Side"
-        Just side -> Right $ TecEnum label (fromEnum side)
 
-makeIndex :: (Show l) => E.Exp l -> Either TecError Index
-makeIndex (E.Lit _ (E.Int _ val _)) = Right $ IndexN $ fromInteger val
-makeIndex (E.Lit _ (E.String _ val _)) = Right $ IndexS val
-makeIndex (E.EnumFrom _ (E.Lit _ (E.Int _ val _))) =
-  Right $
-    IndexR
-      { from = withoutLabel (fromInteger val),
-        to = Nothing
-      }
-makeIndex (E.EnumFromTo _ (E.Lit _ (E.Int _ fromVal _)) (E.Lit _ (E.Int _ toVal _))) =
-  Right $
-    IndexR
-      { from = withoutLabel (fromInteger fromVal),
-        to = Just $ withoutLabel (fromInteger toVal)
-      }
-makeIndex (E.Con _ (E.UnQual _ (E.Ident _ val))) = do
-  e <- guessEnum val
-  return $ IndexE e
-makeIndex unknownExp = Left $ TecErrorUnknownExp (show unknownExp) ""
 
 makeTecAST :: (Show l) => E.Exp l -> Either TecError TecAST
-makeTecAST (E.App _ (E.Con _ (E.UnQual _ (E.Ident _ conName))) exp) =
+makeTecAST (E.App _ (E.Con _ (E.UnQual _ (E.Ident _ conName))) rhs) =
   let handle (E.List _ exps) = do
         children <- traverse makeTecAST exps
         Right $ TecLayout conName children
-      handle indexE = TecType conName <$> makeIndex indexE
-   in handle exp
+      handle indexE = do
+        i <- makeIndex indexE
+        return $ TecType conName i Nothing
+   in handle rhs
+makeTecAST (E.App _ lhs rhs) = do
+  l <- makeTecAST lhs
+  r <- makeIndex rhs
+  case l of
+    (TecType typeName idx0 Nothing) -> return $ TecType typeName idx0 (Just r)
+    _ -> Left $ TecError "Unexpected left side"
 makeTecAST (E.Con _ (E.UnQual _ (E.Ident _ conName))) =
   Right $
-    TecType conName IndexU
+    TecType conName IndexU Nothing
 makeTecAST (E.InfixApp _ l (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) r) = do
   left <- makeTecAST l
   right <- makeTecAST r

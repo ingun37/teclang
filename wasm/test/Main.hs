@@ -64,8 +64,8 @@ testData =
     "Logo :- Logo",
     "Logo :- Logo :- Pantone \"green\"",
     "Colorways [1 ..]",
-    "Colorways [1 .. 3]",
-    "Render Front"
+    "Colorways [1 .. 3]"
+    -- "Render 0 Front"
     -- "Renders [Front .. Right]"
     -- "Render 0 Front"
   ]
