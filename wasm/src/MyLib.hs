@@ -66,6 +66,7 @@ makeTecAST (E.App _ (E.Con _ (E.UnQual _ (E.Ident _ conName))) exp) =
       handle (E.Lit _ (E.Int _ val _)) = Right $ TecType conName (IndexN $ fromInteger val)
       handle (E.Lit _ (E.String _ val _)) = Right $ TecType conName (IndexS val)
       handle (E.EnumFrom _ (E.Lit _ (E.Int _ val _))) = Right $ TecType conName (IndexR (fromInteger val) Nothing)
+      handle (E.EnumFromTo _ (E.Lit _ (E.Int _ fromVal _)) (E.Lit _ (E.Int _ toVal _))) = Right $ TecType conName (IndexR (fromInteger fromVal) (Just $ fromInteger toVal))
       handle unknownExp = Left $ TecErrorUnknownExp (show unknownExp) ""
    in handle exp
 makeTecAST (E.Con _ (E.UnQual _ (E.Ident _ conName))) =
@@ -88,7 +89,9 @@ makeExp tecAst =
               IndexU -> Right con
               IndexN {number} -> Right $ app (E.Lit () (E.Int () (toInteger number) (show number)))
               IndexS {name} -> Right $ app (E.Lit () (E.String () name name))
-              IndexR {from = f, to = t} -> Right $ app (E.EnumFrom () (E.Lit () (E.Int () (toInteger f) (show f))))
+              IndexR {from = f, to = maybeTo} -> case maybeTo of
+                Nothing -> Right $ app (E.EnumFrom () (E.Lit () (E.Int () (toInteger f) (show f))))
+                Just t -> Right $ app (E.EnumFromTo () (E.Lit () (E.Int () (toInteger f) (show f))) (E.Lit () (E.Int () (toInteger t) (show t))))
       eval (TecLayout {typeName, children}) = do
         xs <- traverse makeExp children
         Right $ appN typeName (E.List () xs)

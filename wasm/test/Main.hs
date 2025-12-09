@@ -62,5 +62,6 @@ testData =
     "VStack [HStack [Logo], Colorway 42]",
     "Logo :- Logo",
     "Logo :- Logo :- Pantone \"green\"",
-    "Colorways [1 ..]"
+    "Colorways [1 ..]",
+    "Colorways [1 .. 3]"
   ]
