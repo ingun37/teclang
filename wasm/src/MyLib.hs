@@ -20,19 +20,30 @@ import Data.Aeson
 import Data.Aeson qualified as J
 -- import Data.ByteString qualified as BS
 -- import Data.FileEmbed qualified as Embed
-import Data.Text qualified as T
+
 -- import Data.Text.Encoding qualified as TE
 
-
+import Data.Functor ((<&>))
+import Data.Text qualified as T
 import GHC.Generics (Generic)
 import Language.Haskell.Exts qualified as E
 import TecSyntax (Side)
 
+data TecEnum = TecEnum {label :: String, value :: Int} deriving (Show, Generic)
+
+instance ToJSON TecEnum where
+  toEncoding = genericToEncoding defaultOptions
+
+instance FromJSON TecEnum
+
+withoutLabel :: Int -> TecEnum
+withoutLabel = TecEnum ""
+
 data Index
   = IndexN {number :: Word}
   | IndexS {name :: String}
-  | IndexE {name :: String, value :: Int}
-  | IndexR {from :: Word, to :: Maybe Word}
+  | IndexE TecEnum
+  | IndexR {from :: TecEnum, to :: Maybe TecEnum}
   | IndexU
   deriving (Show, Generic)
 
@@ -68,13 +79,23 @@ tecError str = Left $ TecError str
 makeIndex :: (Show l) => E.Exp l -> Either TecError Index
 makeIndex (E.Lit _ (E.Int _ val _)) = Right $ IndexN $ fromInteger val
 makeIndex (E.Lit _ (E.String _ val _)) = Right $ IndexS val
-makeIndex (E.EnumFrom _ (E.Lit _ (E.Int _ val _))) = Right $ IndexR (fromInteger val) Nothing
-makeIndex (E.EnumFromTo _ (E.Lit _ (E.Int _ fromVal _)) (E.Lit _ (E.Int _ toVal _))) = Right $ IndexR (fromInteger fromVal) (Just $ fromInteger toVal)
+makeIndex (E.EnumFrom _ (E.Lit _ (E.Int _ val _))) =
+  Right $
+    IndexR
+      { from = withoutLabel (fromInteger val),
+        to = Nothing
+      }
+makeIndex (E.EnumFromTo _ (E.Lit _ (E.Int _ fromVal _)) (E.Lit _ (E.Int _ toVal _))) =
+  Right $
+    IndexR
+      { from = withoutLabel (fromInteger fromVal),
+        to = Just $ withoutLabel (fromInteger toVal)
+      }
 makeIndex (E.Con _ (E.UnQual _ (E.Ident _ val))) = do
   let decoded = J.decodeStrictText (T.pack $ "\"" ++ val ++ "\"") :: Maybe Side
   case decoded of
     Nothing -> Left $ TecError $ "Failed to parse " ++ val ++ " to Side"
-    Just side -> Right $ IndexE val (fromEnum side)
+    Just side -> Right $ IndexE (TecEnum val (fromEnum side))
 makeIndex unknownExp = Left $ TecErrorUnknownExp (show unknownExp) ""
 
 makeTecAST :: (Show l) => E.Exp l -> Either TecError TecAST
@@ -93,6 +114,12 @@ makeTecAST (E.InfixApp _ l (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) r) = do
   Right $ TecQuery op left right
 makeTecAST unknownExp = Left $ TecErrorUnknownExp (show unknownExp) (show unknownExp)
 
+makeEnumExp :: TecEnum -> Either TecError (E.Exp ())
+makeEnumExp (TecEnum label value) =
+  case label of
+    "" -> Right $ E.Lit () (E.Int () (toInteger value) (show value))
+    l -> Right $ E.Con () (E.UnQual () (E.Ident () l))
+
 makeExp :: TecAST -> Either TecError (E.Exp ())
 makeExp tecAst =
   let conN n = E.Con () (E.UnQual () (E.Ident () n))
@@ -104,10 +131,15 @@ makeExp tecAst =
               IndexU -> Right con
               IndexN {number} -> Right $ app (E.Lit () (E.Int () (toInteger number) (show number)))
               IndexS {name} -> Right $ app (E.Lit () (E.String () name name))
-              IndexE {name, value = _} -> Right $ app (E.Con () (E.UnQual () (E.Ident () name)))
+              IndexE (TecEnum {label, value = _}) -> Right $ app (E.Con () (E.UnQual () (E.Ident () label)))
               IndexR {from = f, to = maybeTo} -> case maybeTo of
-                Nothing -> Right $ app (E.EnumFrom () (E.Lit () (E.Int () (toInteger f) (show f))))
-                Just t -> Right $ app (E.EnumFromTo () (E.Lit () (E.Int () (toInteger f) (show f))) (E.Lit () (E.Int () (toInteger t) (show t))))
+                Nothing -> do
+                  _f <- makeEnumExp f
+                  return $ app (E.EnumFrom () _f)
+                Just t -> do
+                  _f <- makeEnumExp f
+                  _t <- makeEnumExp t
+                  return $ app (E.EnumFromTo () _f _t)
       eval (TecLayout {typeName, children}) = do
         xs <- traverse makeExp children
         Right $ appN typeName (E.List () xs)
