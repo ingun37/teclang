@@ -8,6 +8,11 @@ import Data.Aeson
     defaultOptions,
     genericToEncoding,
   )
+data Side = Front | Back | Left | Right deriving(Show, Generic)
+instance ToJSON Side where
+  toEncoding = genericToEncoding defaultOptions
+
+instance FromJSON Side
 
 data TecType
   = HStack [TecType]
@@ -18,9 +23,11 @@ data TecType
   | Name
   | PageNumber
   | Colorway Word
+  | Colorways [Int]
   | Fabric String
   | Pantone String
   | Text String
+  | Render Side
   deriving (Show, Generic)
 
 

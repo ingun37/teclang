@@ -6,8 +6,7 @@ module MyLib
     Parsed (Parsed),
     makeHaskellCode,
     ast,
-    rawASTShow,
-    TecError (TecError),
+    TecError (TecError, TecErrorUnknownExp),
     tecError,
   )
 where
@@ -20,14 +19,13 @@ import Data.Aeson
   )
 import Data.ByteString qualified as BS
 import Data.FileEmbed qualified as Embed
-import Data.Text qualified as T
-import Data.Text.Encoding qualified as TE
 import GHC.Generics (Generic)
 import Language.Haskell.Exts qualified as E
 
 data Index
   = IndexN {number :: Word}
   | IndexS {name :: String}
+  | IndexR {from :: Word, to :: Maybe Word}
   | IndexU
   deriving (Show, Generic)
 
@@ -47,19 +45,28 @@ instance ToJSON TecAST where
 
 instance FromJSON TecAST
 
-data TecError = TecError String deriving (Show)
+data TecError
+  = TecError String
+  | TecErrorUnknownExp {expShow :: String, wholeExpShow :: String}
+  deriving (Show)
+
+mapWholeExpShow :: (Show l) => E.Exp l -> Either TecError a -> Either TecError a
+mapWholeExpShow x e = case e of
+  (Left (TecErrorUnknownExp a _)) -> Left (TecErrorUnknownExp a (show x))
+  a -> a
 
 tecError :: String -> Either TecError b
 tecError str = Left $ TecError str
 
-makeTecAST :: E.Exp l -> Either TecError TecAST
+makeTecAST :: (Show l) => E.Exp l -> Either TecError TecAST
 makeTecAST (E.App _ (E.Con _ (E.UnQual _ (E.Ident _ conName))) exp) =
   let handle (E.List _ exps) = do
         children <- traverse makeTecAST exps
         Right $ TecLayout conName children
       handle (E.Lit _ (E.Int _ val _)) = Right $ TecType conName (IndexN $ fromInteger val)
       handle (E.Lit _ (E.String _ val _)) = Right $ TecType conName (IndexS val)
-      handle _ = tecError "handle failed"
+      handle (E.EnumFrom _ (E.Lit _ (E.Int _ val _))) = Right $ TecType conName (IndexR (fromInteger val) Nothing)
+      handle unknownExp = Left $ TecErrorUnknownExp (show unknownExp) ""
    in handle exp
 makeTecAST (E.Con _ (E.UnQual _ (E.Ident _ conName))) =
   Right $
@@ -81,6 +88,7 @@ makeExp tecAst =
               IndexU -> Right con
               IndexN {number} -> Right $ app (E.Lit () (E.Int () (toInteger number) (show number)))
               IndexS {name} -> Right $ app (E.Lit () (E.String () name name))
+              IndexR {from = f, to = t} -> Right $ app (E.EnumFrom () (E.Lit () (E.Int () (toInteger f) (show f))))
       eval (TecLayout {typeName, children}) = do
         xs <- traverse makeExp children
         Right $ appN typeName (E.List () xs)
@@ -98,8 +106,7 @@ tecCode :: BS.ByteString
 tecCode = $(Embed.embedFile "src/TecSyntax.hs")
 
 data Parsed = Parsed
-  { ast :: TecAST,
-    rawASTShow :: String
+  { ast :: TecAST
   }
 
 parseHaskellStr :: String -> Either TecError Parsed
@@ -110,8 +117,8 @@ parseHaskellStr code =
         E.ParseOk a ->
           let e = extractDocExp a
            in do
-                ast <- makeTecAST e
-                Right $ Parsed {ast = ast, rawASTShow = show e}
+                ast <- mapWholeExpShow e $ makeTecAST e
+                Right $ Parsed {ast = ast}
         E.ParseFailed _ str ->
           tecError str
 

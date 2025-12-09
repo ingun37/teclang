@@ -1,5 +1,7 @@
 module Main (main) where
 
+import Control.Monad.Except
+import Control.Monad.Trans
 import Data.Aeson qualified as Json
 import Data.Aeson.Encode.Pretty qualified as JP
 import Data.ByteString qualified as B
@@ -7,8 +9,6 @@ import Data.Text qualified as T
 import Data.Text.Encoding qualified as E
 import MyLib
 import Text.Pretty.Simple qualified as Simple
-import Control.Monad.Except
-import Control.Monad.Trans
 
 data TestErr = ErrStr String | ErrTec TecError deriving (Show)
 
@@ -23,9 +23,7 @@ testE code = do
   lift $ putStrLn "============== TESTING =============="
   lift $ putStrLn "---- Original Code ----"
   lift $ putStrLn code
-  Parsed {ast, rawASTShow} <- liftEither $  mapLeft ErrTec $ parseHaskellStr code
-  lift $ putStrLn "---- Raw ----"
-  lift $ Simple.pPrintString rawASTShow
+  Parsed {ast} <- liftEither $ mapLeft ErrTec $ parseHaskellStr code
   lift $ putStrLn "---- Final AST ----"
   lift $ Simple.pPrint ast
   lift $ putStrLn "---- Json AST ----"
@@ -38,16 +36,22 @@ testE code = do
   lift $ putStrLn "---- Reconstructed Code ----"
   reconstructedCode <- liftEither $ mapLeft ErrTec $ makeHaskellCode tecAST
   lift $ putStrLn reconstructedCode
-  if reconstructedCode == code then
-    lift $ putStrLn "Success!!"
-  else
-    liftEither $ Left $ ErrStr "code and reconstructed code doesnt' match"
+  if reconstructedCode == code
+    then
+      lift $ putStrLn "Success!!"
+    else
+      liftEither $ Left $ ErrStr "code and reconstructed code doesnt' match"
 
 main :: IO ()
 main = do
   let a = traverse testE testData
   b <- runExceptT a
-  print b
+  case b of
+    (Left (ErrTec (TecErrorUnknownExp rawAstShow rawWholeAstShow))) -> do
+      Simple.pPrintString rawAstShow
+      putStrLn "\n\n---- Entire AST show ----\n\n"
+      Simple.pPrintString rawWholeAstShow
+    e -> print e
 
 testData :: [String]
 testData =
@@ -57,5 +61,6 @@ testData =
     "Pantone \"red\"",
     "VStack [HStack [Logo], Colorway 42]",
     "Logo :- Logo",
-    "Logo :- Logo :- Pantone \"green\""
+    "Logo :- Logo :- Pantone \"green\"",
+    "Colorways [1 ..]"
   ]
