@@ -77,15 +77,18 @@ makeExp :: TecAST -> Either TecError (E.Exp ())
 makeExp tecAst =
   let conN n = E.Con () (E.UnQual () (E.Ident () n))
       appN n = E.App () (conN n)
-      eval (TecType {typeName, index}) =
+      eval (TecType {typeName, index, index1}) =
         let con = conN typeName
             app = appN typeName
          in case index of
               IndexU -> Right con
-              i -> do
-                iexp <- makeIndexExp i
-                Right $ app iexp
-              
+              i0 -> do
+                iexp0 <- makeIndexExp i0
+                case index1 of
+                  Nothing -> Right $ app iexp0
+                  Just idx1 -> do
+                    iexp1 <- makeIndexExp idx1
+                    Right $ E.App () (E.App () con iexp0) iexp1
       eval (TecLayout {typeName, children}) = do
         xs <- traverse makeExp children
         Right $ appN typeName (E.List () xs)
