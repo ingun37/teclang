@@ -58,7 +58,9 @@ export function createGraphDB(): TheGraph {
     to: string,
     third: string | undefined = undefined,
   ) {
-    const edgeNode = `${from}->${to}`;
+    const xy = [from, to];
+    xy.sort();
+    const edgeNode = xy.join("->");
     const edgeAtt: EdgeAttributes = {
       edgeNode,
       thirdNodes: third ? [third] : [],

@@ -42,7 +42,9 @@ function* recurseA(
       neighbors.includes(neighbor),
     );
     for (const rightID of intersect) {
-      yield [leftID, rightID];
+      const xy: [string, string] = [leftID, rightID];
+      xy.sort();
+      yield xy;
     }
   }
 }
