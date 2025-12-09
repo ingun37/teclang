@@ -6,6 +6,7 @@ import PageNumber from "@/components/PageNumber.vue";
 import HStack from "@/components/HStack.vue";
 import VStack from "@/components/VStack.vue";
 import Text from "@/components/Text.vue";
+import Render from "@/components/Render.vue";
 
 interface Props {
   ast: TecAST;
@@ -34,6 +35,9 @@ const props = defineProps<Props>();
           <v-sheet v-if="ast.index.tag === 'IndexS'">
             <Text :text="ast.index.name" />
           </v-sheet>
+        </v-sheet>
+        <v-sheet v-if="ast.typeName === 'Render'">
+          <Render :item="ast" />
         </v-sheet>
       </v-sheet>
 

@@ -19,6 +19,7 @@ declare module 'vue' {
     Name: typeof import('./components/Name.vue')['default']
     PageNumber: typeof import('./components/PageNumber.vue')['default']
     Query: typeof import('./components/Query.vue')['default']
+    Render: typeof import('./components/Render.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TecAST: typeof import('./components/TecAST.vue')['default']
