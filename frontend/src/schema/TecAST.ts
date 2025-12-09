@@ -47,6 +47,7 @@ const TecType = Schema.Struct({
   index: Index,
   index1: Schema.NullOr(Index),
 });
+export type TecIndex = typeof Index.Type;
 export type TecType = typeof TecType.Type;
 export type TecAST = TecLayout | TecQuery | TecType;
 export interface TecLayout {
