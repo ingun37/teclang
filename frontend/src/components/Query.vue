@@ -2,37 +2,29 @@
 import type { TecQuery, TecQueryA, TecType } from "@/schema/TecAST.ts";
 import { useAppStore } from "@/stores/app.ts";
 import { Array } from "effect";
-import type { NodeAttributes, TheGraph } from "@/graphdb.ts";
+import type { TheGraph } from "@/graphdb.ts";
+import { compareIndex } from "@/CompareIndex.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
 
-function* iterateIDs(db: TheGraph, tt: TecType) {
-  if (tt.index.tag === "IndexR") {
-    const end = tt.index.to?.value ?? 10;
-
-    for (let i = tt.index.from.value; i < end; i++) {
+function* iterateIDs(db: TheGraph, tt: TecType): Generator<string> {
+  const nodes = db.filterNodes((node, att) => {
+    if (att._tag !== "TypeNode") return false;
+    if (att.typeName !== tt.typeName) return false;
+    if (compareIndex(att.index, tt.index)) {
       if (tt.index1) {
-        throw new Error("Not implemented");
+        if (att.index1) {
+          return compareIndex(att.index1, tt.index1);
+        } else return false;
       } else {
-        const id = `${tt.typeName}-${i}`;
-        if (!db.hasNode(id)) break;
-        yield id;
+        if (att.index1) return false;
       }
+      return true;
     }
-  } else if (tt.index.tag === "IndexS") {
-    if (tt.index.name === "*") {
-      yield* db.filterNodes((node, attributes: NodeAttributes) =>
-        attributes._tag === "TypeNode"
-          ? attributes.typeName === tt.typeName
-          : false,
-      );
-    } else {
-      const id = `${tt.typeName}-${tt.index.name}`;
-      if (!db.hasNode(id)) return;
-      yield id;
-    }
-  }
+    return false;
+  });
+  yield* nodes;
 }
 
 type NE<T> = Array.NonEmptyArray<T>;

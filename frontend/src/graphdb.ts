@@ -11,6 +11,7 @@ export type NodeAttributes =
       _tag: "TypeNode";
       typeName: string;
       index: string | number;
+      index1?: string | number;
       attributes: any;
     }
   | {
@@ -26,23 +27,31 @@ export function createGraphDB(): TheGraph {
     id: string | number,
     typeName: string,
     attributes: any = undefined,
+    id1: string | number | undefined = undefined,
   ) {
-    return graph.addNode(`${typeName}-${id}`, {
+    let node = `${typeName}-${id}`;
+    if (id1) node = `${node}-${id1}`;
+    return graph.addNode(`${typeName}-${node}`, {
       _tag: "TypeNode",
       typeName,
       index: id,
       attributes,
+      index1: id1,
     });
   }
 
-  const addColorway = (id: any) => addNode(id, "Colorways");
+  const addColorway = (id: number) => addNode(id, "Colorways");
   const colorwayNodes = r3.map(addColorway);
-  const addFabric = (id: any) => addNode(id, "Fabric");
+  const addFabric = (id: string) => addNode(id, "Fabric");
   const fabrics = ["A", "B", "C", "D"];
   const fabricNodes = fabrics.map(addFabric);
-  const addPantone = (id: any) => addNode(id, "Pantone");
+  const addPantone = (id: string) => addNode(id, "Pantone");
   const pantones = ["r", "g", "b", "a"];
   const pantoneNodes = pantones.map(addPantone);
+  const sides = rng(4);
+  const addRender = (id0: number, id1: number) =>
+    addNode(id0, "Renders", undefined, id1);
+  const renderNodes = r3.map((id0) => sides.map((id1) => addRender(id0, id1)));
 
   function addEdge(
     from: string,
@@ -63,6 +72,10 @@ export function createGraphDB(): TheGraph {
       graph.addEdge(edgeNode, thirdNode),
     );
   }
+
+  r3.map((c) =>
+    sides.map((s) => addEdge(colorwayNodes[c]!, renderNodes[c]![s]!)),
+  );
 
   addEdge(colorwayNodes[0]!, fabricNodes[0]!, pantoneNodes[0]);
   addEdge(colorwayNodes[1]!, fabricNodes[0]!, pantoneNodes[1]);
