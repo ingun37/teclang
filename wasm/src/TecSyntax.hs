@@ -22,6 +22,7 @@ data TecType
   = HStack [TecType]
   | VStack [TecType]
   | TecType :- TecType
+  | TecType :> TecType
   | Logo
   | Code
   | Name
