@@ -10,6 +10,7 @@ export type NodeAttributes =
   | {
       _tag: "TypeNode";
       typeName: string;
+      index: string | number;
       attributes: any;
     }
   | {
@@ -21,10 +22,15 @@ export function createGraphDB(): TheGraph {
   const rng = (n: number) => Array.range(0, n - 1);
   const r3 = rng(3);
 
-  function addNode(id: any, typeName: string, attributes: any = undefined) {
+  function addNode(
+    id: string | number,
+    typeName: string,
+    attributes: any = undefined,
+  ) {
     return graph.addNode(`${typeName}-${id}`, {
       _tag: "TypeNode",
       typeName,
+      index: id,
       attributes,
     });
   }
