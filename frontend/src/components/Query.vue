@@ -1,14 +1,13 @@
 <script lang="ts" setup>
 import type { TecQuery, TecType } from "@/schema/TecAST.ts";
 import { useAppStore } from "@/stores/app.ts";
-import type Graph from "graphology";
 import { Array, HashSet } from "effect";
-import type { EdgeAttributes, NodeAttributes } from "@/graphdb.ts";
+import type { EdgeAttributes, NodeAttributes, TheGraph } from "@/graphdb.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
 
-function* iterateIDs(db: Graph, tt: TecType) {
+function* iterateIDs(db: TheGraph, tt: TecType) {
   if (tt.index.tag === "IndexR") {
     const end = tt.index.to?.value ?? 10;
 
@@ -23,7 +22,11 @@ function* iterateIDs(db: Graph, tt: TecType) {
     }
   } else if (tt.index.tag === "IndexS") {
     if (tt.index.name === "*") {
-      yield* db.filterNodes((node) => node.startsWith(tt.typeName));
+      yield* db.filterNodes((node, attributes: NodeAttributes) =>
+        attributes._tag === "TypeNode"
+          ? attributes.typeName === tt.typeName
+          : false,
+      );
     } else {
       const id = `${tt.typeName}-${tt.index.name}`;
       if (!db.hasNode(id)) return;
