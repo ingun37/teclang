@@ -3,7 +3,7 @@ import type { TecQuery, TecType } from "@/schema/TecAST.ts";
 import { useAppStore } from "@/stores/app.ts";
 import type Graph from "graphology";
 import { Array, HashSet } from "effect";
-import type { EdgeAttributes } from "@/graphdb.ts";
+import type { EdgeAttributes, NodeAttributes } from "@/graphdb.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
@@ -31,7 +31,10 @@ function* iterateIDs(db: Graph, tt: TecType) {
   }
 }
 type NE<T> = Array.NonEmptyArray<T>;
-type RecurseResult = [string, NE<{ edge: EdgeAttributes; next: string }>];
+type RecurseResult = [
+  string,
+  NE<{ edge: EdgeAttributes; next: string; nodeAttributes: NodeAttributes }>,
+];
 function* recurse(query: TecQuery): Generator<RecurseResult> {
   const db = store.graphDB;
   const left = query.left;
@@ -43,7 +46,8 @@ function* recurse(query: TecQuery): Generator<RecurseResult> {
       const intersection = HashSet.intersection(neighbors, rightIDs);
       for (const next of intersection) {
         const edge = db.getEdgeAttributes(leftID, next);
-        yield [leftID, [{ edge, next }]];
+        const nodeAttributes = db.getNodeAttributes(next);
+        yield [leftID, [{ edge, next, nodeAttributes }]];
       }
     }
   } else if (left.tag === "TecQuery" && right.tag === "TecType") {
@@ -52,12 +56,15 @@ function* recurse(query: TecQuery): Generator<RecurseResult> {
       const neighbors = HashSet.fromIterable(lastEdge.nodes);
       const rightIDs = HashSet.fromIterable(iterateIDs(db, right));
       const intersection = HashSet.intersection(neighbors, rightIDs);
-      for (const nextID of intersection) {
+      for (const next of intersection) {
+        const nodeAttributes = db.getNodeAttributes(next);
+
         yield [
           head,
           Array.append(tail, {
-            edge: db.getEdgeAttributes(lastEdge.edgeNode, nextID),
-            next: nextID,
+            edge: db.getEdgeAttributes(lastEdge.edgeNode, next),
+            nodeAttributes,
+            next,
           }),
         ];
       }
