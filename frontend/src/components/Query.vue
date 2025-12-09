@@ -2,7 +2,8 @@
 import type { TecQuery, TecType } from "@/schema/TecAST.ts";
 import { useAppStore } from "@/stores/app.ts";
 import type Graph from "graphology";
-import { HashSet } from "effect";
+import { Array, HashSet } from "effect";
+import type { EdgeAttributes } from "@/graphdb.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
@@ -25,7 +26,9 @@ function* iterateIDs(db: Graph, tt: TecType) {
     yield id;
   }
 }
-function* recurse(query: TecQuery) {
+type NE<T> = Array.NonEmptyArray<T>;
+type RecurseResult = [string, NE<{ edge: EdgeAttributes; next: string }>];
+function* recurse(query: TecQuery): Generator<RecurseResult> {
   const db = store.graphDB;
   const left = query.left;
   const right = query.right;
@@ -34,10 +37,31 @@ function* recurse(query: TecQuery) {
       const neighbors = HashSet.fromIterable(db.directedNeighbors(leftID));
       const rightIDs = HashSet.fromIterable(iterateIDs(db, right));
       const intersection = HashSet.intersection(neighbors, rightIDs);
-      for (const rightID of intersection) {
-        yield [leftID, rightID];
+      for (const next of intersection) {
+        const edge = db.getEdgeAttributes(leftID, next);
+        yield [leftID, [{ edge, next }]];
       }
     }
+  } else if (left.tag === "TecQuery" && right.tag === "TecType") {
+    for (const [head, tail] of recurse(left)) {
+      const lastEdge = Array.lastNonEmpty(tail).edge;
+      const neighbors = HashSet.fromIterable(
+        db.directedNeighbors(lastEdge.nodes),
+      );
+      const rightIDs = HashSet.fromIterable(iterateIDs(db, right));
+      const intersection = HashSet.intersection(neighbors, rightIDs);
+      for (const nextID of intersection) {
+        yield [
+          head,
+          Array.append(tail, {
+            edge: db.getEdgeAttributes(lastEdge.edgeNode, nextID),
+            next: nextID,
+          }),
+        ];
+      }
+    }
+  } else {
+    throw new Error("Not implemented");
   }
 }
 const items = computed(() => {
