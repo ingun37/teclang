@@ -45,9 +45,7 @@ function* recurse(query: TecQuery): Generator<RecurseResult> {
   } else if (left.tag === "TecQuery" && right.tag === "TecType") {
     for (const [head, tail] of recurse(left)) {
       const lastEdge = Array.lastNonEmpty(tail).edge;
-      const neighbors = HashSet.fromIterable(
-        db.directedNeighbors(lastEdge.nodes),
-      );
+      const neighbors = HashSet.fromIterable(lastEdge.nodes);
       const rightIDs = HashSet.fromIterable(iterateIDs(db, right));
       const intersection = HashSet.intersection(neighbors, rightIDs);
       for (const nextID of intersection) {
