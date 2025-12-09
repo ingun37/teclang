@@ -31,7 +31,7 @@ export function createGraphDB(): TheGraph {
   ) {
     let node = `${typeName}-${id}`;
     if (id1) node = `${node}-${id1}`;
-    return graph.addNode(`${typeName}-${node}`, {
+    return graph.addNode(`${node}`, {
       _tag: "TypeNode",
       typeName,
       index: id,
