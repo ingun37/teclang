@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { TecQuery, TecType } from "@/schema/TecAST.ts";
+import type { TecQuery, TecQueryA, TecType } from "@/schema/TecAST.ts";
 import { useAppStore } from "@/stores/app.ts";
-import { Array, HashSet } from "effect";
-import type { EdgeAttributes, NodeAttributes, TheGraph } from "@/graphdb.ts";
+import { Array } from "effect";
+import type { NodeAttributes, TheGraph } from "@/graphdb.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
@@ -36,48 +36,40 @@ function* iterateIDs(db: TheGraph, tt: TecType) {
 }
 
 type NE<T> = Array.NonEmptyArray<T>;
-type RecurseResult = [
-  string,
-  NE<{ edge: EdgeAttributes; next: string; nodeAttributes: NodeAttributes }>,
-];
-function* recurse(query: TecQuery): Generator<RecurseResult> {
-  const db = store.graphDB;
+function* recurseA(
+  db: TheGraph,
+  query: TecQueryA,
+): Generator<[string, string]> {
   const left = query.left;
   const right = query.right;
-  if (left.tag === "TecType" && right.tag === "TecType") {
-    for (const leftID of iterateIDs(db, left)) {
-      const rightIDs = HashSet.fromIterable(iterateIDs(db, right));
-      {
-        const neighbors = HashSet.fromIterable(db.undirectedNeighbors(leftID));
-        const intersection = HashSet.intersection(neighbors, rightIDs);
-        for (const next of intersection) {
-          const edge = db.getEdgeAttributes(leftID, next);
-          const nodeAttributes = db.getNodeAttributes(next);
-          yield [leftID, [{ edge, next, nodeAttributes }]];
-        }
-      }
-    }
-  } else if (left.tag === "TecQuery" && right.tag === "TecType") {
-    for (const [head, tail] of recurse(left)) {
-      const lastEdge = Array.lastNonEmpty(tail).edge;
-      const neighbors = HashSet.fromIterable(lastEdge.thirdNodes);
-      const rightIDs = HashSet.fromIterable(iterateIDs(db, right));
-      const intersection = HashSet.intersection(neighbors, rightIDs);
-      for (const next of intersection) {
-        const nodeAttributes = db.getNodeAttributes(next);
+  const rightIDs = Array.fromIterable(iterateIDs(db, right));
 
-        yield [
-          head,
-          Array.append(tail, {
-            edge: db.getEdgeAttributes(lastEdge.edgeNode, next),
-            nodeAttributes,
-            next,
-          }),
-        ];
+  for (const leftID of iterateIDs(db, left)) {
+    const neighbors = db.undirectedNeighbors(leftID);
+    const intersect = rightIDs.filter((neighbor) =>
+      neighbors.includes(neighbor),
+    );
+    for (const rightID of intersect) {
+      yield [leftID, rightID];
+    }
+  }
+}
+function* recurse(query: TecQuery): Generator<NE<string>> {
+  const db = store.graphDB;
+  if (query.op === ":-") {
+    yield* recurseA(db, query);
+  } else if (query.op === ":>") {
+    for (const chain of recurse(query.left)) {
+      const rightIDs = Array.fromIterable(iterateIDs(db, query.right));
+      const edgeNode = chain.join("->");
+      const neighbors = db.directedNeighbors(edgeNode);
+      const intersect = rightIDs.filter((neighbor) =>
+        neighbors.includes(neighbor),
+      );
+      for (const rightID of intersect) {
+        yield [...chain, rightID];
       }
     }
-  } else {
-    throw new Error("Not implemented");
   }
 }
 

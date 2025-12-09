@@ -14,8 +14,6 @@ export type NodeAttributes =
     }
   | {
       _tag: "EdgeNode";
-      from: string;
-      to: string;
     };
 export function createGraphDB(): TheGraph {
   const graph = new Graph<NodeAttributes, EdgeAttributes, any>();
@@ -37,7 +35,7 @@ export function createGraphDB(): TheGraph {
   const fabrics = ["A", "B", "C", "D"];
   const fabricNodes = fabrics.map(addFabric);
   const addPantone = (id: any) => addNode(id, "Pantone");
-  const pantones = ["R", "G", "B", "A"];
+  const pantones = ["r", "g", "b", "a"];
   const pantoneNodes = pantones.map(addPantone);
 
   function addEdge(
@@ -53,8 +51,6 @@ export function createGraphDB(): TheGraph {
     graph.addUndirectedEdge(from, to, edgeAtt);
     graph.addNode(edgeNode, {
       _tag: "EdgeNode",
-      from,
-      to,
     });
 
     edgeAtt.thirdNodes.forEach((thirdNode) =>

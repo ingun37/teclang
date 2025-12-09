@@ -55,23 +55,37 @@ export interface TecLayout {
   readonly typeName: string;
   readonly children: readonly TecAST[];
 }
-export interface TecQuery {
+export interface TecQueryA {
   readonly tag: "TecQuery";
-  readonly op: string;
-  readonly left: TecAST;
-  readonly right: TecAST;
+  readonly op: ":-";
+  readonly left: TecType;
+  readonly right: TecType;
 }
+export interface TecQueryB {
+  readonly tag: "TecQuery";
+  readonly op: ":>";
+  readonly left: TecQuery;
+  readonly right: TecType;
+}
+export type TecQuery = TecQueryA | TecQueryB;
 const TecLayout = Schema.Struct({
   tag: Schema.tag("TecLayout"),
   typeName: Schema.String,
   children: Schema.Array(Schema.suspend((): Schema.Schema<TecAST> => TecAST)),
 });
-const TecQuery = Schema.Struct({
+const TecQueryA = Schema.Struct({
   tag: Schema.tag("TecQuery"),
-  op: Schema.String,
-  left: Schema.suspend((): Schema.Schema<TecAST> => TecAST),
-  right: Schema.suspend((): Schema.Schema<TecAST> => TecAST),
+  op: Schema.Literal(":-"),
+  left: Schema.suspend((): Schema.Schema<TecType> => TecType),
+  right: Schema.suspend((): Schema.Schema<TecType> => TecType),
 });
+const TecQueryB = Schema.Struct({
+  tag: Schema.tag("TecQuery"),
+  op: Schema.Literal(":>"),
+  left: Schema.suspend((): Schema.Schema<TecQuery> => TecQuery),
+  right: Schema.suspend((): Schema.Schema<TecType> => TecType),
+});
+const TecQuery = Schema.Union(TecQueryA, TecQueryB);
 const TecAST = Schema.Union(
   Schema.suspend((): Schema.Schema<TecLayout> => TecLayout),
   Schema.suspend((): Schema.Schema<TecQuery> => TecQuery),
