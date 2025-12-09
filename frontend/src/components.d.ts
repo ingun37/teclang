@@ -18,6 +18,7 @@ declare module 'vue' {
     Logo: typeof import('./components/Logo.vue')['default']
     Name: typeof import('./components/Name.vue')['default']
     PageNumber: typeof import('./components/PageNumber.vue')['default']
+    Pantone: typeof import('./components/Pantone.vue')['default']
     Query: typeof import('./components/Query.vue')['default']
     Render: typeof import('./components/Render.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

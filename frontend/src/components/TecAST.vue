@@ -39,6 +39,9 @@ const props = defineProps<Props>();
         <v-sheet v-if="ast.typeName === 'Render'">
           <Render :item="ast" />
         </v-sheet>
+        <v-sheet v-if="ast.typeName === 'Pantone'">
+          <Pantone :item="ast" />
+        </v-sheet>
       </v-sheet>
 
       <!-- TecLayout -->
