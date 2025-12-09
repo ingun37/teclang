@@ -1,37 +1,47 @@
 <script lang="ts" setup>
 import type { TecQuery, TecType } from "@/schema/TecAST.ts";
 import { useAppStore } from "@/stores/app.ts";
+import type Graph from "graphology";
+import { HashSet } from "effect";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
-function* recurse(left: TecType, right: TecType | TecQuery) {
-  const db = store.graphDB;
-  if (left.index.tag === "IndexR") {
-    const end = left.index.to?.value ?? 10;
+function* iterateIDs(db: Graph, tt: TecType) {
+  if (tt.index.tag === "IndexR") {
+    const end = tt.index.to?.value ?? 10;
 
-    for (let i = left.index.from.value; i < end; i++) {
-      if (left.index1) {
+    for (let i = tt.index.from.value; i < end; i++) {
+      if (tt.index1) {
         throw new Error("Not implemented");
       } else {
-        const id = `${left.typeName}-${i}`;
+        const id = `${tt.typeName}-${i}`;
         if (!db.hasNode(id)) break;
-        const neighbours = db.directedNeighbors(id);
-        for (let neighbour of neighbours) {
-          yield [id, neighbour];
-        }
+        yield id;
+      }
+    }
+  } else if (tt.index.tag === "IndexS") {
+    const id = `${tt.typeName}-${tt.index.name}`;
+    if (!db.hasNode(id)) return;
+    yield id;
+  }
+}
+function* recurse(query: TecQuery) {
+  const db = store.graphDB;
+  const left = query.left;
+  const right = query.right;
+  if (left.tag === "TecType" && right.tag === "TecType") {
+    for (const leftID of iterateIDs(db, left)) {
+      const neighbors = HashSet.fromIterable(db.directedNeighbors(leftID));
+      const rightIDs = HashSet.fromIterable(iterateIDs(db, right));
+      const intersection = HashSet.intersection(neighbors, rightIDs);
+      for (const rightID of intersection) {
+        yield [leftID, rightID];
       }
     }
   }
 }
 const items = computed(() => {
-  const leftExp = props.query.left;
-  const rightExp = props.query.right;
-  if (
-    leftExp.tag === "TecType" &&
-    (rightExp.tag === "TecType" || rightExp.tag === "TecQuery")
-  ) {
-    return [...recurse(leftExp, rightExp)];
-  }
+  return [...recurse(props.query)];
 });
 </script>
 <template>

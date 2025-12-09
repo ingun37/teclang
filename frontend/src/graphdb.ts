@@ -8,18 +8,22 @@ export function createGraphDB(): Graph {
 
   const rng = (n: number) => Array.range(0, n - 1);
   const r3 = rng(3);
-  const r4 = rng(4);
   const colorwayNodes = r3.map((i) => graph.addNode(`Colorways-${i}`));
-  const renderNodes = r3.map((i) =>
-    r4.map((j) => graph.addNode(`Renders-${i}-${j}`)),
-  );
 
-  const edges = Array.zip(colorwayNodes, renderNodes).map(
-    ([colorwayNode, renderNodes]) =>
-      renderNodes.map((renderNode) =>
-        graph.addEdge(colorwayNode, renderNode, { type: "index0" as EdgeType }),
-      ),
-  );
-  console.log("=== MOCK DATA ====", { colorwayNodes, renderNodes, edges });
+  const fabricNames = [
+    "ECOALF 987.1",
+    "BEEBLEBROX 3rd",
+    "ARTHUR DENT",
+    "MARVIN 1000x",
+  ];
+  const fabricNodes = fabricNames.map((i) => graph.addNode(`Fabric-${i}`));
+
+  graph.addEdge(colorwayNodes[0], fabricNodes[0]);
+  graph.addEdge(colorwayNodes[1], fabricNodes[0]);
+  graph.addEdge(colorwayNodes[1], fabricNodes[1]);
+  graph.addEdge(colorwayNodes[2], fabricNodes[2]);
+  graph.addEdge(colorwayNodes[2], fabricNodes[3]);
+
+  console.log("=== MOCK DATA ====", { colorwayNodes, fabricNodes });
   return graph;
 }
