@@ -1,10 +1,29 @@
 import { Schema } from "effect";
 
+// enum Side {
+//   Front,
+//   Back,
+//   Left,
+//   Right,
+// }
+// const TecEnumSide = Schema.Struct({
+//   label: Schema.Enums(Side),
+//   typeName: Schema.Literal("Side"),
+//   value: Schema.Number,
+// });
+//
+// const TecEnumInt = Schema.Struct({
+//   label: Schema.Literal(""),
+//   typeName: Schema.Literal(""),
+//   value: Schema.Number,
+// });
+// const TecEnum = Schema.Union(TecEnumSide, TecEnumInt);
+
 const TecEnum = Schema.Struct({
   label: Schema.String,
+  typeName: Schema.String,
   value: Schema.Number,
 });
-
 const IndexS = Schema.Struct({
   tag: Schema.tag("IndexS"),
   name: Schema.String,

@@ -55,21 +55,9 @@ const props = defineProps<Props>();
       </v-sheet>
 
       <!-- TecQuery -->
-      <div v-else-if="ast.tag === 'TecQuery'">
-        <div><strong>Operator:</strong> {{ ast.op }}</div>
-        <div class="mt-2">
-          <strong>Left:</strong>
-          <div class="ml-4 mt-2">
-            <TecAST :ast="ast.left" />
-          </div>
-        </div>
-        <div class="mt-2">
-          <strong>Right:</strong>
-          <div class="ml-4 mt-2">
-            <TecAST :ast="ast.right" />
-          </div>
-        </div>
-      </div>
+      <v-sheet v-else-if="ast.tag === 'TecQuery'">
+        <Query :query="ast" />
+      </v-sheet>
     </v-card-text>
   </v-card>
 </template>
