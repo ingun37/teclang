@@ -17,7 +17,9 @@ data TecError
   | TecErrorUnknownExp {expShow :: String, wholeExpShow :: String}
   deriving (Show)
 
-data TecEnum = TecEnum {label :: String, value :: Int} deriving (Show, Generic)
+data TecEnum = TecEnum
+  {label :: String, typeName :: String, value :: Int}
+  deriving (Show, Generic)
 
 instance ToJSON TecEnum where
   toEncoding = genericToEncoding defaultOptions
@@ -25,10 +27,11 @@ instance ToJSON TecEnum where
 instance FromJSON TecEnum
 
 withoutLabel :: Integer -> TecEnum
-withoutLabel i = TecEnum "" (fromInteger i)
+withoutLabel i = TecEnum "" "" (fromInteger i)
 
 data Index
   = IndexS {name :: String}
+  | IndexN Int
   | IndexE TecEnum
   | IndexR {from :: TecEnum, to :: Maybe TecEnum}
   | IndexU
@@ -44,48 +47,51 @@ guessEnum label =
   let decoded = J.decodeStrictText (T.pack $ "\"" ++ label ++ "\"") :: Maybe Side
    in case decoded of
         Nothing -> Left $ TecError $ "Failed to parse " ++ label ++ " to Side"
-        Just side -> Right $ TecEnum label (fromEnum side)
+        Just side -> Right $ TecEnum label "Side" (fromEnum side)
 
 makeEnumExp :: TecEnum -> Either TecError (E.Exp ())
-makeEnumExp (TecEnum label value) =
+makeEnumExp (TecEnum label _ value) =
   case label of
     "" -> Right $ E.Lit () (E.Int () (toInteger value) (show value))
     l -> Right $ E.Con () (E.UnQual () (E.Ident () l))
 
 makeEnum :: (Show l) => E.Exp l -> Either TecError TecEnum
-makeEnum (E.Lit _ (E.Int _ valueInt valueStr)) = undefined
-makeEnum (E.Con _ (E.UnQual _ (E.Ident _ label))) = undefined
+makeEnum (E.Lit _ (E.Int _ valueInt _)) = Right $ withoutLabel valueInt
+makeEnum (E.Con _ (E.UnQual _ (E.Ident _ label))) = do
+  enum <- guessEnum label
+  Right enum
+makeEnum _ = Left $ TecError "Failed to make Enum from exp"
 
 makeIndex :: (Show l) => E.Exp l -> Either TecError Index
-makeIndex (E.Lit _ (E.Int _ val _)) = Right $ IndexE $ withoutLabel val
 makeIndex (E.Lit _ (E.String _ val _)) = Right $ IndexS val
-makeIndex (E.EnumFrom _ (E.Lit _ (E.Int _ val _))) =
+makeIndex (E.EnumFrom _ e) = do
+  e' <- makeEnum e
   Right $
     IndexR
-      { from = withoutLabel val,
+      { from = e',
         to = Nothing
       }
-makeIndex (E.EnumFromTo _ (E.Lit _ (E.Int _ fromVal _)) (E.Lit _ (E.Int _ toVal _))) =
+makeIndex (E.EnumFromTo _ from to) = do
+  from' <- makeEnum from
+  to' <- makeEnum to
   Right $
     IndexR
-      { from = withoutLabel fromVal,
-        to = Just $ withoutLabel toVal
+      { from = from',
+        to = Just to'
       }
-makeIndex (E.Con _ (E.UnQual _ (E.Ident _ val))) = do
-  e <- guessEnum val
-  return $ IndexE e
-makeIndex unknownExp = Left $ TecErrorUnknownExp (show unknownExp) ""
+makeIndex x = IndexE <$> makeEnum x
 
 makeIndexExp :: Index -> Either TecError (E.Exp ())
 makeIndexExp IndexU = Left $ TecError "indexu"
 makeIndexExp (IndexS name) = Right $ E.Lit () (E.String () name name)
-makeIndexExp (IndexE (TecEnum label value)) = case label of
+makeIndexExp (IndexE (TecEnum label _ value)) = case label of
   "" -> Right $ E.Lit () (E.Int () (toInteger value) (show value))
   lbl -> Right $ E.Con () (E.UnQual () (E.Ident () lbl))
 makeIndexExp (IndexR from to) = do
-    f <- makeEnumExp from
-    case to of
-        Nothing -> Right $ E.EnumFrom () f
-        Just _to -> do
-            t <- makeEnumExp _to
-            Right $ E.EnumFromTo () f t
+  f <- makeEnumExp from
+  case to of
+    Nothing -> Right $ E.EnumFrom () f
+    Just _to -> do
+      t <- makeEnumExp _to
+      Right $ E.EnumFromTo () f t
+makeIndexExp _ = Left $ TecError "Failed to parse index exp"
