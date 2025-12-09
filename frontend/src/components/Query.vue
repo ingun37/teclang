@@ -30,7 +30,7 @@ const items = computed(() => {
     leftExp.tag === "TecType" &&
     (rightExp.tag === "TecType" || rightExp.tag === "TecQuery")
   ) {
-    return [...recurse(leftExp, rightExp)].flat();
+    return [...recurse(leftExp, rightExp)];
   }
 });
 </script>
