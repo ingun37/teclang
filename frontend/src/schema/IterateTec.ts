@@ -37,6 +37,16 @@ export function* iterateTec(
       };
       yield* iterateTec(newTecType, depth + 1);
     }
+  } else if (p.tag === "TecList") {
+    for (const item of p.list) {
+      let parameters = [...tecType.parameters];
+      parameters.splice(depth, 1, item);
+      const newTecType: TecType = {
+        ...tecType,
+        parameters,
+      };
+      yield* iterateTec(newTecType, depth + 1);
+    }
   } else {
     yield* iterateTec(tecType, depth + 1);
   }
