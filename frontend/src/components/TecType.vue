@@ -2,19 +2,9 @@
 import type { TecType } from "@/schema/TecAstSchema.ts";
 import { decodeUnknownSync } from "effect/Schema";
 import { RefinedTecType } from "@/schema/TecRefined.ts";
-import { iterateTec, queryDB } from "@/schema/IterateTec.ts";
-import { useAppStore } from "@/stores/app.ts";
 
 const props = defineProps<{ tecType: TecType }>();
-const store = useAppStore();
 
-const matrix = computed(() => {
-  const db = store.graphDB;
-  const aaa = Array.from(iterateTec(props.tecType, 0))
-    .map(queryDB(db))
-    .flatMap((x) => (x ? [x] : []));
-  return aaa;
-});
 const refined = computed((): RefinedTecType | null => {
   try {
     return decodeUnknownSync(RefinedTecType)(props.tecType);
@@ -26,19 +16,15 @@ const refined = computed((): RefinedTecType | null => {
 </script>
 
 <template>
-  <v-sheet v-if="matrix && 1 < matrix.length">
-    MATRIX!! {{ matrix.length }}
-    <HStack :items="matrix.map((x) => x.tecType)"></HStack>
-  </v-sheet>
-  <v-sheet v-else-if="refined">
+  <v-sheet v-if="refined">
     <v-sheet v-if="refined.typeName === 'Text'">
-      <Text :text="refined.parameters[0].str" />
+      <Text :text="refined.parameters[0]!.str" />
     </v-sheet>
     <v-sheet v-if="refined.typeName === 'Pantone'">
       <Pantone :item="refined" />
     </v-sheet>
     <v-sheet v-if="refined.typeName === 'Render'">
-      <Render :item="refined" />
+      <Render :render-item="refined" />
     </v-sheet>
   </v-sheet>
 

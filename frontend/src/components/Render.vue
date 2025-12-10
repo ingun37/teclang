@@ -1,22 +1,26 @@
 <script lang="ts" setup>
 import type { Render } from "@/schema/TecRefined.ts";
-import { TecSide } from "@/schema/TecEnum.ts";
+import { useAppStore } from "@/stores/app.ts";
+import { iterateIndexSetsDB } from "@/schema/IterateTec.ts";
 
 interface Props {
-  readonly item: Render;
+  renderItem: Render;
 }
 const props = defineProps<Props>();
-const imgName = computed(() => {
-  const colorway = props.item.parameters[0].int;
-  const side = TecSide[props.item.parameters[1]];
-  return `http://localhost:3000/render/${colorway}-${side.toLowerCase()}.png`;
+const matrix = computed(() => {
+  const db = useAppStore().graphDB;
+  const renderItem = props.renderItem;
+  return Array.from(
+    iterateIndexSetsDB(db, renderItem.typeName, renderItem.parameters),
+  );
 });
 </script>
 
 <template>
   <v-img
-    v-if="imgName"
-    :src="imgName"
+    v-for="(item, index) in matrix"
+    :key="index"
+    :src="`/render/${item[0]}-${item[1]}.png`"
     alt="Render image"
     max-width="500px"
     min-width="100px"

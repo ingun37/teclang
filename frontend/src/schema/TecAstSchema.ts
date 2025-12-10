@@ -1,6 +1,5 @@
 import { Schema as S } from "effect";
 import type { Schema } from "effect/Schema";
-import { TecSideFromStr } from "@/schema/TecEnum.ts";
 
 export interface TecType {
   readonly tag: "TecType";
@@ -32,29 +31,16 @@ export const TecStr = S.Struct({
   tag: S.tag("TecStr"),
   str: S.String,
 });
-const TecRngInt = S.Struct({
+export const TecRngInt = S.Struct({
   tag: S.tag("TecRngInt"),
   fromI: S.Number,
   toI: S.NullOr(S.Number),
 });
 
-const TecRngEnum = S.Struct({
-  tag: S.tag("TecRngEnum"),
-  fromE: TecSideFromStr,
-  toE: S.NullOr(TecSideFromStr),
-});
 export type TecInt = typeof TecInt.Type;
 export type TecStr = typeof TecStr.Type;
 export type TecRngInt = typeof TecRngInt.Type;
-export type TecRngEnum = typeof TecRngEnum.Type;
-export type TecAST =
-  | TecType
-  | TecList
-  | TecQuery
-  | TecInt
-  | TecStr
-  | TecRngInt
-  | TecRngEnum;
+export type TecAST = TecType | TecList | TecQuery | TecInt | TecStr | TecRngInt;
 
 const TecQueryA = S.Struct({
   tag: S.tag("TecQuery"),
@@ -75,7 +61,7 @@ export const TecType = S.Struct({
   parameters: S.Array(S.suspend((): Schema<TecAST> => TecAST)),
 });
 
-const TecList = S.Struct({
+export const TecList = S.Struct({
   tag: S.tag("TecList"),
   list: S.Array(S.suspend((): Schema<TecAST> => TecAST)),
 });
@@ -84,7 +70,6 @@ export const TecAST = S.Union(
   S.suspend((): Schema<TecType> => TecType),
   S.suspend((): Schema<TecList> => TecList),
   S.suspend((): Schema<TecQuery> => TecQuery),
-  TecRngEnum,
   TecInt,
   TecStr,
   TecRngInt,

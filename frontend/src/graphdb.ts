@@ -1,5 +1,6 @@
 import Graph from "graphology";
 import { Array } from "effect";
+import type { IndexItem } from "@/schema/TecRefined.ts";
 
 export type TheGraph = Graph<any, EdgeAttributes, any>;
 export type EdgeAttributes = {
@@ -10,9 +11,7 @@ export type NodeAttributes =
   | {
       _tag: "TypeNode";
       typeName: string;
-      index: string | number;
-      index1?: string | number;
-      attributes: any;
+      ids: IndexItem[];
     }
   | {
       _tag: "EdgeNode";
@@ -23,34 +22,26 @@ export function createGraphDB(): TheGraph {
   const rng = (n: number) => Array.range(0, n - 1);
   const r3 = rng(3);
 
-  function addNode(
-    id: string | number,
-    typeName: string,
-    attributes: any = undefined,
-    id1: string | number | undefined = undefined,
-  ) {
-    let node = `${typeName}-${id}`;
-    if (id1 !== undefined) node = `${node}-${id1}`;
+  function addNode(typeName: string, ...ids: IndexItem[]) {
+    const idPart = ids.map((x) => x.toString()).join("-");
+    let node = `${typeName}-${idPart}`;
     return graph.addNode(`${node}`, {
       _tag: "TypeNode",
       typeName,
-      index: id,
-      attributes,
-      index1: id1,
+      ids,
     });
   }
 
-  const addColorway = (id: number) => addNode(id, "Colorway");
+  const addColorway = (id: number) => addNode("Colorway", id);
   const colorwayNodes = r3.map(addColorway);
-  const addFabric = (id: string) => addNode(id, "Fabric");
+  const addFabric = (id: string) => addNode("Fabric", id);
   const fabrics = ["A", "B", "C", "D"];
   const fabricNodes = fabrics.map(addFabric);
-  const addPantone = (id: string) => addNode(id, "Pantone");
+  const addPantone = (id: string) => addNode("Pantone", id);
   const pantones = ["r", "g", "b", "a"];
   const pantoneNodes = pantones.map(addPantone);
   const sides = ["Front", "Back", "Left", "Right"];
-  const addRender = (id0: number, id1: number) =>
-    addNode(id0, "Render", undefined, id1);
+  const addRender = (id0: number, id1: string) => addNode("Render", id0, id1);
   const renderNodes = r3.map((id0) => sides.map((id1) => addRender(id0, id1)));
 
   function addEdge(

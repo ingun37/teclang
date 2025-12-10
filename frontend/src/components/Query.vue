@@ -4,7 +4,6 @@ import { Array } from "effect";
 import type { TheGraph } from "@/graphdb.ts";
 import { compareIndex } from "@/CompareIndex.ts";
 import type { TecQuery, TecQueryA, TecType } from "@/schema/TecAstSchema.ts";
-import { iterateDB, type IterItem } from "@/schema/IterateTec.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
