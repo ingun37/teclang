@@ -30,7 +30,7 @@ export function createGraphDB(): TheGraph {
     id1: string | number | undefined = undefined,
   ) {
     let node = `${typeName}-${id}`;
-    if (id1) node = `${node}-${id1}`;
+    if (id1 !== undefined) node = `${node}-${id1}`;
     return graph.addNode(`${node}`, {
       _tag: "TypeNode",
       typeName,
