@@ -67,9 +67,13 @@ function idxStr(tecType: TecAST) {
 }
 export function queryDB(db: TheGraph) {
   return function (tecType: TecType): { key: string; tecType: TecType } | null {
-    const idxPart = tecType.parameters.map(idxStr).join("-");
-    const key = `${tecType.typeName}-${idxPart}`;
-    if (db.hasNode(key)) return { key, tecType };
-    return null;
+    try {
+      const idxPart = tecType.parameters.map(idxStr).join("-");
+      const key = `${tecType.typeName}-${idxPart}`;
+      if (db.hasNode(key)) return { key, tecType };
+      return null;
+    } catch {
+      return null;
+    }
   };
 }
