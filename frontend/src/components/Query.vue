@@ -3,7 +3,7 @@ import { useAppStore } from "@/stores/app.ts";
 import { Array } from "effect";
 import type { TheGraph } from "@/graphdb.ts";
 import { compareIndex } from "@/CompareIndex.ts";
-import type { TecQuery, TecType } from "@/schema/TecAstSchema.ts";
+import type { TecQuery, TecQueryA, TecType } from "@/schema/TecAstSchema.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
@@ -12,15 +12,16 @@ function* iterateIDs(db: TheGraph, tt: TecType): Generator<string> {
   const nodes = db.filterNodes((node, att) => {
     if (att._tag !== "TypeNode") return false;
     if (att.typeName !== tt.typeName) return false;
-    if (compareIndex(att.index, tt.index)) {
-      if (tt.index1) {
+    if (att.index) {
+      if (!tt.parameters[0]) return false;
+      if (compareIndex(att.index, tt.parameters[0])) {
         if (att.index1) {
-          return compareIndex(att.index1, tt.index1);
-        } else return false;
-      } else {
-        if (att.index1) return false;
-      }
-      return true;
+          if (!tt.parameters[1]) return false;
+          return compareIndex(att.index1, tt.parameters[1]);
+        } else {
+          return !tt.parameters[1];
+        }
+      } else return false;
     }
     return false;
   });

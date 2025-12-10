@@ -13,6 +13,9 @@ const props = defineProps<Props>();
   <v-sheet v-if="ast.tag === 'TecType'" min-width="100px">
     <TecType :tec-type="ast" />
   </v-sheet>
+  <v-sheet v-if="ast.tag === 'TecQuery'">
+    <Query :query="ast" />
+  </v-sheet>
 </template>
 
 <style lang="sass" scoped></style>
