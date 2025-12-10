@@ -37,6 +37,7 @@ export type Entry = {
   node: string;
   indexSet: IndexItem[];
 };
+export type TypedEntry = { entry: Entry; typeName: string };
 
 export function* iterateIndexSetsDB(
   db: TheGraph,

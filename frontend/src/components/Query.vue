@@ -4,17 +4,16 @@ import { Array, Effect } from "effect";
 import type { TheGraph } from "@/graphdb.ts";
 import type { TecQuery, TecQueryA } from "@/schema/TecAstSchema.ts";
 import { decodeGenericIndexSets } from "@/schema/TecRefined.ts";
-import { type Entry, iterateIndexSetsDB } from "@/schema/IterateTec.ts";
+import { iterateIndexSetsDB, type TypedEntry } from "@/schema/IterateTec.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
 
 type NE<T> = Array.NonEmptyArray<T>;
-type QueryEntry = { entry: Entry; typeName: string };
 function* recurseA(
   db: TheGraph,
   query: TecQueryA,
-): Generator<[QueryEntry, QueryEntry]> {
+): Generator<[TypedEntry, TypedEntry]> {
   const left = query.left;
   const right = query.right;
 
@@ -32,7 +31,7 @@ function* recurseA(
       neighbors.includes(rightEntry.node),
     );
     for (const rightEntry of intersect) {
-      const xy: [QueryEntry, QueryEntry] = [
+      const xy: [TypedEntry, TypedEntry] = [
         { typeName: left.typeName, entry: leftEntry },
         { typeName: right.typeName, entry: rightEntry },
       ];
@@ -41,7 +40,7 @@ function* recurseA(
     }
   }
 }
-function* recurse(query: TecQuery): Generator<NE<QueryEntry>> {
+function* recurse(query: TecQuery): Generator<NE<TypedEntry>> {
   const db = store.graphDB;
   if (query.op === ":-") {
     yield* recurseA(db, query);
@@ -78,7 +77,7 @@ const items = computed(() => {
       class="query-item"
     >
       <v-sheet v-for="(queryEntry, index) in queryEntries" :key="index">
-        <Single :entry="queryEntry.entry" :typeName="queryEntry.typeName" />
+        <Single :t-entry="queryEntry" />
       </v-sheet>
     </v-sheet>
   </v-sheet>
