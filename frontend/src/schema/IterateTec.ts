@@ -1,6 +1,7 @@
 import type { NodeAttributes, TheGraph } from "@/graphdb.ts";
-import type { IndexItem, IndexSet } from "@/schema/TecRefined.ts";
-import { Array } from "effect";
+import { decodeGenericIndexSets, type IndexItem, type IndexSet } from "@/schema/TecRefined.ts";
+import { Array, Effect } from "effect";
+import type { TecQuery, TecQueryA, TecType } from "@/schema/TecAstSchema.ts";
 
 function* iterateIndexSet(p: IndexSet): Generator<IndexItem> {
   switch (p._tag) {
@@ -68,4 +69,58 @@ export function* iterateIndexSetsDB(
   // .map((x): Entry => ({ indexSet: x.ids }));
 
   yield* validIds;
+}
+
+export function* iterateTecType(
+  db: TheGraph,
+  tecType: TecType,
+): Generator<TypedEntry> {
+  const indexSets = Effect.runSync(decodeGenericIndexSets(tecType.parameters));
+  const entries = iterateIndexSetsDB(db, tecType.typeName, indexSets);
+  for (const entry of entries) yield { entry, typeName: tecType.typeName };
+}
+
+type NE<T> = Array.NonEmptyArray<T>;
+function* recurseA(
+  db: TheGraph,
+  query: TecQueryA,
+): Generator<[TypedEntry, TypedEntry]> {
+  const rightDB = Array.fromIterable(iterateTecType(db, query.right));
+  for (const leftEntry of iterateTecType(db, query.left)) {
+    const neighbors = db.undirectedNeighbors(leftEntry.entry.node);
+    const intersect = rightDB.filter((rightEntry) =>
+      neighbors.includes(rightEntry.entry.node),
+    );
+    for (const rightEntry of intersect) {
+      const xy: [TypedEntry, TypedEntry] = [leftEntry, rightEntry];
+      xy.sort((a, b) => a.entry.node.localeCompare(b.entry.node));
+      yield xy;
+    }
+  }
+}
+export function* iterateQuery(
+  db: TheGraph,
+  query: TecQuery,
+): Generator<NE<TypedEntry>> {
+  if (query.op === ":-") {
+    yield* recurseA(db, query);
+  } else if (query.op === ":>") {
+    for (const chain of iterateQuery(db, query.left)) {
+      const rightIndexSets = Effect.runSync(
+        decodeGenericIndexSets(query.right.parameters),
+      );
+      const rightDB = Array.fromIterable(
+        iterateIndexSetsDB(db, query.right.typeName, rightIndexSets),
+      );
+
+      const edgeNode = chain.map((x) => x.entry.node).join("->");
+      const neighbors = db.directedNeighbors(edgeNode);
+      const intersect = rightDB.filter((rEntry) =>
+        neighbors.includes(rEntry.node),
+      );
+      for (const rightEntry of intersect) {
+        yield [...chain, { entry: rightEntry, typeName: query.right.typeName }];
+      }
+    }
+  }
 }

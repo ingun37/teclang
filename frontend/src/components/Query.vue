@@ -1,72 +1,15 @@
 <script lang="ts" setup>
 import { useAppStore } from "@/stores/app.ts";
-import { Array, Effect } from "effect";
-import type { TheGraph } from "@/graphdb.ts";
-import type { TecQuery, TecQueryA } from "@/schema/TecAstSchema.ts";
-import { decodeGenericIndexSets } from "@/schema/TecRefined.ts";
-import { iterateIndexSetsDB, type TypedEntry } from "@/schema/IterateTec.ts";
+import type { TecQuery } from "@/schema/TecAstSchema.ts";
+import { iterateQuery } from "@/schema/IterateTec.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
 
-type NE<T> = Array.NonEmptyArray<T>;
-function* recurseA(
-  db: TheGraph,
-  query: TecQueryA,
-): Generator<[TypedEntry, TypedEntry]> {
-  const left = query.left;
-  const right = query.right;
-
-  const leftIndexSets = Effect.runSync(decodeGenericIndexSets(left.parameters));
-  const leftDB = iterateIndexSetsDB(db, left.typeName, leftIndexSets);
-  const rightIndexSets = Effect.runSync(
-    decodeGenericIndexSets(right.parameters),
-  );
-  const rightDB = Array.fromIterable(
-    iterateIndexSetsDB(db, right.typeName, rightIndexSets),
-  );
-  for (const leftEntry of leftDB) {
-    const neighbors = db.undirectedNeighbors(leftEntry.node);
-    const intersect = rightDB.filter((rightEntry) =>
-      neighbors.includes(rightEntry.node),
-    );
-    for (const rightEntry of intersect) {
-      const xy: [TypedEntry, TypedEntry] = [
-        { typeName: left.typeName, entry: leftEntry },
-        { typeName: right.typeName, entry: rightEntry },
-      ];
-      xy.sort((a, b) => a.entry.node.localeCompare(b.entry.node));
-      yield xy;
-    }
-  }
-}
-function* recurse(query: TecQuery): Generator<NE<TypedEntry>> {
-  const db = store.graphDB;
-  if (query.op === ":-") {
-    yield* recurseA(db, query);
-  } else if (query.op === ":>") {
-    for (const chain of recurse(query.left)) {
-      const rightIndexSets = Effect.runSync(
-        decodeGenericIndexSets(query.right.parameters),
-      );
-      const rightDB = Array.fromIterable(
-        iterateIndexSetsDB(db, query.right.typeName, rightIndexSets),
-      );
-
-      const edgeNode = chain.map((x) => x.entry.node).join("->");
-      const neighbors = db.directedNeighbors(edgeNode);
-      const intersect = rightDB.filter((rEntry) =>
-        neighbors.includes(rEntry.node),
-      );
-      for (const rightEntry of intersect) {
-        yield [...chain, { entry: rightEntry, typeName: query.right.typeName }];
-      }
-    }
-  }
-}
-
 const items = computed(() => {
-  return [...recurse(props.query)];
+  const db = store.graphDB;
+
+  return [...iterateQuery(db, props.query)];
 });
 </script>
 <template>
