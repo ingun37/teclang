@@ -48,7 +48,7 @@ export function createGraphDB(): TheGraph {
   const addPantone = (id: string) => addNode(id, "Pantone");
   const pantones = ["r", "g", "b", "a"];
   const pantoneNodes = pantones.map(addPantone);
-  const sides = rng(4);
+  const sides = ["Front", "Back", "Left", "Right"];
   const addRender = (id0: number, id1: number) =>
     addNode(id0, "Render", undefined, id1);
   const renderNodes = r3.map((id0) => sides.map((id1) => addRender(id0, id1)));
@@ -76,7 +76,12 @@ export function createGraphDB(): TheGraph {
   }
 
   r3.map((c) =>
-    sides.map((s) => addEdge(colorwayNodes[c]!, renderNodes[c]![s]!)),
+    sides.map((s) =>
+      addEdge(
+        colorwayNodes[c]!,
+        renderNodes[c]![sides.findIndex((x) => x === s)]!,
+      ),
+    ),
   );
 
   addEdge(colorwayNodes[0]!, fabricNodes[0]!, pantoneNodes[0]);

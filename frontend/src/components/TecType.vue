@@ -10,9 +10,10 @@ const store = useAppStore();
 
 const matrix = computed(() => {
   const db = store.graphDB;
-  return Array.from(iterateTec(props.tecType, 0))
+  const aaa = Array.from(iterateTec(props.tecType, 0))
     .map(queryDB(db))
     .flatMap((x) => (x ? [x] : []));
+  return aaa;
 });
 const refined = computed((): RefinedTecType | null => {
   try {
@@ -25,10 +26,10 @@ const refined = computed((): RefinedTecType | null => {
 </script>
 
 <template>
-  <v-sheet v-if="matrix">
+  <v-sheet v-if="matrix && 1 < matrix.length">
     MATRIX!! {{ matrix.length }}
     <v-sheet v-for="(item, index) in matrix" :key="index">
-      {{ item.key }}
+      <TecType :tec-type="item.tecType" />
     </v-sheet>
   </v-sheet>
   <v-sheet v-else-if="refined">

@@ -1,5 +1,6 @@
 import type { TecAST, TecType } from "@/schema/TecAstSchema.ts";
 import type { TheGraph } from "@/graphdb.ts";
+import { TecSide } from "@/schema/TecEnum.ts";
 
 export function* iterateTec(
   tecType: TecType,
@@ -24,7 +25,12 @@ export function* iterateTec(
   } else if (p.tag === "TecRngEnum") {
     for (let i = p.fromE; i <= (p.toE ?? 10); i++) {
       let parameters = [...tecType.parameters];
-      parameters.splice(depth, 1, { tag: "TecInt", int: i });
+      const label = TecSide[i];
+      parameters.splice(depth, 1, {
+        tag: "TecType",
+        typeName: label,
+        parameters: [],
+      });
       const newTecType: TecType = {
         ...tecType,
         parameters,
@@ -42,6 +48,9 @@ function idxStr(tecType: TecAST) {
       return tecType.int.toString();
     case "TecStr":
       return tecType.str;
+    case "TecType":
+      if (tecType.parameters.length === 0) return tecType.typeName;
+      else throw new Error("Invalid index type");
     default:
       throw new Error("Invalid index type");
   }
