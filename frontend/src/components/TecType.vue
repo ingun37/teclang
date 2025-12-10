@@ -8,6 +8,7 @@ const refined = computed((): RefinedTecType | null => {
   try {
     return decodeUnknownSync(RefinedTecType)(props.tecType);
   } catch (e) {
+    console.error("Error decoding TecType:", e);
     return null;
   }
 });
@@ -20,6 +21,9 @@ const refined = computed((): RefinedTecType | null => {
     </v-sheet>
     <v-sheet v-if="refined.typeName === 'Pantone'">
       <Pantone :item="refined" /> />
+    </v-sheet>
+    <v-sheet v-if="refined.typeName === 'Render'">
+      <Render :item="refined" />>
     </v-sheet>
   </v-sheet>
 

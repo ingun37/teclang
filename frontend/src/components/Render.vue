@@ -1,17 +1,15 @@
 <script lang="ts" setup>
-import type { TecType } from "@/schema/TecAST.ts";
+import type { Render } from "@/schema/TecRefined.ts";
+import { TecSide } from "@/schema/TecAstSchema.ts";
 
 interface Props {
-  readonly item: TecType;
+  readonly item: Render;
 }
 const props = defineProps<Props>();
 const imgName = computed(() => {
-  if (props.item.index.tag === "IndexE") {
-    if (props.item.index1)
-      if (props.item.index1.tag === "IndexE") {
-        return `http://localhost:3000/render/${props.item.index.contents.value}-${props.item.index1.contents.label.toLowerCase()}.png`;
-      }
-  }
+  const colorway = props.item.parameters[0].int;
+  const side = TecSide[props.item.parameters[1]];
+  return `http://localhost:3000/render/${colorway}-${side.toLowerCase()}.png`;
 });
 </script>
 

@@ -23,7 +23,7 @@ export interface TecQueryB {
   readonly right: TecType;
 }
 export type TecQuery = TecQueryA | TecQueryB;
-const TecInt = S.Struct({
+export const TecInt = S.Struct({
   tag: S.tag("TecInt"),
   int: S.Number,
 });
@@ -36,18 +36,18 @@ const TecRngInt = S.Struct({
   fromI: S.Number,
   toI: S.NullOr(S.Number),
 });
-export enum Side {
+export enum TecSide {
   Front,
   Back,
   Left,
   Right,
 }
-const Side_ = S.Enums(Side);
+export const _TecSide = S.Enums(TecSide);
 
 const TecRngEnum = S.Struct({
   tag: S.tag("TecRngEnum"),
-  from: Side_,
-  to: S.NullOr(Side_),
+  from: _TecSide,
+  to: S.NullOr(_TecSide),
 });
 export type TecInt = typeof TecInt.Type;
 export type TecStr = typeof TecStr.Type;
@@ -60,7 +60,8 @@ export type TecAST =
   | TecInt
   | TecStr
   | TecRngInt
-  | TecRngEnum;
+  | TecRngEnum
+  | TecSide;
 
 const TecQueryA = S.Struct({
   tag: S.tag("TecQuery"),
@@ -94,6 +95,7 @@ export const TecAST = S.Union(
   TecStr,
   TecRngInt,
   TecRngEnum,
+  _TecSide,
 );
 
 export function decodeTecAST(o: any): TecAST {
