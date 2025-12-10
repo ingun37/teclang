@@ -80,6 +80,7 @@ export function createGraphDB(): TheGraph {
   addEdge(colorwayNodes[0]!, fabricNodes[0]!, pantoneNodes[0]);
   addEdge(colorwayNodes[1]!, fabricNodes[0]!, pantoneNodes[1]);
   addEdge(colorwayNodes[2]!, fabricNodes[0]!, pantoneNodes[2]);
+  addEdge(colorwayNodes[3]!, fabricNodes[0]!, pantoneNodes[2]);
 
   addEdge(colorwayNodes[1]!, fabricNodes[1]!);
   addEdge(colorwayNodes[2]!, fabricNodes[2]!);
