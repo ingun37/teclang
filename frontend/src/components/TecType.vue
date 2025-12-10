@@ -14,9 +14,15 @@ const refined = computed((): RefinedTecType | null => {
 </script>
 
 <template>
-  <v-sheet v-if="refined && refined.typeName === 'Text'">
-    <Text :text="refined.parameters[0].str" />
+  <v-sheet v-if="refined">
+    <v-sheet v-if="refined.typeName === 'Text'">
+      <Text :text="refined.parameters[0].str" />
+    </v-sheet>
+    <v-sheet v-if="refined.typeName === 'Pantone'">
+      <Pantone :item="refined" /> />
+    </v-sheet>
   </v-sheet>
+
   <v-sheet v-if="tecType.typeName === 'Logo'">
     <Logo />
   </v-sheet>

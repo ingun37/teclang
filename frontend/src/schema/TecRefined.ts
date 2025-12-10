@@ -12,5 +12,15 @@ export const Text = Raw.TecType.pipe(
   ),
 );
 
-export const RefinedTecType = S.Union(Text);
+export const Pantone = Raw.TecType.pipe(
+  S.compose(
+    S.Struct({
+      ...Raw.TecType.fields,
+      typeName: S.Literal("Pantone"),
+      parameters: S.NonEmptyArray(Raw.TecStr),
+    }),
+  ),
+);
+export type Pantone = typeof Pantone.Type;
+export const RefinedTecType = S.Union(Text, Pantone);
 export type RefinedTecType = typeof RefinedTecType.Type;

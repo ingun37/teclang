@@ -1,21 +1,16 @@
 <script lang="ts" setup>
-import type { TecType } from "@/schema/TecAST.ts";
+import type { Pantone } from "@/schema/TecRefined.ts";
 
 interface Props {
-  readonly item: TecType;
+  readonly item: Pantone;
 }
 const props = defineProps<Props>();
-const name = computed(() => {
-  if (props.item.index.tag === "IndexS") {
-    return props.item.index.name;
-  }
-});
 </script>
 
 <template>
   <div class="pantone-container">
     <div class="color-square"></div>
-    <div class="color-label">{{ name }}</div>
+    <div class="color-label">{{ item.parameters[0].str }}</div>
   </div>
 </template>
 
