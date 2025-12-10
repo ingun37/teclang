@@ -60,8 +60,7 @@ export type TecAST =
   | TecInt
   | TecStr
   | TecRngInt
-  | TecRngEnum
-  | TecSide;
+  | TecRngEnum;
 
 const TecQueryA = S.Struct({
   tag: S.tag("TecQuery"),
@@ -95,7 +94,6 @@ export const TecAST = S.Union(
   TecStr,
   TecRngInt,
   TecRngEnum,
-  _TecSide,
 );
 
 export function decodeTecAST(o: any): TecAST {
