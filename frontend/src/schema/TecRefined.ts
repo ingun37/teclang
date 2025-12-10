@@ -13,3 +13,4 @@ export const Text = Raw.TecType.pipe(
 );
 
 export const RefinedTecType = S.Union(Text);
+export type RefinedTecType = typeof RefinedTecType.Type;
