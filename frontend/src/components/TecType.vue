@@ -8,7 +8,7 @@ const refined = computed((): RefinedTecType | null => {
   try {
     return decodeUnknownSync(RefinedTecType)(props.tecType);
   } catch (e) {
-    console.error("Error decoding TecType:", e);
+    console.warn("Error decoding TecType:", e);
     return null;
   }
 });
@@ -38,6 +38,12 @@ const refined = computed((): RefinedTecType | null => {
   </v-sheet>
   <v-sheet v-if="tecType.typeName === 'PageNumber'">
     <PageNumber />
+  </v-sheet>
+  <v-sheet v-if="tecType.typeName === 'HStack'">
+    <HStack :items="tecType.parameters" />
+  </v-sheet>
+  <v-sheet v-if="tecType.typeName === 'VStack'">
+    <VStack :items="tecType.parameters" />
   </v-sheet>
 </template>
 

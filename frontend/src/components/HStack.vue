@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { TecAST as TecASTType } from "@/schema/TecAST";
 import TecAST from "@/components/TecAST.vue";
+import type { TecAST as TecASTType } from "@/schema/TecAstSchema.ts";
 
 interface Props {
   items: readonly TecASTType[];
