@@ -1,10 +1,4 @@
-import {
-  Array as A,
-  Either as E,
-  ParseResult,
-  pipe,
-  Schema as S,
-} from "effect";
+import { Array as A, Either as E, ParseResult, pipe, Schema as S } from "effect";
 import * as Raw from "./TecAstSchema";
 
 const IndexRange = S.Struct({
@@ -164,6 +158,17 @@ export const Pantone = Raw.TecType.pipe(
 );
 export type Pantone = typeof Pantone.Type;
 
+export const Fabric = Raw.TecType.pipe(
+  S.compose(
+    S.Struct({
+      ...Raw.TecType.fields,
+      typeName: S.Literal("Fabric"),
+      parameters: S.Array(StringSet).pipe(S.itemsCount(1)),
+    }),
+  ),
+);
+export type Fabric = typeof Fabric.Type;
+
 export const Render = Raw.TecType.pipe(
   S.compose(
     S.Struct({
@@ -175,5 +180,5 @@ export const Render = Raw.TecType.pipe(
 );
 
 export type Render = typeof Render.Type;
-export const RefinedTecType = S.Union(Text, Pantone, Render);
+export const RefinedTecType = S.Union(Text, Pantone, Render, Fabric);
 export type RefinedTecType = typeof RefinedTecType.Type;

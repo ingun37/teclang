@@ -20,10 +20,13 @@ const refined = computed((): RefinedTecType | null => {
     <v-sheet v-if="refined.typeName === 'Text'">
       <Text :text="refined.parameters[0]!.str" />
     </v-sheet>
-    <v-sheet v-if="refined.typeName === 'Pantone'">
+    <v-sheet v-else-if="refined.typeName === 'Pantone'">
       <Pantone :item="refined" />
     </v-sheet>
-    <v-sheet v-if="refined.typeName === 'Render'">
+    <v-sheet v-else-if="refined.typeName === 'Fabric'">
+      <Fabric :item="refined" />
+    </v-sheet>
+    <v-sheet v-else-if="refined.typeName === 'Render'">
       <Render :render-item="refined" />
     </v-sheet>
   </v-sheet>
