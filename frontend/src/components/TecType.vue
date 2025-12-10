@@ -28,9 +28,7 @@ const refined = computed((): RefinedTecType | null => {
 <template>
   <v-sheet v-if="matrix && 1 < matrix.length">
     MATRIX!! {{ matrix.length }}
-    <v-sheet v-for="(item, index) in matrix" :key="index">
-      <TecType :tec-type="item.tecType" />
-    </v-sheet>
+    <HStack :items="matrix.map((x) => x.tecType)"></HStack>
   </v-sheet>
   <v-sheet v-else-if="refined">
     <v-sheet v-if="refined.typeName === 'Text'">
