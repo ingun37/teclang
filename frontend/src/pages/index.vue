@@ -62,7 +62,7 @@ import { useAppStore } from "@/stores/app";
 import { refDebounced, useDebounceFn } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
-import { decodeTecAST, type TecAST } from "@/schema/TecAST.ts";
+import { decodeTecAST, type TecAST } from "@/schema/TecAstSchema.ts";
 
 const appStore = useAppStore();
 
