@@ -1038,3 +1038,86 @@ App
             )
         )
     )
+---- Original Code ----
+Render [Front .. Right]
+---- Raw AST ----
+App
+    ( SrcSpanInfo
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 2 9 2 32
+        , srcInfoPoints = []
+        }
+    )
+    ( Con
+        ( SrcSpanInfo
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 2 9 2 15
+            , srcInfoPoints = []
+            }
+        )
+        ( UnQual
+            ( SrcSpanInfo
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 2 9 2 15
+                , srcInfoPoints = []
+                }
+            )
+            ( Ident
+                ( SrcSpanInfo
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 2 9 2 15
+                    , srcInfoPoints = []
+                    }
+                ) "Render"
+            )
+        )
+    )
+    ( EnumFromTo
+        ( SrcSpanInfo
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 2 16 2 32
+            , srcInfoPoints =
+                [ SrcSpan "<unknown>.hs" 2 16 2 17
+                , SrcSpan "<unknown>.hs" 2 23 2 25
+                , SrcSpan "<unknown>.hs" 2 31 2 32
+                ]
+            }
+        )
+        ( Con
+            ( SrcSpanInfo
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 2 17 2 22
+                , srcInfoPoints = []
+                }
+            )
+            ( UnQual
+                ( SrcSpanInfo
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 2 17 2 22
+                    , srcInfoPoints = []
+                    }
+                )
+                ( Ident
+                    ( SrcSpanInfo
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 2 17 2 22
+                        , srcInfoPoints = []
+                        }
+                    ) "Front"
+                )
+            )
+        )
+        ( Con
+            ( SrcSpanInfo
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 2 26 2 31
+                , srcInfoPoints = []
+                }
+            )
+            ( UnQual
+                ( SrcSpanInfo
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 2 26 2 31
+                    , srcInfoPoints = []
+                    }
+                )
+                ( Ident
+                    ( SrcSpanInfo
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 2 26 2 31
+                        , srcInfoPoints = []
+                        }
+                    ) "Right"
+                )
+            )
+        )
+    )

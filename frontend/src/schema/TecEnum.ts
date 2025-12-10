@@ -21,7 +21,7 @@ export const _TecSide: S.Schema<TecSide, any> = S.transformOrFail(
     strict: false,
     decode(x: UnitCon, _, ast) {
       return pipe(
-        TecSide[x.typeName],
+        TecSide[x.typeName as any],
         S.decodeUnknownOption(__TecSide),
         ParseResult.fromOption(
           () => new ParseResult.Type(ast, x, "Failed to encode tecside"),
@@ -34,6 +34,27 @@ export const _TecSide: S.Schema<TecSide, any> = S.transformOrFail(
         typeName: TecSide[x],
         parameters: [],
       } as UnitCon);
+    },
+  },
+);
+
+export const TecSideFromStr: S.Schema<TecSide, any> = S.transformOrFail(
+  S.String,
+  __TecSide,
+  {
+    strict: true,
+    decode(s, _, ast) {
+      return pipe(
+        TecSide[s as any],
+        S.decodeUnknownOption(__TecSide),
+        ParseResult.fromOption(
+          () => new ParseResult.Type(ast, s, "fail to decode TecSide"),
+        ),
+      );
+    },
+    encode(s) {
+      const label = TecSide[s];
+      return ParseResult.succeed(label);
     },
   },
 );

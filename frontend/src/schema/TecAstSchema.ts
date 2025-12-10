@@ -1,6 +1,6 @@
 import { Schema as S } from "effect";
 import type { Schema } from "effect/Schema";
-import { _TecSide } from "@/schema/TecEnum.ts";
+import { TecSideFromStr } from "@/schema/TecEnum.ts";
 
 export interface TecType {
   readonly tag: "TecType";
@@ -40,8 +40,8 @@ const TecRngInt = S.Struct({
 
 const TecRngEnum = S.Struct({
   tag: S.tag("TecRngEnum"),
-  from: _TecSide,
-  to: S.NullOr(_TecSide),
+  fromE: TecSideFromStr,
+  toE: S.NullOr(TecSideFromStr),
 });
 export type TecInt = typeof TecInt.Type;
 export type TecStr = typeof TecStr.Type;

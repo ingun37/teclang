@@ -78,7 +78,7 @@ testData =
     "Render 0 Front",
     "Colorways [0 ..] :> Fabric \"*\"",
     "Colorways [0]",
-    "HStack Logo (Render 0 Front)"
-    -- "Renders [Front .. Right]"
+    "HStack Logo (Render 0 Front)",
+    "Render [Front .. Right]"
     -- "Render 0 Front"
   ]
