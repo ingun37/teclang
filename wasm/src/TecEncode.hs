@@ -11,6 +11,7 @@ encode (E.App _ lhs rhs) = do
   case l of
     (TecType typeName params) -> return $ TecType typeName (params ++ [r])
     _ -> Left $ TecError "Unexpected left side"
+encode (E.Paren _ x) = encode x
 encode (E.Con _ (E.UnQual _ (E.Ident _ typeName))) = Right $ TecType typeName []
 encode (E.InfixApp _ left (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) right) = do
   l <- encode left
