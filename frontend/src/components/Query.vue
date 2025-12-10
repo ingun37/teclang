@@ -1,65 +1,56 @@
 <script lang="ts" setup>
 import { useAppStore } from "@/stores/app.ts";
-import { Array } from "effect";
+import { Array, Effect } from "effect";
 import type { TheGraph } from "@/graphdb.ts";
-import { compareIndex } from "@/CompareIndex.ts";
-import type { TecQuery, TecQueryA, TecType } from "@/schema/TecAstSchema.ts";
+import type { TecQuery, TecQueryA } from "@/schema/TecAstSchema.ts";
+import { decodeGenericIndexSets } from "@/schema/TecRefined.ts";
+import { type Entry, iterateIndexSetsDB } from "@/schema/IterateTec.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
 
-function* iterateIDs(db: TheGraph, tt: TecType): Generator<string> {
-  const nodes = db.filterNodes((node, att) => {
-    if (att._tag !== "TypeNode") return false;
-    if (att.typeName !== tt.typeName) return false;
-    if (att.index) {
-      if (!tt.parameters[0]) return false;
-      if (compareIndex(att.index, tt.parameters[0])) {
-        if (att.index1) {
-          if (!tt.parameters[1]) return false;
-          return compareIndex(att.index1, tt.parameters[1]);
-        } else {
-          return !tt.parameters[1];
-        }
-      } else return false;
-    }
-    return false;
-  });
-  yield* nodes;
-}
-
 type NE<T> = Array.NonEmptyArray<T>;
-function* recurseA(
-  db: TheGraph,
-  query: TecQueryA,
-): Generator<[IterItem, IterItem]> {
+function* recurseA(db: TheGraph, query: TecQueryA): Generator<[Entry, Entry]> {
   const left = query.left;
   const right = query.right;
-  const rightItems = iterateDB(db, right);
 
-  for (const leftItem of iterateDB(db, left)) {
-    const neighbors = db.undirectedNeighbors(leftItem.key);
-    const intersect = rightItems.filter((rightItem) =>
-      neighbors.includes(rightItem.key),
+  const leftIndexSets = Effect.runSync(decodeGenericIndexSets(left.parameters));
+  const leftDB = iterateIndexSetsDB(db, left.typeName, leftIndexSets);
+  const rightIndexSets = Effect.runSync(
+    decodeGenericIndexSets(right.parameters),
+  );
+  const rightDB = Array.fromIterable(
+    iterateIndexSetsDB(db, right.typeName, rightIndexSets),
+  );
+  for (const leftEntry of leftDB) {
+    const neighbors = db.undirectedNeighbors(leftEntry.node);
+    const intersect = rightDB.filter((rightEntry) =>
+      neighbors.includes(rightEntry.node),
     );
-    for (const rightItem of intersect) {
-      const xy: [IterItem, IterItem] = [leftItem, rightItem];
-      xy.sort((a, b) => a.key.localeCompare(b.key));
+    for (const rightEntry of intersect) {
+      const xy: [Entry, Entry] = [leftEntry, rightEntry];
+      xy.sort((a, b) => a.node.localeCompare(b.node));
       yield xy;
     }
   }
 }
-function* recurse(query: TecQuery): Generator<NE<IterItem>> {
+function* recurse(query: TecQuery): Generator<NE<Entry>> {
   const db = store.graphDB;
   if (query.op === ":-") {
     yield* recurseA(db, query);
   } else if (query.op === ":>") {
     for (const chain of recurse(query.left)) {
-      const rightItems = iterateDB(db, query.right);
-      const edgeNode = chain.map((x) => x.key).join("->");
+      const rightIndexSets = Effect.runSync(
+        decodeGenericIndexSets(query.right.parameters),
+      );
+      const rightDB = Array.fromIterable(
+        iterateIndexSetsDB(db, query.right.typeName, rightIndexSets),
+      );
+
+      const edgeNode = chain.map((x) => x.node).join("->");
       const neighbors = db.directedNeighbors(edgeNode);
-      const intersect = rightItems.filter((rightItem) =>
-        neighbors.includes(rightItem.key),
+      const intersect = rightDB.filter((rEntry) =>
+        neighbors.includes(rEntry.node),
       );
       for (const rightItem of intersect) {
         yield [...chain, rightItem];

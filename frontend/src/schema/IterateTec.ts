@@ -33,11 +33,16 @@ export function* itertateIndexSets(
   }
 }
 
+export type Entry = {
+  node: string;
+  indexSet: IndexItem[];
+};
+
 export function* iterateIndexSetsDB(
   db: TheGraph,
   typeName: string,
   parameters: readonly IndexSet[],
-) {
+): Generator<Entry> {
   const total = Array.fromIterable(itertateIndexSets(parameters));
 
   const nodes = db.filterNodes((node, att: NodeAttributes) => {
@@ -53,10 +58,13 @@ export function* iterateIndexSetsDB(
     );
   });
 
-  const validIds = nodes
-    .map((node): NodeAttributes => db.getNodeAttributes(node))
-    .flatMap((x) => (x._tag === "TypeNode" ? [x] : []))
-    .map((x) => x.ids);
+  const validIds = nodes.flatMap((node): Entry[] => {
+    const na: NodeAttributes = db.getNodeAttributes(node);
+    if (na._tag !== "TypeNode") return [];
+    return [{ node, indexSet: na.ids }];
+  });
+  // .flatMap((x) => (x._tag === "TypeNode" ? [x] : []))
+  // .map((x): Entry => ({ indexSet: x.ids }));
 
   yield* validIds;
 }

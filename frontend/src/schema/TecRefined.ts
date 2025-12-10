@@ -1,5 +1,13 @@
-import { Array as A, Either as E, ParseResult, pipe, Schema as S } from "effect";
+import {
+  Array as A,
+  Effect,
+  Either as E,
+  ParseResult,
+  pipe,
+  Schema as S,
+} from "effect";
 import * as Raw from "./TecAstSchema";
+import type { ParseError } from "effect/ParseResult";
 
 const IndexRange = S.Struct({
   _tag: S.tag("int_range"),
@@ -135,8 +143,20 @@ const StringSet = S.transformOrFail(
   },
 );
 export type StringSet = typeof StringSet.Type;
-export type IndexSet = IntSet | EnumSet | StringSet;
+const IndexSet = S.Union(IntSet, EnumSet, StringSet);
+export type IndexSet = typeof IndexSet.Type;
 export type IndexItem = number | string;
+
+export function decodeGenericIndexSets(
+  asts: readonly Raw.TecAST[],
+): Effect.Effect<IndexSet[], ParseError> {
+  return pipe(
+    asts,
+    A.map((x) => S.decodeUnknown(IndexSet)(x)),
+    Effect.all,
+  );
+}
+
 export const Text = Raw.TecType.pipe(
   S.compose(
     S.Struct({
