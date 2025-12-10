@@ -32,6 +32,7 @@ export const Render = Raw.TecType.pipe(
     }),
   ),
 );
+
 export type Render = typeof Render.Type;
 export const RefinedTecType = S.Union(Text, Pantone, Render);
 export type RefinedTecType = typeof RefinedTecType.Type;

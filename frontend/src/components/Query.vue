@@ -4,6 +4,7 @@ import { Array } from "effect";
 import type { TheGraph } from "@/graphdb.ts";
 import { compareIndex } from "@/CompareIndex.ts";
 import type { TecQuery, TecQueryA, TecType } from "@/schema/TecAstSchema.ts";
+import { iterateDB, type IterItem } from "@/schema/IterateTec.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
@@ -32,37 +33,37 @@ type NE<T> = Array.NonEmptyArray<T>;
 function* recurseA(
   db: TheGraph,
   query: TecQueryA,
-): Generator<[string, string]> {
+): Generator<[IterItem, IterItem]> {
   const left = query.left;
   const right = query.right;
-  const rightIDs = Array.fromIterable(iterateIDs(db, right));
+  const rightItems = iterateDB(db, right);
 
-  for (const leftID of iterateIDs(db, left)) {
-    const neighbors = db.undirectedNeighbors(leftID);
-    const intersect = rightIDs.filter((neighbor) =>
-      neighbors.includes(neighbor),
+  for (const leftItem of iterateDB(db, left)) {
+    const neighbors = db.undirectedNeighbors(leftItem.key);
+    const intersect = rightItems.filter((rightItem) =>
+      neighbors.includes(rightItem.key),
     );
-    for (const rightID of intersect) {
-      const xy: [string, string] = [leftID, rightID];
-      xy.sort();
+    for (const rightItem of intersect) {
+      const xy: [IterItem, IterItem] = [leftItem, rightItem];
+      xy.sort((a, b) => a.key.localeCompare(b.key));
       yield xy;
     }
   }
 }
-function* recurse(query: TecQuery): Generator<NE<string>> {
+function* recurse(query: TecQuery): Generator<NE<IterItem>> {
   const db = store.graphDB;
   if (query.op === ":-") {
     yield* recurseA(db, query);
   } else if (query.op === ":>") {
     for (const chain of recurse(query.left)) {
-      const rightIDs = Array.fromIterable(iterateIDs(db, query.right));
-      const edgeNode = chain.join("->");
+      const rightItems = iterateDB(db, query.right);
+      const edgeNode = chain.map((x) => x.key).join("->");
       const neighbors = db.directedNeighbors(edgeNode);
-      const intersect = rightIDs.filter((neighbor) =>
-        neighbors.includes(neighbor),
+      const intersect = rightItems.filter((rightItem) =>
+        neighbors.includes(rightItem.key),
       );
-      for (const rightID of intersect) {
-        yield [...chain, rightID];
+      for (const rightItem of intersect) {
+        yield [...chain, rightItem];
       }
     }
   }

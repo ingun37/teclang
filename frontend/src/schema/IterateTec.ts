@@ -65,8 +65,9 @@ function idxStr(tecType: TecAST) {
       throw new Error("Invalid index type");
   }
 }
+export type IterItem = { key: string; tecType: TecType };
 export function queryDB(db: TheGraph) {
-  return function (tecType: TecType): { key: string; tecType: TecType } | null {
+  return function (tecType: TecType): IterItem | null {
     try {
       const idxPart = tecType.parameters.map(idxStr).join("-");
       const key = `${tecType.typeName}-${idxPart}`;
@@ -76,4 +77,10 @@ export function queryDB(db: TheGraph) {
       return null;
     }
   };
+}
+
+export function iterateDB(db: TheGraph, tecType: TecType) {
+  return Array.from(iterateTec(tecType, 0))
+    .map(queryDB(db))
+    .flatMap((x) => (x ? [x] : []));
 }
