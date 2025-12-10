@@ -200,5 +200,18 @@ export const Render = Raw.TecType.pipe(
 );
 
 export type Render = typeof Render.Type;
-export const RefinedTecType = S.Union(Text, Pantone, Render, Fabric);
+
+export const Schematic = Raw.TecType.pipe(
+  S.compose(
+    S.Struct({
+      ...Raw.TecType.fields,
+      typeName: S.Literal("Schematic"),
+      parameters: S.Tuple(EnumSet),
+    }),
+  ),
+);
+
+export type Schematic = typeof Render.Type;
+
+export const RefinedTecType = S.Union(Text, Pantone, Render, Fabric, Schematic);
 export type RefinedTecType = typeof RefinedTecType.Type;

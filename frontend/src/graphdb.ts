@@ -20,7 +20,6 @@ export function createGraphDB(): TheGraph {
   const graph = new Graph<NodeAttributes, EdgeAttributes, any>();
 
   const rng = (n: number) => Array.range(0, n - 1);
-  const r3 = rng(3);
 
   function addNode(typeName: string, ...ids: IndexItem[]) {
     const idPart = ids.map((x) => x.toString()).join("-");
@@ -31,9 +30,9 @@ export function createGraphDB(): TheGraph {
       ids,
     });
   }
-
+  const colorways = rng(4);
   const addColorway = (id: number) => addNode("Colorway", id);
-  const colorwayNodes = r3.map(addColorway);
+  const colorwayNodes = colorways.map(addColorway);
   const addFabric = (id: string) => addNode("Fabric", id);
   const fabrics = ["A", "B", "C", "D"];
   const fabricNodes = fabrics.map(addFabric);
@@ -42,7 +41,10 @@ export function createGraphDB(): TheGraph {
   const pantoneNodes = pantones.map(addPantone);
   const sides = ["Front", "Back", "Left", "Right"];
   const addRender = (id0: number, id1: string) => addNode("Render", id0, id1);
-  const renderNodes = r3.map((id0) => sides.map((id1) => addRender(id0, id1)));
+  const renderNodes = colorways.map((id0) =>
+    sides.map((id1) => addRender(id0, id1)),
+  );
+  sides.map((side) => addNode("Schematic", side));
 
   function addEdge(
     from: string,
@@ -66,7 +68,7 @@ export function createGraphDB(): TheGraph {
     );
   }
 
-  r3.map((c) =>
+  colorways.map((c) =>
     sides.map((s) =>
       addEdge(
         colorwayNodes[c]!,

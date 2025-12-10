@@ -2,6 +2,7 @@
 import type { TecType } from "@/schema/TecAstSchema.ts";
 import { decodeUnknownSync } from "effect/Schema";
 import { RefinedTecType } from "@/schema/TecRefined.ts";
+import Zip from "@/components/Zip.vue";
 
 const props = defineProps<{ tecType: TecType }>();
 
@@ -29,6 +30,9 @@ const refined = computed((): RefinedTecType | null => {
     <v-sheet v-else-if="refined.typeName === 'Render'">
       <Renders :render-item="refined" />
     </v-sheet>
+    <v-sheet v-else-if="refined.typeName === 'Schematic'">
+      <Many :index-sets="refined.parameters" :type-name="refined.typeName" />
+    </v-sheet>
   </v-sheet>
 
   <v-sheet v-if="tecType.typeName === 'Logo'">
@@ -48,6 +52,9 @@ const refined = computed((): RefinedTecType | null => {
   </v-sheet>
   <v-sheet v-if="tecType.typeName === 'VStack'">
     <VStack :items="tecType.parameters" />
+  </v-sheet>
+  <v-sheet v-if="tecType.typeName === 'Zip'">
+    <Zip :asts="tecType.parameters" />
   </v-sheet>
 </template>
 

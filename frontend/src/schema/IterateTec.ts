@@ -1,5 +1,9 @@
 import type { NodeAttributes, TheGraph } from "@/graphdb.ts";
-import { decodeGenericIndexSets, type IndexItem, type IndexSet } from "@/schema/TecRefined.ts";
+import {
+  decodeGenericIndexSets,
+  type IndexItem,
+  type IndexSet,
+} from "@/schema/TecRefined.ts";
 import { Array, Effect } from "effect";
 import type { TecQuery, TecQueryA, TecType } from "@/schema/TecAstSchema.ts";
 
