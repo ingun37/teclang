@@ -11,10 +11,11 @@ import Data.Text qualified as T
 import GHC.Generics (Generic)
 import Language.Haskell.Exts qualified as E
 import TecSyntax (Side)
-
+import Data.Functor ((<&>))
 data TecError
   = TecError String
-  | TecErrorUnknownExp {expShow :: String, wholeExpShow :: String}
+  | TecErrorUnknownExp {expShow :: String}
+  | TecErrorWithWholeExpShow {err :: TecError, wholeExpShow :: String}
   deriving (Show)
 
 data TecEnum = TecEnum
@@ -31,9 +32,9 @@ withoutLabel i = TecEnum "" "" (fromInteger i)
 
 data Index
   = IndexS {name :: String}
-  | IndexN Int
   | IndexE TecEnum
   | IndexR {from :: TecEnum, to :: Maybe TecEnum}
+  | IndexL [Index]
   | IndexU
   deriving (Show, Generic)
 
@@ -63,6 +64,7 @@ makeEnum (E.Con _ (E.UnQual _ (E.Ident _ label))) = do
 makeEnum _ = Left $ TecError "Failed to make Enum from exp"
 
 makeIndex :: (Show l) => E.Exp l -> Either TecError Index
+makeIndex (E.List _ exps) = traverse makeIndex exps <&> IndexL
 makeIndex (E.Lit _ (E.String _ val _)) = Right $ IndexS val
 makeIndex (E.EnumFrom _ e) = do
   e' <- makeEnum e
@@ -94,4 +96,6 @@ makeIndexExp (IndexR from to) = do
     Just _to -> do
       t <- makeEnumExp _to
       Right $ E.EnumFromTo () f t
-makeIndexExp _ = Left $ TecError "Failed to parse index exp"
+makeIndexExp (IndexL idxs) = do
+  subIndexExps <- traverse makeIndexExp idxs
+  return $ E.List () subIndexExps

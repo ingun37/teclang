@@ -6,7 +6,8 @@ module MyLib
     Parsed (Parsed),
     makeHaskellCode,
     ast,
-    TecError (TecError, TecErrorUnknownExp),
+    rawAstShow,
+    TecError (TecError, TecErrorUnknownExp, TecErrorWithWholeExpShow),
     tecError,
   )
 where
@@ -17,11 +18,11 @@ import Data.Aeson
     defaultOptions,
     genericToEncoding,
   )
-
 -- import Data.ByteString qualified as BS
 -- import Data.FileEmbed qualified as Embed
 -- import Data.Text.Encoding qualified as TE
 
+import Data.Functor ((<&>))
 import GHC.Generics (Generic)
 import Language.Haskell.Exts qualified as E
 import TecIndex
@@ -39,23 +40,23 @@ instance FromJSON TecAST
 
 mapWholeExpShow :: (Show l) => E.Exp l -> Either TecError a -> Either TecError a
 mapWholeExpShow x e = case e of
-  (Left (TecErrorUnknownExp a _)) -> Left (TecErrorUnknownExp a (show x))
+  (Left err) -> Left (TecErrorWithWholeExpShow err (show x))
   a -> a
 
 tecError :: String -> Either TecError b
 tecError str = Left $ TecError str
 
-
-
 makeTecAST :: (Show l) => E.Exp l -> Either TecError TecAST
 makeTecAST (E.App _ (E.Con _ (E.UnQual _ (E.Ident _ conName))) rhs) =
-  let handle (E.List _ exps) = do
-        children <- traverse makeTecAST exps
-        Right $ TecLayout conName children
-      handle indexE = do
-        i <- makeIndex indexE
-        return $ TecType conName i Nothing
-   in handle rhs
+  let handle' e = case makeIndex e of
+        Right idx -> Right $ TecType {typeName = conName, index = idx, index1 = Nothing}
+        Left _ ->
+          case rhs of
+            (E.List _ exps) -> do
+              children <- traverse makeTecAST exps
+              Right $ TecLayout conName children
+            _ -> Left $ TecErrorUnknownExp (show rhs)
+   in handle' rhs
 makeTecAST (E.App _ lhs rhs) = do
   l <- makeTecAST lhs
   r <- makeIndex rhs
@@ -69,9 +70,7 @@ makeTecAST (E.InfixApp _ l (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) r) = do
   left <- makeTecAST l
   right <- makeTecAST r
   Right $ TecQuery op left right
-makeTecAST unknownExp = Left $ TecErrorUnknownExp (show unknownExp) (show unknownExp)
-
-
+makeTecAST unknownExp = Left $ TecErrorUnknownExp (show unknownExp)
 
 makeExp :: TecAST -> Either TecError (E.Exp ())
 makeExp tecAst =
@@ -106,7 +105,8 @@ extractDocExp _ = undefined
 -- tecCode = $(Embed.embedFile "src/TecSyntax.hs")
 
 data Parsed = Parsed
-  { ast :: TecAST
+  { ast :: TecAST,
+    rawAstShow :: String
   }
 
 parseHaskellStr :: String -> Either TecError Parsed
@@ -118,9 +118,9 @@ parseHaskellStr code =
           let e = extractDocExp a
            in do
                 ast <- mapWholeExpShow e $ makeTecAST e
-                Right $ Parsed {ast = ast}
+                Right $ Parsed {ast = ast, rawAstShow = show e}
         E.ParseFailed _ str ->
-          tecError str
+          tecError $ "Initial parsing failed:\n" ++ str
 
 makeHaskellCode :: TecAST -> Either TecError String
 makeHaskellCode ast = fmap E.prettyPrint (makeExp ast)

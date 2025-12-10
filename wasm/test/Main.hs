@@ -9,6 +9,8 @@ import Data.Text qualified as T
 import Data.Text.Encoding qualified as E
 import MyLib
 import Text.Pretty.Simple qualified as Simple
+import System.IO qualified as IO
+import Data.Text.IO (hPutStrLn)
 
 data TestErr = ErrStr String | ErrTec TecError deriving (Show)
 
@@ -18,12 +20,16 @@ mapLeft :: (a -> c) -> Either a b -> Either c b
 mapLeft f (Left a) = Left (f a)
 mapLeft _ (Right a) = Right a
 
-testE :: String -> ErrM ()
-testE code = do
+testE :: IO.Handle -> String -> ErrM ()
+testE logHandle code = do
   lift $ putStrLn "============== TESTING =============="
   lift $ putStrLn "---- Original Code ----"
   lift $ putStrLn code
-  Parsed {ast} <- liftEither $ mapLeft ErrTec $ parseHaskellStr code
+  lift $ hPutStrLn logHandle (T.pack "---- Original Code ----")
+  lift $ hPutStrLn logHandle (T.pack code)
+  Parsed { ast, rawAstShow } <- liftEither $ mapLeft ErrTec $ parseHaskellStr code
+  lift $ hPutStrLn logHandle (T.pack "---- Raw AST ----")
+  Simple.pHPrintString logHandle rawAstShow
   lift $ putStrLn "---- Final AST ----"
   lift $ Simple.pPrint ast
   lift $ putStrLn "---- Json AST ----"
@@ -44,12 +50,16 @@ testE code = do
 
 main :: IO ()
 main = do
-  let a = traverse testE testData
+  logHandle <- IO.openFile "out.log" IO.WriteMode
+  let a = traverse (testE logHandle) testData
   b <- runExceptT a
+  IO.hClose logHandle
   case b of
-    (Left (ErrTec (TecErrorUnknownExp rawAstShow rawWholeAstShow))) -> do
-      putStrLn "\n\n---- Unknown AST show ----\n\n"
-      Simple.pPrintString rawAstShow
+    (Left (ErrTec (TecErrorWithWholeExpShow initialErr rawWholeAstShow))) -> do
+      putStrLn "\n\n---- Initial error ----\n\n"
+      case initialErr of
+        (TecErrorUnknownExp e) -> Simple.pPrintString e
+        _ -> Simple.pPrint initialErr
       putStrLn "\n\n---- Entire AST show ----\n\n"
       Simple.pPrintString rawWholeAstShow
     e -> print e
@@ -57,7 +67,7 @@ main = do
 testData :: [String]
 testData =
   [ "Logo",
-    "HStack []",
+    "HStack [Logo]",
     "Colorway 0",
     "Pantone \"red\"",
     "VStack [HStack [Logo], Colorway 42]",
@@ -66,7 +76,8 @@ testData =
     "Colorways [1 ..]",
     "Colorways [1 .. 3]",
     "Render 0 Front",
-    "Colorways [0 ..] :> Fabric \"*\""
+    "Colorways [0 ..] :> Fabric \"*\"",
+    "Colorways [0]"
     -- "Renders [Front .. Right]"
     -- "Render 0 Front"
   ]
