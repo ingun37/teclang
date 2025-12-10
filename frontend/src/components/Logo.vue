@@ -1,7 +1,11 @@
 <script lang="ts" setup></script>
 
 <template>
-  <img alt="Brand Logo" src="@/assets/brand_logo.png" />
+  <v-img
+    alt="Brand Logo"
+    max-width="500px"
+    src="http://localhost:3000/brand_logo.png"
+  />
 </template>
 
 <style lang="sass" scoped></style>

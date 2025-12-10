@@ -10,13 +10,9 @@ const props = defineProps<Props>();
 </script>
 
 <template>
-  <v-card class="mb-2">
-    <v-card-text>
-      <v-sheet v-if="ast.tag === 'TecType'">
-        <TecType :tec-type="ast" />
-      </v-sheet>
-    </v-card-text>
-  </v-card>
+  <v-sheet v-if="ast.tag === 'TecType'" min-width="100px">
+    <TecType :tec-type="ast" />
+  </v-sheet>
 </template>
 
 <style lang="sass" scoped></style>

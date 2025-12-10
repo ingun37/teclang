@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { TecQuery, TecQueryA, TecType } from "@/schema/TecAST.ts";
 import { useAppStore } from "@/stores/app.ts";
 import { Array } from "effect";
 import type { TheGraph } from "@/graphdb.ts";
 import { compareIndex } from "@/CompareIndex.ts";
+import type { TecQuery, TecType } from "@/schema/TecAstSchema.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();

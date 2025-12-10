@@ -40,7 +40,7 @@ export function createGraphDB(): TheGraph {
     });
   }
 
-  const addColorway = (id: number) => addNode(id, "Colorways");
+  const addColorway = (id: number) => addNode(id, "Colorway");
   const colorwayNodes = r3.map(addColorway);
   const addFabric = (id: string) => addNode(id, "Fabric");
   const fabrics = ["A", "B", "C", "D"];
@@ -50,7 +50,7 @@ export function createGraphDB(): TheGraph {
   const pantoneNodes = pantones.map(addPantone);
   const sides = rng(4);
   const addRender = (id0: number, id1: number) =>
-    addNode(id0, "Renders", undefined, id1);
+    addNode(id0, "Render", undefined, id1);
   const renderNodes = r3.map((id0) => sides.map((id1) => addRender(id0, id1)));
 
   function addEdge(

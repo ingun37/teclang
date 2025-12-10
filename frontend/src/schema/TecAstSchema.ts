@@ -1,5 +1,6 @@
 import { Schema as S } from "effect";
 import type { Schema } from "effect/Schema";
+import { _TecSide } from "@/schema/TecEnum.ts";
 
 export interface TecType {
   readonly tag: "TecType";
@@ -36,13 +37,6 @@ const TecRngInt = S.Struct({
   fromI: S.Number,
   toI: S.NullOr(S.Number),
 });
-export enum TecSide {
-  Front,
-  Back,
-  Left,
-  Right,
-}
-export const _TecSide = S.Enums(TecSide);
 
 const TecRngEnum = S.Struct({
   tag: S.tag("TecRngEnum"),
@@ -90,10 +84,10 @@ export const TecAST = S.Union(
   S.suspend((): Schema<TecType> => TecType),
   S.suspend((): Schema<TecList> => TecList),
   S.suspend((): Schema<TecQuery> => TecQuery),
+  TecRngEnum,
   TecInt,
   TecStr,
   TecRngInt,
-  TecRngEnum,
 );
 
 export function decodeTecAST(o: any): TecAST {

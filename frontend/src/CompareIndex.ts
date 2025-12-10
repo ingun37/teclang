@@ -1,6 +1,6 @@
-import type { TecIndex } from "@/schema/TecAST.ts";
+import type { TecRngInt } from "@/schema/TecAstSchema.ts";
 
-export function compareIndex(idx: number | string, tec: TecIndex) {
+export function compareIndex(idx: number | string, tec: TecRngInt) {
   if (typeof idx === "number") {
     if (tec.tag === "IndexE") return tec.contents.value === idx;
     if (tec.tag === "IndexR")

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Render } from "@/schema/TecRefined.ts";
-import { TecSide } from "@/schema/TecAstSchema.ts";
+import { TecSide } from "@/schema/TecEnum.ts";
 
 interface Props {
   readonly item: Render;
@@ -14,6 +14,12 @@ const imgName = computed(() => {
 </script>
 
 <template>
-  <v-img v-if="imgName" :src="imgName" alt="Render image" />
+  <v-img
+    v-if="imgName"
+    :src="imgName"
+    alt="Render image"
+    max-width="500px"
+    min-width="100px"
+  />
 </template>
 <style lang="sass" scoped></style>
