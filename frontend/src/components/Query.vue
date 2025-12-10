@@ -10,7 +10,11 @@ const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
 
 type NE<T> = Array.NonEmptyArray<T>;
-function* recurseA(db: TheGraph, query: TecQueryA): Generator<[Entry, Entry]> {
+type QueryEntry = { entry: Entry; typeName: string };
+function* recurseA(
+  db: TheGraph,
+  query: TecQueryA,
+): Generator<[QueryEntry, QueryEntry]> {
   const left = query.left;
   const right = query.right;
 
@@ -28,13 +32,16 @@ function* recurseA(db: TheGraph, query: TecQueryA): Generator<[Entry, Entry]> {
       neighbors.includes(rightEntry.node),
     );
     for (const rightEntry of intersect) {
-      const xy: [Entry, Entry] = [leftEntry, rightEntry];
-      xy.sort((a, b) => a.node.localeCompare(b.node));
+      const xy: [QueryEntry, QueryEntry] = [
+        { typeName: left.typeName, entry: leftEntry },
+        { typeName: right.typeName, entry: rightEntry },
+      ];
+      xy.sort((a, b) => a.entry.node.localeCompare(b.entry.node));
       yield xy;
     }
   }
 }
-function* recurse(query: TecQuery): Generator<NE<Entry>> {
+function* recurse(query: TecQuery): Generator<NE<QueryEntry>> {
   const db = store.graphDB;
   if (query.op === ":-") {
     yield* recurseA(db, query);
@@ -47,13 +54,13 @@ function* recurse(query: TecQuery): Generator<NE<Entry>> {
         iterateIndexSetsDB(db, query.right.typeName, rightIndexSets),
       );
 
-      const edgeNode = chain.map((x) => x.node).join("->");
+      const edgeNode = chain.map((x) => x.entry.node).join("->");
       const neighbors = db.directedNeighbors(edgeNode);
       const intersect = rightDB.filter((rEntry) =>
         neighbors.includes(rEntry.node),
       );
-      for (const rightItem of intersect) {
-        yield [...chain, rightItem];
+      for (const rightEntry of intersect) {
+        yield [...chain, { entry: rightEntry, typeName: query.right.typeName }];
       }
     }
   }
@@ -64,11 +71,17 @@ const items = computed(() => {
 });
 </script>
 <template>
-  <div v-if="items" class="query-results">
-    <div v-for="(item, index) in items" :key="index" class="query-item">
-      {{ item }}
-    </div>
-  </div>
+  <v-sheet v-if="items" class="query-results">
+    <v-sheet
+      v-for="(queryEntries, index) in items"
+      :key="index"
+      class="query-item"
+    >
+      <v-sheet v-for="(queryEntry, index) in queryEntries" :key="index">
+        <Single :entry="queryEntry.entry" :typeName="queryEntry.typeName" />
+      </v-sheet>
+    </v-sheet>
+  </v-sheet>
   <div v-else class="no-results">No results</div>
 </template>
 
