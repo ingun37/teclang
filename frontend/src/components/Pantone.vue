@@ -1,16 +1,26 @@
 <script lang="ts" setup>
 import type { Pantone } from "@/schema/TecRefined.ts";
+import { useAppStore } from "@/stores/app.ts";
+import { iterateIndexSetsDB } from "@/schema/IterateTec.ts";
 
 interface Props {
   readonly item: Pantone;
 }
 const props = defineProps<Props>();
+
+const matrix = computed(() => {
+  const db = useAppStore().graphDB;
+  const renderItem: Pantone = props.item;
+  return Array.from(
+    iterateIndexSetsDB(db, renderItem.typeName, renderItem.parameters),
+  );
+});
 </script>
 
 <template>
-  <div class="pantone-container">
+  <div v-for="(item, index) in matrix" :key="index" class="pantone-container">
     <div class="color-square"></div>
-    <div class="color-label">{{ item.parameters[0].str }}</div>
+    <div class="color-label">PANTONE A7@h</div>
   </div>
 </template>
 
