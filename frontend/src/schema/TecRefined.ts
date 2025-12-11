@@ -14,10 +14,12 @@ const IndexRange = S.Struct({
   from: S.Number,
   to: S.NullOr(S.Number),
 });
+export type IndexRange = typeof IndexRange.Type;
 const IndexList = S.Struct({
   _tag: S.tag("int_list"),
   list: S.Array(S.Number),
 });
+export type IndexList = typeof IndexList.Type;
 const IntSet = S.transformOrFail(
   S.Union(Raw.TecInt, Raw.TecRngInt, Raw.TecList),
   S.Union(IndexRange, IndexList),
@@ -146,7 +148,6 @@ export type StringSet = typeof StringSet.Type;
 const IndexSet = S.Union(IntSet, EnumSet, StringSet);
 export type IndexSet = typeof IndexSet.Type;
 export type IndexItem = number | string;
-
 export function decodeGenericIndexSets(
   asts: readonly Raw.TecAST[],
 ): Effect.Effect<IndexSet[], ParseError> {
@@ -237,6 +238,18 @@ export const Schematic = Raw.TecType.pipe(
 
 export type Schematic = typeof Render.Type;
 
+export const Pom = Raw.TecType.pipe(
+  S.compose(
+    S.Struct({
+      ...Raw.TecType.fields,
+      typeName: S.Literal("Pom"),
+      parameters: S.Tuple(StringSet, StringSet),
+    }),
+  ),
+);
+
+export type Pom = typeof Pom.Type;
+
 export const RefinedTecType = S.Union(
   Text,
   Pantone,
@@ -244,5 +257,6 @@ export const RefinedTecType = S.Union(
   Fabric,
   Schematic,
   Image,
+  Pom,
 );
 export type RefinedTecType = typeof RefinedTecType.Type;

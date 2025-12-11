@@ -93,6 +93,27 @@ export function createGraphDB(): TheGraph {
   addEdge(colorwayNodes[2]!, fabricNodes[2]!);
   addEdge(colorwayNodes[2]!, fabricNodes[3]!);
 
-  console.log("=== MOCK DATA ====", { colorwayNodes, fabricNodes });
+  const sizes = ["XS", "S", "M", "L", "XL", "2XL"];
+  const addSize = (id: string) => addNode("Size", [id]);
+  const sizeNodes = sizes.map(addSize);
+  const lines = ["A", "B", "C", "D", "E"];
+  const addLine = (id: string) => addNode("Line", [id]);
+  const lineNodes = lines.map(addLine);
+  const addPom = (size: string, line: string, value: number) =>
+    addNode("Pom", [size, line], { value });
+  const reference = [17, 4, 4.5, 17, 11];
+  const pomNodes = sizes.map((size, i) =>
+    lines.map((line, j) => {
+      const pomNode = addPom(size, line, nonNull(reference[j]) + i * 0.5);
+      addEdge(nonNull(sizeNodes[i]), pomNode);
+      addEdge(nonNull(lineNodes[j]), pomNode);
+      return pomNode;
+    }),
+  );
+
   return graph;
+}
+function nonNull<A>(a: A | null | undefined): A {
+  if (a) return a;
+  throw new Error("unexpected null");
 }

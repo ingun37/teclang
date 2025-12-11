@@ -37,6 +37,9 @@ const refined = computed((): RefinedTecType | null => {
     <v-sheet v-else-if="refined.typeName === 'Image'">
       <Image :name="refined.parameters[0].str"></Image>
     </v-sheet>
+    <v-sheet v-else-if="refined.typeName === 'Pom'">
+      <Pom :pom="refined"></Pom>
+    </v-sheet>
   </v-sheet>
 
   <v-sheet v-if="tecType.typeName === 'Logo'">

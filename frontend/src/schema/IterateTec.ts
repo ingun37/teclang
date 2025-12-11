@@ -2,6 +2,8 @@ import type { NodeAttributes, TheGraph } from "@/graphdb.ts";
 import {
   decodeGenericIndexSets,
   type IndexItem,
+  type IndexList,
+  type IndexRange,
   type IndexSet,
 } from "@/schema/TecRefined.ts";
 import { Array, Effect } from "effect";
@@ -38,12 +40,29 @@ export function* itertateIndexSets(
   }
 }
 
-export type Entry = {
+type EntryTT<T extends readonly IndexItem[]> = {
   node: string;
-  indexSet: IndexItem[];
+  indexSet: T;
 };
+export type EntryT<T extends IndexItem> = EntryTT<readonly T[]>;
+export type Entry = EntryT<IndexItem>;
 export type TypedEntry = { entry: Entry; typeName: string };
 
+type IndexType<I extends IndexSet> = I extends IndexRange
+  ? number
+  : I extends IndexList
+    ? number
+    : string;
+export function* iterateIndexSetsDBTuple<
+  A extends IndexSet,
+  B extends IndexSet,
+>(
+  db: TheGraph,
+  typeName: string,
+  parameters: readonly [A, B],
+): Generator<EntryTT<readonly [IndexType<A>, IndexType<B>]>> {
+  yield* iterateIndexSetsDB(db, typeName, parameters) as any;
+}
 export function* iterateIndexSetsDB(
   db: TheGraph,
   typeName: string,
@@ -79,7 +98,9 @@ export function* iterateTecType(
   db: TheGraph,
   tecType: TecType,
 ): Generator<TypedEntry> {
-  const indexSets = Effect.runSync(decodeGenericIndexSets(tecType.parameters));
+  const indexSets: IndexSet[] = Effect.runSync(
+    decodeGenericIndexSets(tecType.parameters),
+  );
   const entries = iterateIndexSetsDB(db, tecType.typeName, indexSets);
   for (const entry of entries) yield { entry, typeName: tecType.typeName };
 }
