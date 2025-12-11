@@ -18,7 +18,7 @@ const items = computed(() => {
       <v-sheet v-for="(queryEntries, index) in items" :key="index">
         <v-sheet class="d-flex flex-column">
           <v-sheet v-for="(queryEntry, index) in queryEntries" :key="index">
-            <Single :t-entry="queryEntry" />
+            <Single :t-entry="queryEntry" class="pa-1" />
           </v-sheet>
         </v-sheet>
       </v-sheet>
