@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { TecAST, TecASTEquivalence, TecType } from "@/schema/TecAstSchema.ts";
+import { TecAST, TecType } from "@/schema/TecAstSchema.ts";
 import { decodeUnknownSync } from "effect/Schema";
 import { RefinedTecType } from "@/schema/TecRefined.ts";
 import Zip from "@/components/Zip.vue";
@@ -42,11 +42,10 @@ const handleContextMenu = (event: MouseEvent) => {
   }
 };
 
-function handleItemRemove(ast: TecAST) {
+function handleItemRemove(ast: TecAST, index: number) {
   console.log("removing", ast.tag);
-  const newParams = tecType.value.parameters.filter(
-    (x) => !TecASTEquivalence(ast, x),
-  );
+  let newParams = [...tecType.value.parameters];
+  newParams.splice(index, 1);
 
   if (newParams.length === 0) {
     console.log("After removing an item, HStack is empty. Removing it too ...");
