@@ -65,3 +65,7 @@ parseHaskell code = toJSString <$> Util.parseHaskell (fromJSString code)
 foreign export javascript "formatHaskell" formatHaskell :: JSString -> IO JSString
 formatHaskell :: JSString -> IO JSString
 formatHaskell = return . toJSString . TL.unpack . Simple.pStringNoColor . fromJSString
+
+foreign export javascript "makeHaskell" makeHaskell :: JSString -> IO JSString
+makeHaskell :: JSString -> IO JSString
+makeHaskell code = toJSString <$> Util.makeHaskell (fromJSString code)

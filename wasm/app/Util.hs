@@ -1,14 +1,13 @@
 module Util where
 
 import Control.Monad.Except
-import Control.Monad.Trans
 import Data.Aeson qualified as J
 import Data.ByteString qualified as BS
 import Data.Text qualified as T
 import Data.Text.Encoding qualified as TE
 import MyLib qualified
 
-data AppErr = TecErr MyLib.TecError
+data AppErr = TecErr MyLib.TecError | ErrMsg String deriving (Show)
 
 mapLeft :: (a -> c) -> Either a b -> Either c b
 mapLeft f (Left a) = Left (f a)
@@ -24,9 +23,15 @@ _parseHaskell code = do
 parseHaskell :: String -> IO String
 parseHaskell x = do
   e <- runExceptT $ _parseHaskell x
-  case e of
-    Left err ->
-      case err of
-        TecErr (MyLib.TecError msg) -> do
-          fail msg
-    Right json -> return json
+  either (fail . show) return e
+  
+_makeHaskell :: String -> ExceptT AppErr IO String
+_makeHaskell jsonStr = do
+  let tecAst = J.decodeStrictText (T.pack jsonStr) :: Maybe MyLib.TecAST
+  tecAst' <- liftEither $ maybe (Left $ ErrMsg "json decoding failed") Right tecAst
+  liftEither $ mapLeft TecErr (MyLib.makeHaskellCode tecAst')
+
+makeHaskell :: String -> IO String
+makeHaskell x = do
+  e <- runExceptT $ _makeHaskell x
+  either (fail . show) return e
