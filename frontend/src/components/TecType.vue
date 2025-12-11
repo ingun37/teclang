@@ -6,6 +6,9 @@ import Zip from "@/components/Zip.vue";
 import Image from "@/components/Image.vue";
 
 const props = defineProps<{ tecType: TecType }>();
+const emit = defineEmits<{
+  deleted: [];
+}>();
 
 const refined = computed((): RefinedTecType | null => {
   try {
@@ -15,54 +18,81 @@ const refined = computed((): RefinedTecType | null => {
     return null;
   }
 });
+
+const isSelected = ref(false);
+
+const handleClick = () => {
+  isSelected.value = true;
+};
+
+const handleDeleteKey = (event: KeyboardEvent) => {
+  if (event.key === "Delete" || event.key === "Backspace") {
+    console.log("delete me", props.tecType.typeName);
+    emit("deleted");
+  }
+};
+
+watch(isSelected, (selected) => {
+  if (selected) {
+    window.addEventListener("keydown", handleDeleteKey);
+  } else {
+    window.removeEventListener("keydown", handleDeleteKey);
+  }
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", handleDeleteKey);
+});
 </script>
 
 <template>
-  <v-sheet v-if="refined">
-    <v-sheet v-if="refined.typeName === 'Text'">
-      <Text :text="refined.parameters[0]!.str" />
+  <div @click.stop="handleClick">
+    <v-sheet v-if="refined">
+      <v-sheet v-if="refined.typeName === 'Text'">
+        <Text :text="refined.parameters[0]!.str" />
+      </v-sheet>
+      <v-sheet v-else-if="refined.typeName === 'Pantone'">
+        <Many :index-sets="refined.parameters" :type-name="refined.typeName" />
+      </v-sheet>
+      <v-sheet v-else-if="refined.typeName === 'Fabric'">
+        <Fabrics :item="refined" />
+      </v-sheet>
+      <v-sheet v-else-if="refined.typeName === 'Render'">
+        <Many :index-sets="refined.parameters" :type-name="refined.typeName" />
+      </v-sheet>
+      <v-sheet v-else-if="refined.typeName === 'Schematic'">
+        <Many :index-sets="refined.parameters" :type-name="refined.typeName" />
+      </v-sheet>
+      <v-sheet v-else-if="refined.typeName === 'Image'">
+        <Image :name="refined.parameters[0].str"></Image>
+      </v-sheet>
+      <v-sheet v-else-if="refined.typeName === 'Pom'">
+        <Pom :pom="refined"></Pom>
+      </v-sheet>
     </v-sheet>
-    <v-sheet v-else-if="refined.typeName === 'Pantone'">
-      <Many :index-sets="refined.parameters" :type-name="refined.typeName" />
-    </v-sheet>
-    <v-sheet v-else-if="refined.typeName === 'Fabric'">
-      <Fabrics :item="refined" />
-    </v-sheet>
-    <v-sheet v-else-if="refined.typeName === 'Render'">
-      <Many :index-sets="refined.parameters" :type-name="refined.typeName" />
-    </v-sheet>
-    <v-sheet v-else-if="refined.typeName === 'Schematic'">
-      <Many :index-sets="refined.parameters" :type-name="refined.typeName" />
-    </v-sheet>
-    <v-sheet v-else-if="refined.typeName === 'Image'">
-      <Image :name="refined.parameters[0].str"></Image>
-    </v-sheet>
-    <v-sheet v-else-if="refined.typeName === 'Pom'">
-      <Pom :pom="refined"></Pom>
-    </v-sheet>
-  </v-sheet>
 
-  <v-sheet v-if="tecType.typeName === 'Logo'">
-    <Logo />
-  </v-sheet>
-  <v-sheet v-if="tecType.typeName === 'Code'">
-    <Code />
-  </v-sheet>
-  <v-sheet v-if="tecType.typeName === 'Name'">
-    <Name />
-  </v-sheet>
-  <v-sheet v-if="tecType.typeName === 'PageNumber'">
-    <PageNumber />
-  </v-sheet>
-  <v-sheet v-if="tecType.typeName === 'HStack'">
-    <HStack :items="tecType.parameters" />
-  </v-sheet>
-  <v-sheet v-if="tecType.typeName === 'VStack'">
-    <VStack :items="tecType.parameters" />
-  </v-sheet>
-  <v-sheet v-if="tecType.typeName === 'Zip'">
-    <Zip :asts="tecType.parameters" />
-  </v-sheet>
+    <v-sheet v-if="tecType.typeName === 'Logo'">
+      <Logo />
+    </v-sheet>
+    <v-sheet v-if="tecType.typeName === 'Code'">
+      <Code />
+    </v-sheet>
+    <v-sheet v-if="tecType.typeName === 'Name'">
+      <Name />
+    </v-sheet>
+    <v-sheet v-if="tecType.typeName === 'PageNumber'">
+      <PageNumber />
+    </v-sheet>
+    <v-sheet v-if="tecType.typeName === 'HStack'">
+      <HStack :items="tecType.parameters" />
+    </v-sheet>
+    <v-sheet v-if="tecType.typeName === 'VStack'">
+      <VStack :items="tecType.parameters" />
+    </v-sheet>
+    <v-sheet v-if="tecType.typeName === 'Zip'">
+      <Zip :asts="tecType.parameters" />
+    </v-sheet>
+  </div>
 </template>
 
 <style lang="sass" scoped></style>
