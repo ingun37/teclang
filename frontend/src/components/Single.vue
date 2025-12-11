@@ -6,12 +6,7 @@ const props = defineProps<{ tEntry: TypedEntry }>();
 
 <template>
   <v-sheet v-if="tEntry.typeName === 'Pantone'">
-    <v-card class="pantone-container" subtitle="PANTONE 2001">
-      <v-card-text>
-        <div class="color-square"></div>
-        <div class="color-label">#76ab2a</div>
-      </v-card-text>
-    </v-card>
+    <Pantone :item="tEntry" />
   </v-sheet>
   <v-sheet v-else-if="tEntry.typeName === 'Render'">
     <v-img
@@ -39,20 +34,4 @@ const props = defineProps<{ tEntry: TypedEntry }>();
   </v-sheet>
 </template>
 
-<style lang="sass" scoped>
-.pantone-container
-  display: flex
-  flex-direction: column
-  align-items: center
-
-.color-square
-  width: 60px
-  height: 60px
-  background-color: #40E0D0
-  border: 1px solid #ccc
-  border-radius: 4px
-
-.color-label
-  font-size: 14px
-  text-align: center
-</style>
+<style lang="sass" scoped></style>

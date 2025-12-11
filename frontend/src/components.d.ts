@@ -22,7 +22,6 @@ declare module 'vue' {
     Name: typeof import('./components/Name.vue')['default']
     PageNumber: typeof import('./components/PageNumber.vue')['default']
     Pantone: typeof import('./components/Pantone.vue')['default']
-    Pantones: typeof import('./components/Pantones.vue')['default']
     Query: typeof import('./components/Query.vue')['default']
     Render: typeof import('./components/Render.vue')['default']
     Renders: typeof import('./components/Renders.vue')['default']
