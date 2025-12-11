@@ -74,13 +74,7 @@ import { useAppStore } from "@/stores/app";
 import { refDebounced, useDebounceFn } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
-import {
-  decodeTecAST,
-  encodeTecAST,
-  type TecAST as TecASTType,
-  TecStr,
-  TecType,
-} from "@/schema/TecAstSchema.ts";
+import { decodeTecAST, encodeTecAST, type TecAST as TecASTType, TecStr, TecType } from "@/schema/TecAstSchema.ts";
 
 const appStore = useAppStore();
 
@@ -120,11 +114,6 @@ watch(jsonString, (newValue) => {
   }
 });
 
-watch(jsonString, (newValue) => {
-  if (newValue === null || newValue.length === 0) return;
-  const tecAST = decodeTecAST(JSON.parse(newValue));
-  console.log(tecAST);
-});
 // Option 1: Debounced callback function
 const debouncedCallback = useDebounceFn(async (value: string) => {
   console.log("Debounced value changed:", value);
