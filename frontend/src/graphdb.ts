@@ -28,6 +28,15 @@ export function createGraphDB(): TheGraph {
       meta: meta ?? {},
     });
   }
+  function addEdge(from: string, to: string, third?: string) {
+    graph.addUndirectedEdge(from, to);
+    if (third) {
+      if (!graph.hasUndirectedEdge(from, third))
+        graph.addUndirectedEdge(from, third);
+      if (!graph.hasUndirectedEdge(to, third))
+        graph.addUndirectedEdge(to, third);
+    }
+  }
   const colorways = rng(4);
   const addColorway = (id: number) => addNode("Colorway", [id]);
   const colorwayNodes = colorways.map(addColorway);
@@ -44,21 +53,27 @@ export function createGraphDB(): TheGraph {
   ];
   const pantoneNodes = pantones.map(addPantone);
   const sides = ["Front", "Back", "Left", "Right"];
-  const addRender = (id0: number, id1: string) => addNode("Render", [id0, id1]);
+  const sideNodes = sides.map((side) => addNode("Side", [side]));
+  function sideNode(side: string) {
+    const i = sides.findIndex((s) => s === side);
+    if (i < 0) throw new Error(`side ${side} not found`);
+    const n = sideNodes[i];
+    if (!n) throw new Error(`side ${side} not found`);
+    return n;
+  }
+  const addRender = (id0: number, id1: string) => {
+    const node = addNode("Render", [id0, id1]);
+    addEdge(sideNode(id1), node);
+    return node;
+  };
   const renderNodes = colorways.map((id0) =>
     sides.map((id1) => addRender(id0, id1)),
   );
-  sides.map((side) => addNode("Schematic", [side]));
-
-  function addEdge(from: string, to: string, third?: string) {
-    graph.addUndirectedEdge(from, to);
-    if (third) {
-      if (!graph.hasUndirectedEdge(from, third))
-        graph.addUndirectedEdge(from, third);
-      if (!graph.hasUndirectedEdge(to, third))
-        graph.addUndirectedEdge(to, third);
-    }
-  }
+  const schematicNodes = sides.map((side) => {
+    const n = addNode("Schematic", [side]);
+    addEdge(sideNode(side), n);
+    return n;
+  });
 
   colorways.map((c) =>
     sides.map((s) =>

@@ -201,6 +201,18 @@ export const Render = Raw.TecType.pipe(
 
 export type Render = typeof Render.Type;
 
+export const Side = Raw.TecType.pipe(
+  S.compose(
+    S.Struct({
+      ...Raw.TecType.fields,
+      typeName: S.Literal("Side"),
+      parameters: S.Tuple(EnumSet),
+    }),
+  ),
+);
+
+export type Side = typeof Side.Type;
+
 export const Schematic = Raw.TecType.pipe(
   S.compose(
     S.Struct({
