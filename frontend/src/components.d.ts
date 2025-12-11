@@ -13,7 +13,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     Code: typeof import('./components/Code.vue')['default']
-    Fabric: typeof import('./components/Fabric.vue')['default']
     Fabrics: typeof import('./components/Fabrics.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     HStack: typeof import('./components/HStack.vue')['default']

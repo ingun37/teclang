@@ -5,8 +5,13 @@ import type { TecAST as TecASTType } from "@/schema/TecAstSchema.ts";
 interface Props {
   items: readonly TecASTType[];
 }
-
+const emit = defineEmits<{
+  onItemRemove: [TecASTType];
+}>();
 const props = defineProps<Props>();
+function deleteItem(item: TecASTType) {
+  emit("onItemRemove", item);
+}
 </script>
 
 <template>
@@ -17,7 +22,7 @@ const props = defineProps<Props>();
           v-if="item.tag === 'TecType' && item.typeName === 'Spacing'"
           style="min-width: 100px"
         ></v-spacer>
-        <TecAST v-else :ast="item" />
+        <TecAST v-else :ast="item" @deleted="deleteItem" />
       </Resizable>
     </v-sheet>
   </v-sheet>

@@ -1,18 +1,20 @@
 <script lang="ts" setup>
-import type { TecType } from "@/schema/TecAstSchema.ts";
+import { TecAST, TecASTEquivalence, TecType } from "@/schema/TecAstSchema.ts";
 import { decodeUnknownSync } from "effect/Schema";
 import { RefinedTecType } from "@/schema/TecRefined.ts";
 import Zip from "@/components/Zip.vue";
 import Image from "@/components/Image.vue";
 
-const props = defineProps<{ tecType: TecType }>();
+const props = defineProps<{ inputTecType: TecType }>();
 const emit = defineEmits<{
-  deleted: [];
+  deleted: [TecType];
 }>();
+
+const tecType = ref(props.inputTecType);
 
 const refined = computed((): RefinedTecType | null => {
   try {
-    return decodeUnknownSync(RefinedTecType)(props.tecType);
+    return decodeUnknownSync(RefinedTecType)(tecType.value);
   } catch (e) {
     console.warn("Error decoding TecType:", e);
     return null;
@@ -27,8 +29,8 @@ const handleClick = () => {
 
 const handleDeleteKey = (event: KeyboardEvent) => {
   if (event.key === "Delete" || event.key === "Backspace") {
-    console.log("delete me", props.tecType.typeName);
-    emit("deleted");
+    console.log("delete me", tecType.value.typeName);
+    emit("deleted", tecType.value);
   }
 };
 
@@ -43,6 +45,22 @@ watch(isSelected, (selected) => {
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleDeleteKey);
 });
+
+function handleItemRemove(ast: TecAST) {
+  console.log("removing", ast.tag);
+  const newParams = tecType.value.parameters.filter(
+    (x) => !TecASTEquivalence(ast, x),
+  );
+
+  if (newParams.length === 0) {
+    console.log("After removing an item, HStack is empty. Removing it too ...");
+    emit("deleted", props.inputTecType);
+  } else
+    tecType.value = TecType.make({
+      typeName: tecType.value.typeName,
+      parameters: newParams,
+    });
+}
 </script>
 
 <template>
@@ -84,7 +102,7 @@ onBeforeUnmount(() => {
       <PageNumber />
     </v-sheet>
     <v-sheet v-if="tecType.typeName === 'HStack'">
-      <HStack :items="tecType.parameters" />
+      <HStack :items="tecType.parameters" @onItemRemove="handleItemRemove" />
     </v-sheet>
     <v-sheet v-if="tecType.typeName === 'VStack'">
       <VStack :items="tecType.parameters" />

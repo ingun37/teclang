@@ -22,7 +22,7 @@
       <v-card>
         <v-card-title>TecAST Visualization</v-card-title>
         <v-card-text>
-          <TecAST v-if="tecAST" :ast="tecAST" />
+          <TecAST v-if="tecAST" :ast="tecAST" @deleted="handleRemove" />
           <span v-else class="text-grey">No AST to display...</span>
         </v-card-text>
       </v-card>
@@ -71,7 +71,7 @@ import { ref, watch } from "vue";
 import {
   decodeTecAST,
   encodeTecAST,
-  type TecAST,
+  type TecAST as TecASTType,
   TecStr,
   TecType,
 } from "@/schema/TecAstSchema.ts";
@@ -81,7 +81,12 @@ const appStore = useAppStore();
 const debounceTime = 2000;
 const jsonString = ref<string>("");
 const isLoading = ref(false);
-const tecAST = ref<TecAST | null>(null);
+const tecAST = ref<TecASTType | null>(null);
+function handleRemove() {
+  console.log("removing root ast ...");
+  tecAST.value = null;
+  appStore.textValue = "";
+}
 async function formatCode() {
   const code = appStore.textValue;
   const formatted: string = await appStore.wasmInstance.formatHaskell(code);

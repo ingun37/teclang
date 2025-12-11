@@ -62,6 +62,7 @@ export const TecAST = S.Union(
   TecStr,
   TecRngInt,
 );
+export const TecASTEquivalence = S.equivalence(TecAST);
 
 export function decodeTecAST(o: any): TecAST {
   return S.decodeUnknownSync(TecAST)(o);
