@@ -54,6 +54,7 @@ const TecQueryB = S.Struct({
   left: S.suspend((): Schema<TecQuery> => TecQuery),
   right: S.suspend((): Schema<TecType> => TecType),
 });
+
 const TecQuery = S.Union(TecQueryA, TecQueryB);
 export const TecType = S.Struct({
   tag: S.tag("TecType"),

@@ -96,9 +96,7 @@ function* recurseA(
       neighbors.includes(rightEntry.entry.node),
     );
     for (const rightEntry of intersect) {
-      const xy: [TypedEntry, TypedEntry] = [leftEntry, rightEntry];
-      xy.sort((a, b) => a.entry.node.localeCompare(b.entry.node));
-      yield xy;
+      yield [leftEntry, rightEntry];
     }
   }
 }
@@ -110,20 +108,15 @@ export function* iterateQuery(
     yield* recurseA(db, query);
   } else if (query.op === ":>") {
     for (const chain of iterateQuery(db, query.left)) {
-      const rightIndexSets = Effect.runSync(
-        decodeGenericIndexSets(query.right.parameters),
-      );
-      const rightDB = Array.fromIterable(
-        iterateIndexSetsDB(db, query.right.typeName, rightIndexSets),
-      );
+      const rightDB = Array.fromIterable(iterateTecType(db, query.right));
 
-      const edgeNode = chain.map((x) => x.entry.node).join("->");
-      const neighbors = db.directedNeighbors(edgeNode);
-      const intersect = rightDB.filter((rEntry) =>
-        neighbors.includes(rEntry.node),
-      );
-      for (const rightEntry of intersect) {
-        yield [...chain, { entry: rightEntry, typeName: query.right.typeName }];
+      for (const rightEntry of rightDB) {
+        const inLoop = chain.every((leftEntry) => {
+          const neighbors = db.undirectedNeighbors(leftEntry.entry.node);
+          return neighbors.includes(rightEntry.entry.node);
+        });
+
+        if (inLoop) yield [...chain, rightEntry];
       }
     }
   }

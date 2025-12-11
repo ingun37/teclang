@@ -13,14 +13,14 @@ const items = computed(() => {
 });
 </script>
 <template>
-  <v-sheet v-if="items" class="query-results">
-    <v-sheet
-      v-for="(queryEntries, index) in items"
-      :key="index"
-      class="query-item"
-    >
-      <v-sheet v-for="(queryEntry, index) in queryEntries" :key="index">
-        <Single :t-entry="queryEntry" />
+  <v-sheet v-if="items">
+    <v-sheet class="d-flex flex-row">
+      <v-sheet v-for="(queryEntries, index) in items" :key="index">
+        <v-sheet class="d-flex flex-column">
+          <v-sheet v-for="(queryEntry, index) in queryEntries" :key="index">
+            <Single :t-entry="queryEntry" />
+          </v-sheet>
+        </v-sheet>
       </v-sheet>
     </v-sheet>
   </v-sheet>
@@ -28,16 +28,6 @@ const items = computed(() => {
 </template>
 
 <style lang="sass" scoped>
-.query-results
-  display: flex
-  flex-direction: column
-  gap: 8px
-
-.query-item
-  padding: 8px
-  background-color: #f5f5f5
-  border-radius: 4px
-  border: 1px solid #ddd
 
 .no-results
   color: #999

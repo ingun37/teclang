@@ -7,15 +7,11 @@ export type EdgeAttributes = {
   edgeNode: string;
   thirdNodes: string[];
 };
-export type NodeAttributes =
-  | {
-      _tag: "TypeNode";
-      typeName: string;
-      ids: IndexItem[];
-    }
-  | {
-      _tag: "EdgeNode";
-    };
+export type NodeAttributes = {
+  _tag: "TypeNode";
+  typeName: string;
+  ids: IndexItem[];
+};
 export function createGraphDB(): TheGraph {
   const graph = new Graph<NodeAttributes, EdgeAttributes, any>();
 
@@ -46,26 +42,14 @@ export function createGraphDB(): TheGraph {
   );
   sides.map((side) => addNode("Schematic", side));
 
-  function addEdge(
-    from: string,
-    to: string,
-    third: string | undefined = undefined,
-  ) {
-    const xy = [from, to];
-    xy.sort();
-    const edgeNode = xy.join("->");
-    const edgeAtt: EdgeAttributes = {
-      edgeNode,
-      thirdNodes: third ? [third] : [],
-    };
-    graph.addUndirectedEdge(from, to, edgeAtt);
-    graph.addNode(edgeNode, {
-      _tag: "EdgeNode",
-    });
-
-    edgeAtt.thirdNodes.forEach((thirdNode) =>
-      graph.addEdge(edgeNode, thirdNode),
-    );
+  function addEdge(from: string, to: string, third?: string) {
+    graph.addUndirectedEdge(from, to);
+    if (third) {
+      if (!graph.hasUndirectedEdge(from, third))
+        graph.addUndirectedEdge(from, third);
+      if (!graph.hasUndirectedEdge(to, third))
+        graph.addUndirectedEdge(to, third);
+    }
   }
 
   colorways.map((c) =>
@@ -77,10 +61,10 @@ export function createGraphDB(): TheGraph {
     ),
   );
 
-  addEdge(colorwayNodes[0]!, fabricNodes[0]!, pantoneNodes[0]);
-  addEdge(colorwayNodes[1]!, fabricNodes[0]!, pantoneNodes[1]);
-  addEdge(colorwayNodes[2]!, fabricNodes[0]!, pantoneNodes[2]);
-  addEdge(colorwayNodes[3]!, fabricNodes[0]!, pantoneNodes[2]);
+  addEdge(colorwayNodes[0]!, fabricNodes[0]!, pantoneNodes[0]!);
+  addEdge(colorwayNodes[1]!, fabricNodes[0]!, pantoneNodes[1]!);
+  addEdge(colorwayNodes[2]!, fabricNodes[0]!, pantoneNodes[2]!);
+  addEdge(colorwayNodes[3]!, fabricNodes[0]!, pantoneNodes[2]!);
 
   addEdge(colorwayNodes[1]!, fabricNodes[1]!);
   addEdge(colorwayNodes[2]!, fabricNodes[2]!);
