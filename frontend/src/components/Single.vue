@@ -9,12 +9,7 @@ const props = defineProps<{ tEntry: TypedEntry }>();
     <Pantone :item="tEntry" />
   </v-sheet>
   <v-sheet v-else-if="tEntry.typeName === 'Render'">
-    <v-img
-      :src="`/render/${tEntry.entry.indexSet[0]}-${tEntry.entry.indexSet[1]}.png`"
-      alt="Render image"
-      max-width="500px"
-      min-width="100px"
-    />
+    <Render :item="tEntry" />
   </v-sheet>
   <v-sheet v-else-if="tEntry.typeName === 'Schematic'">
     <v-img

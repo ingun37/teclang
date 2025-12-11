@@ -24,7 +24,6 @@ declare module 'vue' {
     Pantone: typeof import('./components/Pantone.vue')['default']
     Query: typeof import('./components/Query.vue')['default']
     Render: typeof import('./components/Render.vue')['default']
-    Renders: typeof import('./components/Renders.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Single: typeof import('./components/Single.vue')['default']

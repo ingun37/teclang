@@ -28,7 +28,7 @@ const transposed = computed(() => {
     <v-sheet v-for="(row, index) in transposed" :key="index">
       <v-sheet class="d-flex flex-column">
         <v-sheet v-for="(entry, index) in row" :key="index">
-          <Single v-if="entry" :t-entry="entry" />
+          <Single v-if="entry" :t-entry="entry" class="pa-1" />
         </v-sheet>
       </v-sheet>
     </v-sheet>

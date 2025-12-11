@@ -28,7 +28,7 @@ const refined = computed((): RefinedTecType | null => {
       <Fabrics :item="refined" />
     </v-sheet>
     <v-sheet v-else-if="refined.typeName === 'Render'">
-      <Renders :render-item="refined" />
+      <Many :index-sets="refined.parameters" :type-name="refined.typeName" />
     </v-sheet>
     <v-sheet v-else-if="refined.typeName === 'Schematic'">
       <Many :index-sets="refined.parameters" :type-name="refined.typeName" />
