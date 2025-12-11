@@ -86,15 +86,19 @@ const startResize = (
 
 .resize-handle-horizontal
   right: 0
-  top: 0
+  top: 50%
+  transform: translateY(-50%)
   bottom: 0
-  width: 8px
+  width: 4px
+  height: 40px
   cursor: ew-resize
 
 .resize-handle-vertical
-  left: 0
+  left: 50%
+  transform: translateX(-50%)
   right: 0
   bottom: 0
-  height: 8px
+  height: 4px
+  width: 40px
   cursor: ns-resize
 </style>
