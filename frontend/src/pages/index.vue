@@ -22,7 +22,13 @@
       <v-card>
         <v-card-title>TecAST Visualization</v-card-title>
         <v-card-text>
-          <TecAST v-if="tecAST" :ast="tecAST" @deleted="handleRemove" />
+          <TecAST
+            v-if="tecAST"
+            :ast="tecAST"
+            @deleted="handleRemove"
+            @updated="(x) => handleUpdate(x)"
+          />
+
           <span v-else class="text-grey">No AST to display...</span>
         </v-card-text>
       </v-card>
@@ -80,6 +86,10 @@ function handleRemove() {
   console.log("removing root ast ...");
   tecAST.value = null;
   appStore.textValue = "";
+}
+function handleUpdate(newItem: TecASTType) {
+  console.log("updating root ast ...");
+  tecAST.value = newItem;
 }
 async function formatCode() {
   const code = appStore.textValue;

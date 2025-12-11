@@ -8,15 +8,14 @@ import Image from "@/components/Image.vue";
 const props = defineProps<{ inputTecType: TecType }>();
 const emit = defineEmits<{
   deleted: [TecType];
+  updated: [TecType];
 }>();
-
-const tecType = ref(props.inputTecType);
 
 const refined = computed((): RefinedTecType | null => {
   try {
-    return decodeUnknownSync(RefinedTecType)(tecType.value);
+    return decodeUnknownSync(RefinedTecType)(props.inputTecType);
   } catch (e) {
-    console.warn("Error decoding TecType:", e);
+    // console.warn("Error decoding TecType:", e);
     return null;
   }
 });
@@ -27,7 +26,7 @@ const menuX = ref(0);
 const menuY = ref(0);
 
 const handleClick = () => {
-  isSelected.value = true;
+  isSelected.value = !isSelected.value;
 };
 
 const handleContextMenu = (event: MouseEvent) => {
@@ -44,17 +43,33 @@ const handleContextMenu = (event: MouseEvent) => {
 
 function handleItemRemove(ast: TecAST, index: number) {
   console.log("removing", ast.tag);
-  let newParams = [...tecType.value.parameters];
+  let newParams = [...props.inputTecType.parameters];
   newParams.splice(index, 1);
 
   if (newParams.length === 0) {
     console.log("After removing an item, HStack is empty. Removing it too ...");
     emit("deleted", props.inputTecType);
   } else
-    tecType.value = TecType.make({
-      typeName: tecType.value.typeName,
+    emit(
+      "updated",
+      TecType.make({
+        typeName: props.inputTecType.typeName,
+        parameters: newParams,
+      }),
+    );
+}
+function handleItemUpdate(newItem: TecAST, index: number) {
+  console.log("updating paramater", `#${index}`);
+
+  let newParams = [...props.inputTecType.parameters];
+  newParams[index] = newItem;
+  emit(
+    "updated",
+    TecType.make({
+      typeName: props.inputTecType.typeName,
       parameters: newParams,
-    });
+    }),
+  );
 }
 </script>
 
@@ -88,26 +103,30 @@ function handleItemRemove(ast: TecAST, index: number) {
       </v-sheet>
     </v-sheet>
 
-    <v-sheet v-if="tecType.typeName === 'Logo'">
+    <v-sheet v-if="inputTecType.typeName === 'Logo'">
       <Logo />
     </v-sheet>
-    <v-sheet v-if="tecType.typeName === 'Code'">
+    <v-sheet v-if="inputTecType.typeName === 'Code'">
       <Code />
     </v-sheet>
-    <v-sheet v-if="tecType.typeName === 'Name'">
+    <v-sheet v-if="inputTecType.typeName === 'Name'">
       <Name />
     </v-sheet>
-    <v-sheet v-if="tecType.typeName === 'PageNumber'">
+    <v-sheet v-if="inputTecType.typeName === 'PageNumber'">
       <PageNumber />
     </v-sheet>
-    <v-sheet v-if="tecType.typeName === 'HStack'">
-      <HStack :items="tecType.parameters" @onItemRemove="handleItemRemove" />
+    <v-sheet v-if="inputTecType.typeName === 'HStack'">
+      <HStack
+        :items="inputTecType.parameters"
+        @onItemRemove="handleItemRemove"
+        @updated="(newItem, index) => handleItemUpdate(newItem, index)"
+      />
     </v-sheet>
-    <v-sheet v-if="tecType.typeName === 'VStack'">
-      <VStack :items="tecType.parameters" />
+    <v-sheet v-if="inputTecType.typeName === 'VStack'">
+      <VStack :items="inputTecType.parameters" />
     </v-sheet>
-    <v-sheet v-if="tecType.typeName === 'Zip'">
-      <Zip :asts="tecType.parameters" />
+    <v-sheet v-if="inputTecType.typeName === 'Zip'">
+      <Zip :asts="inputTecType.parameters" />
     </v-sheet>
 
     <v-menu
@@ -116,7 +135,7 @@ function handleItemRemove(ast: TecAST, index: number) {
       absolute
     >
       <v-list>
-        <v-list-item @click="() => emit('deleted', tecType)">
+        <v-list-item @click="() => emit('deleted', inputTecType)">
           <v-list-item-title>Delete</v-list-item-title>
         </v-list-item>
       </v-list>

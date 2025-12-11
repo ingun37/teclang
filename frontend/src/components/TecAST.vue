@@ -9,6 +9,7 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits<{
   deleted: [TecAST];
+  updated: [TecAST];
 }>();
 function onDelete() {
   emit("deleted", props.ast);
@@ -17,7 +18,11 @@ function onDelete() {
 
 <template>
   <v-sheet v-if="ast.tag === 'TecType'">
-    <TecType :input-tec-type="ast" @deleted="onDelete" />
+    <TecType
+      :input-tec-type="ast"
+      @deleted="onDelete"
+      @updated="(x) => emit('updated', x)"
+    />
   </v-sheet>
   <v-sheet v-if="ast.tag === 'TecQuery'">
     <Query :query="ast" />

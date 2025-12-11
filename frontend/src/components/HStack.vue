@@ -7,10 +7,14 @@ interface Props {
 }
 const emit = defineEmits<{
   onItemRemove: [TecASTType, number];
+  updated: [TecASTType, number];
 }>();
 const props = defineProps<Props>();
 function deleteItem(item: TecASTType, index: number) {
   emit("onItemRemove", item, index);
+}
+function updateItem(newItem: TecASTType, index: number) {
+  emit("updated", newItem, index);
 }
 </script>
 
@@ -22,7 +26,12 @@ function deleteItem(item: TecASTType, index: number) {
           v-if="item.tag === 'TecType' && item.typeName === 'Spacing'"
           style="min-width: 100px"
         ></v-spacer>
-        <TecAST v-else :ast="item" @deleted="deleteItem(item, index)" />
+        <TecAST
+          v-else
+          :ast="item"
+          @deleted="deleteItem(item, index)"
+          @updated="(newItem) => updateItem(newItem, index)"
+        />
       </Resizable>
     </v-sheet>
   </v-sheet>
