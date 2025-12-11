@@ -3,6 +3,7 @@ import type { TecType } from "@/schema/TecAstSchema.ts";
 import { decodeUnknownSync } from "effect/Schema";
 import { RefinedTecType } from "@/schema/TecRefined.ts";
 import Zip from "@/components/Zip.vue";
+import Image from "@/components/Image.vue";
 
 const props = defineProps<{ tecType: TecType }>();
 
@@ -32,6 +33,9 @@ const refined = computed((): RefinedTecType | null => {
     </v-sheet>
     <v-sheet v-else-if="refined.typeName === 'Schematic'">
       <Many :index-sets="refined.parameters" :type-name="refined.typeName" />
+    </v-sheet>
+    <v-sheet v-else-if="refined.typeName === 'Image'">
+      <Image :name="refined.parameters[0].str"></Image>
     </v-sheet>
   </v-sheet>
 

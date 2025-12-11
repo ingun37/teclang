@@ -213,6 +213,18 @@ export const Side = Raw.TecType.pipe(
 
 export type Side = typeof Side.Type;
 
+export const Image = Raw.TecType.pipe(
+  S.compose(
+    S.Struct({
+      ...Raw.TecType.fields,
+      typeName: S.Literal("Image"),
+      parameters: S.Tuple(Raw.TecStr),
+    }),
+  ),
+);
+
+export type Image = typeof Image.Type;
+
 export const Schematic = Raw.TecType.pipe(
   S.compose(
     S.Struct({
@@ -225,5 +237,12 @@ export const Schematic = Raw.TecType.pipe(
 
 export type Schematic = typeof Render.Type;
 
-export const RefinedTecType = S.Union(Text, Pantone, Render, Fabric, Schematic);
+export const RefinedTecType = S.Union(
+  Text,
+  Pantone,
+  Render,
+  Fabric,
+  Schematic,
+  Image,
+);
 export type RefinedTecType = typeof RefinedTecType.Type;

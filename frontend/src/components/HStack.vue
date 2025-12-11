@@ -10,7 +10,7 @@ const props = defineProps<Props>();
 </script>
 
 <template>
-  <v-sheet class="d-flex flex-row">
+  <v-sheet class="d-flex flex-row ga-1">
     <TecAST v-for="(item, index) in items" :key="index" :ast="item" />
   </v-sheet>
 </template>

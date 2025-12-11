@@ -17,6 +17,7 @@ declare module 'vue' {
     Fabrics: typeof import('./components/Fabrics.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     HStack: typeof import('./components/HStack.vue')['default']
+    Image: typeof import('./components/Image.vue')['default']
     Logo: typeof import('./components/Logo.vue')['default']
     Many: typeof import('./components/Many.vue')['default']
     Name: typeof import('./components/Name.vue')['default']

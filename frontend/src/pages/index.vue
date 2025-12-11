@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <v-row><v-btn v-on:click="formatCode">Format code</v-btn></v-row>
     <v-row>
       <v-col cols="12">
         <v-textarea
@@ -70,7 +71,10 @@ const debounceTime = 2000;
 const jsonString = ref<string>("");
 const isLoading = ref(false);
 const tecAST = ref<TecAST | null>(null);
-
+async function formatCode() {
+  const code = appStore.textValue;
+  appStore.textValue = await appStore.wasmInstance.formatHaskell(code);
+}
 watch(jsonString, (newValue) => {
   if (!newValue) {
     tecAST.value = null;
