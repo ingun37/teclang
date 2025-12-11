@@ -1,6 +1,11 @@
 <template>
   <v-container>
-    <v-row><v-btn v-on:click="formatCode">Format code</v-btn></v-row>
+    <v-row
+      ><v-btn v-on:click="formatCode">Format code</v-btn>
+      <v-btn v-if="tecAST === null" v-on:click="createHStack"
+        >create hstack</v-btn
+      >
+    </v-row>
     <v-row>
       <v-col cols="12">
         <v-textarea
@@ -63,7 +68,7 @@ import { useAppStore } from "@/stores/app";
 import { refDebounced, useDebounceFn } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
-import { decodeTecAST, type TecAST } from "@/schema/TecAstSchema.ts";
+import { decodeTecAST, encodeTecAST, type TecAST, TecStr, TecType } from "@/schema/TecAstSchema.ts";
 
 const appStore = useAppStore();
 
@@ -126,7 +131,29 @@ watch(
     debouncedCallback(newValue);
   },
 );
-
+function createHStack() {
+  if (tecAST.value === null) {
+    tecAST.value = TecType.make({
+      typeName: "HStack",
+      parameters: [
+        TecType.make({
+          typeName: "Text",
+          parameters: [TecStr.make({ str: "(empty HStack)" })],
+        }),
+      ],
+    });
+  }
+}
+watch(tecAST, async (newValue) => {
+  if (!newValue) return;
+  const jsonStr = encodeTecAST(newValue).trim();
+  console.log("converting ast back to haskell code ...", jsonStr);
+  if (jsonStr) {
+    const haskellCodeTask: Promise<string> =
+      appStore.wasmInstance.makeHaskell(jsonStr);
+    appStore.textValue = await haskellCodeTask;
+  }
+});
 // Option 2: Debounced reactive ref (for display)
 const { textValue } = storeToRefs(appStore);
 const debouncedValue = refDebounced(textValue, debounceTime);

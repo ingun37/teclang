@@ -66,3 +66,7 @@ export const TecAST = S.Union(
 export function decodeTecAST(o: any): TecAST {
   return S.decodeUnknownSync(TecAST)(o);
 }
+
+export function encodeTecAST(o: TecAST): any {
+  return JSON.stringify(S.encodeSync(TecAST)(o));
+}
