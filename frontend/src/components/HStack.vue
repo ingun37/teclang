@@ -6,11 +6,11 @@ interface Props {
   items: readonly TecASTType[];
 }
 const emit = defineEmits<{
-  onItemRemove: [TecASTType];
+  onItemRemove: [TecASTType, number];
 }>();
 const props = defineProps<Props>();
-function deleteItem(item: TecASTType) {
-  emit("onItemRemove", item);
+function deleteItem(item: TecASTType, index: number) {
+  emit("onItemRemove", item, index);
 }
 </script>
 
@@ -22,7 +22,7 @@ function deleteItem(item: TecASTType) {
           v-if="item.tag === 'TecType' && item.typeName === 'Spacing'"
           style="min-width: 100px"
         ></v-spacer>
-        <TecAST v-else :ast="item" @deleted="deleteItem" />
+        <TecAST v-else :ast="item" @deleted="deleteItem(item, index)" />
       </Resizable>
     </v-sheet>
   </v-sheet>

@@ -22,29 +22,25 @@ const refined = computed((): RefinedTecType | null => {
 });
 
 const isSelected = ref(false);
+const showMenu = ref(false);
+const menuX = ref(0);
+const menuY = ref(0);
 
 const handleClick = () => {
   isSelected.value = true;
 };
 
-const handleDeleteKey = (event: KeyboardEvent) => {
-  if (event.key === "Delete" || event.key === "Backspace") {
-    console.log("delete me", tecType.value.typeName);
-    emit("deleted", tecType.value);
+const handleContextMenu = (event: MouseEvent) => {
+  if (isSelected.value) {
+    event.preventDefault();
+    showMenu.value = false;
+    menuX.value = event.clientX;
+    menuY.value = event.clientY;
+    nextTick(() => {
+      showMenu.value = true;
+    });
   }
 };
-
-watch(isSelected, (selected) => {
-  if (selected) {
-    window.addEventListener("keydown", handleDeleteKey);
-  } else {
-    window.removeEventListener("keydown", handleDeleteKey);
-  }
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("keydown", handleDeleteKey);
-});
 
 function handleItemRemove(ast: TecAST) {
   console.log("removing", ast.tag);
@@ -64,7 +60,11 @@ function handleItemRemove(ast: TecAST) {
 </script>
 
 <template>
-  <div @click.stop="handleClick">
+  <div
+    :class="{ 'selected-tectype': isSelected }"
+    @contextmenu="handleContextMenu"
+    @click.stop="handleClick"
+  >
     <v-sheet v-if="refined">
       <v-sheet v-if="refined.typeName === 'Text'">
         <Text :text="refined.parameters[0]!.str" />
@@ -110,7 +110,26 @@ function handleItemRemove(ast: TecAST) {
     <v-sheet v-if="tecType.typeName === 'Zip'">
       <Zip :asts="tecType.parameters" />
     </v-sheet>
+
+    <v-menu
+      v-model="showMenu"
+      :style="`position: fixed; left: ${menuX}px; top: ${menuY}px;`"
+      absolute
+    >
+      <v-list>
+        <v-list-item @click="() => emit('deleted', tecType)">
+          <v-list-item-title>Delete</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
   </div>
 </template>
 
-<style lang="sass" scoped></style>
+<style lang="sass" scoped>
+
+.selected-tectype
+  outline: 2px solid #1976d2
+  outline-offset: 2px
+  background-color: rgba(25, 118, 210, 0.08)
+  border-radius: 4px
+</style>
