@@ -1,11 +1,7 @@
 import type { NodeAttributes, TheGraph } from "@/graphdb.ts";
-import {
-  decodeGenericIndexSets,
-  type IndexItem,
-  type IndexSet,
-} from "@/schema/TecRefined.ts";
+import { decodeGenericIndexSets, type IndexItem, type IndexSet } from "@/schema/TecRefined.ts";
 import { Array, Effect } from "effect";
-import type { TecQuery, TecQueryA, TecType } from "@/schema/TecAstSchema.ts";
+import type { TecQuery, TecType } from "@/schema/TecAstSchema.ts";
 
 function* iterateIndexSet(p: IndexSet): Generator<IndexItem> {
   switch (p._tag) {
@@ -85,28 +81,22 @@ export function* iterateTecType(
 }
 
 type NE<T> = Array.NonEmptyArray<T>;
-function* recurseA(
-  db: TheGraph,
-  query: TecQueryA,
-): Generator<[TypedEntry, TypedEntry]> {
-  const rightDB = Array.fromIterable(iterateTecType(db, query.right));
-  for (const leftEntry of iterateTecType(db, query.left)) {
-    const neighbors = db.undirectedNeighbors(leftEntry.entry.node);
-    const intersect = rightDB.filter((rightEntry) =>
-      neighbors.includes(rightEntry.entry.node),
-    );
-    for (const rightEntry of intersect) {
-      yield [leftEntry, rightEntry];
-    }
-  }
-}
 export function* iterateQuery(
   db: TheGraph,
   query: TecQuery,
 ): Generator<NE<TypedEntry>> {
-  if (query.op === ":-") {
-    yield* recurseA(db, query);
-  } else if (query.op === ":>") {
+  if (query.left.tag === "TecType") {
+    const rightDB = Array.fromIterable(iterateTecType(db, query.right));
+    for (const leftEntry of iterateTecType(db, query.left)) {
+      const neighbors = db.undirectedNeighbors(leftEntry.entry.node);
+      const intersect = rightDB.filter((rightEntry) =>
+        neighbors.includes(rightEntry.entry.node),
+      );
+      for (const rightEntry of intersect) {
+        yield [leftEntry, rightEntry];
+      }
+    }
+  } else {
     for (const chain of iterateQuery(db, query.left)) {
       const rightDB = Array.fromIterable(iterateTecType(db, query.right));
 

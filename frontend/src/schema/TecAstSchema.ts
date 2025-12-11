@@ -10,19 +10,13 @@ export interface TecList {
   readonly tag: "TecList";
   readonly list: readonly TecAST[];
 }
-export interface TecQueryA {
+export interface TecQuery {
   readonly tag: "TecQuery";
   readonly op: ":-";
-  readonly left: TecType;
+  readonly left: TecType | TecQuery;
   readonly right: TecType;
 }
-export interface TecQueryB {
-  readonly tag: "TecQuery";
-  readonly op: ":>";
-  readonly left: TecQuery;
-  readonly right: TecType;
-}
-export type TecQuery = TecQueryA | TecQueryB;
+
 export const TecInt = S.Struct({
   tag: S.tag("TecInt"),
   int: S.Number,
@@ -42,20 +36,13 @@ export type TecStr = typeof TecStr.Type;
 export type TecRngInt = typeof TecRngInt.Type;
 export type TecAST = TecType | TecList | TecQuery | TecInt | TecStr | TecRngInt;
 
-const TecQueryA = S.Struct({
+const TecQuery = S.Struct({
   tag: S.tag("TecQuery"),
   op: S.Literal(":-"),
-  left: S.suspend((): Schema<TecType> => TecType),
-  right: S.suspend((): Schema<TecType> => TecType),
-});
-const TecQueryB = S.Struct({
-  tag: S.tag("TecQuery"),
-  op: S.Literal(":>"),
-  left: S.suspend((): Schema<TecQuery> => TecQuery),
+  left: S.suspend((): Schema<TecType | TecQuery> => S.Union(TecType, TecQuery)),
   right: S.suspend((): Schema<TecType> => TecType),
 });
 
-const TecQuery = S.Union(TecQueryA, TecQueryB);
 export const TecType = S.Struct({
   tag: S.tag("TecType"),
   typeName: S.String,
