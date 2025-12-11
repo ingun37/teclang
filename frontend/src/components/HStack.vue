@@ -11,7 +11,15 @@ const props = defineProps<Props>();
 
 <template>
   <v-sheet class="d-flex flex-row ga-1">
-    <TecAST v-for="(item, index) in items" :key="index" :ast="item" />
+    <v-sheet v-for="(item, index) in items" :key="index">
+      <Resizable>
+        <v-spacer
+          v-if="item.tag === 'TecType' && item.typeName === 'Spacing'"
+          style="min-width: 100px"
+        ></v-spacer>
+        <TecAST v-else :ast="item" />
+      </Resizable>
+    </v-sheet>
   </v-sheet>
 </template>
 

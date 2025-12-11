@@ -18,7 +18,6 @@ const startResize = (
 
   const handleMouseMove = (e: MouseEvent) => {
     if (!containerRef.value || !isResizing.value) return;
-    console.log(containerRef.value);
     const rect = containerRef.value.getBoundingClientRect();
 
     if (resizeDirection.value === "horizontal") {
@@ -73,11 +72,10 @@ const startResize = (
 <style lang="sass" scoped>
 .resizable-container
   min-width: 100px
-  min-height: 100px
 
 .resize-handle
   position: absolute
-  background-color: rgba(33, 150, 243, 0.5)
+  background-color: rgba(33, 150, 243, 0.3)
   transition: background-color 0.2s
   z-index: 10
 
@@ -89,8 +87,8 @@ const startResize = (
   top: 50%
   transform: translateY(-50%)
   bottom: 0
-  width: 4px
-  height: 40px
+  width: 3px
+  height: 8px
   cursor: ew-resize
 
 .resize-handle-vertical
@@ -98,7 +96,7 @@ const startResize = (
   transform: translateX(-50%)
   right: 0
   bottom: 0
-  height: 4px
-  width: 40px
+  height: 3px
+  width: 8px
   cursor: ns-resize
 </style>

@@ -16,7 +16,9 @@ const matrix = computed(() => {
 
 <template>
   <v-sheet v-for="(entry, index) in matrix" :key="index">
-    <Single :t-entry="{ typeName: props.typeName, entry }" class="pa-1" />
+    <Resizable>
+      <Single :t-entry="{ typeName: props.typeName, entry }" class="pa-1" />
+    </Resizable>
   </v-sheet>
 </template>
 

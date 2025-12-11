@@ -4,6 +4,7 @@
   <v-img
     alt="Brand Logo"
     max-width="500px"
+    min-width="100px"
     src="http://localhost:3000/brand_logo.png"
   />
 </template>
