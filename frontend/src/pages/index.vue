@@ -73,7 +73,12 @@ const isLoading = ref(false);
 const tecAST = ref<TecAST | null>(null);
 async function formatCode() {
   const code = appStore.textValue;
-  appStore.textValue = await appStore.wasmInstance.formatHaskell(code);
+  const formatted: string = await appStore.wasmInstance.formatHaskell(code);
+
+  appStore.textValue = formatted
+    .split("\n")
+    .filter((line) => line.trim().length > 0)
+    .join("\n");
 }
 watch(jsonString, (newValue) => {
   if (!newValue) {
