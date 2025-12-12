@@ -15,11 +15,11 @@ const showMenu = ref(false);
 const flexDirection = computed(() =>
   props.axis === "Y" ? "flex-column" : "flex-row",
 );
-
+const girth = "1em";
 const buttonDimensions = computed(() =>
   props.axis === "Y"
-    ? { width: "100%", height: "8px", minHeight: "8px", minWidth: undefined }
-    : { height: "100%", width: "8px", minWidth: "8px" },
+    ? { width: "100%", height: girth, minHeight: girth, minWidth: undefined }
+    : { height: "100%", width: girth, minWidth: girth },
 );
 
 function deleteItem(item: TecASTType, index: number) {
@@ -50,12 +50,13 @@ function handleAddItem() {
     <v-menu v-model="showMenu" location="bottom">
       <template v-slot:activator="{ props }">
         <v-btn
+          :height="buttonDimensions.height"
+          :min-height="buttonDimensions.minHeight"
+          :min-width="buttonDimensions.minWidth"
+          :width="buttonDimensions.width"
           class="add-button"
-          height="100%"
-          min-width="8px"
           v-bind="props"
           variant="text"
-          width="8px"
         >
           +
         </v-btn>

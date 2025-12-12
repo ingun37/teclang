@@ -1,5 +1,10 @@
 <script lang="ts" setup>
-import { TecAST as TecASTType, TecBinding as TecBindingType, TecStr, TecType } from "@/schema/TecAstSchema.ts";
+import {
+  TecAST as TecASTType,
+  TecBinding as TecBindingType,
+  TecStr,
+  TecType,
+} from "@/schema/TecAstSchema.ts";
 import { pipe, Record } from "effect";
 import TecAST from "@/components/TecAST.vue";
 
