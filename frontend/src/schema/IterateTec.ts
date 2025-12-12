@@ -136,3 +136,17 @@ export function* iterateQuery(
     }
   }
 }
+
+export function* iterateTypeNames(db: TheGraph): Generator<string> {
+  yield* new Set(
+    Array.fromIterable(db.nodeEntries()).map((x) => x.attributes.typeName),
+  );
+}
+export function* iterateIndexTuples(
+  db: TheGraph,
+  typeName: string,
+): Generator<IndexItem[]> {
+  yield* Array.fromIterable(db.nodeEntries())
+    .filter((x) => x.attributes.typeName === typeName)
+    .map((x) => x.attributes.ids);
+}

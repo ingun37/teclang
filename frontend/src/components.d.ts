@@ -28,6 +28,7 @@ declare module 'vue' {
     Resizable: typeof import('./components/Resizable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SelectTecType: typeof import('./components/SelectTecType.vue')['default']
     Single: typeof import('./components/Single.vue')['default']
     Stack: typeof import('./components/Stack.vue')['default']
     TecAST: typeof import('./components/TecAST.vue')['default']

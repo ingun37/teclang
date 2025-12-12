@@ -2,7 +2,6 @@ import Graph from "graphology";
 import { Array } from "effect";
 import type { IndexItem } from "@/schema/TecRefined.ts";
 
-export type TheGraph = Graph<any, EdgeAttributes, any>;
 export type EdgeAttributes = {
   edgeNode: string;
   thirdNodes: string[];
@@ -13,6 +12,8 @@ export type NodeAttributes = {
   ids: IndexItem[];
   meta: any;
 };
+export type TheGraph = Graph<NodeAttributes, EdgeAttributes, any>;
+
 export function createGraphDB(): TheGraph {
   const graph = new Graph<NodeAttributes, EdgeAttributes, any>();
 

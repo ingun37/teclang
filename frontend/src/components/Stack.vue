@@ -4,7 +4,9 @@ import {
   type TecAST as TecASTType,
   TecInt,
   TecStr,
+  type TecType,
 } from "@/schema/TecAstSchema.ts";
+import SelectTecType from "@/components/SelectTecType.vue";
 
 interface Props {
   items: readonly TecASTType[];
@@ -17,6 +19,8 @@ const emit = defineEmits<{
 }>();
 const props = defineProps<Props>();
 const showMenu = ref(false);
+const showTypeDialog = ref(false);
+
 const flexDirection = computed(() =>
   props.axis === "Y" ? "flex-column" : "flex-row",
 );
@@ -43,6 +47,10 @@ function updateItem(newItem: TecASTType, index: number) {
   emit("updated", newItem, index);
 }
 function handleAddItem(topS: TecASTType["tag"]) {
+  if (topS === "TecType") {
+    showTypeDialog.value = true;
+    return;
+  }
   function makeTec(): TecASTType {
     switch (topS) {
       case "TecInt":
@@ -92,6 +100,19 @@ function handleAddItem(topS: TecASTType["tag"]) {
         </v-list-item>
       </v-list>
     </v-menu>
+
+    <v-dialog v-model="showTypeDialog" max-width="400">
+      <v-card>
+        <v-card-title>Select Type</v-card-title>
+        <v-card-text>
+          <SelectTecType />
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn @click="showTypeDialog = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-sheet>
 </template>
 
