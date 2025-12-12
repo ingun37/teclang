@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import TecAST from "@/components/TecAST.vue";
-import type { TecAST as TecASTType } from "@/schema/TecAstSchema.ts";
+import { type TecAST as TecASTType, TecInt, TecStr } from "@/schema/TecAstSchema.ts";
 
 interface Props {
   items: readonly TecASTType[];
@@ -9,6 +9,7 @@ interface Props {
 const emit = defineEmits<{
   removed: [TecASTType, number];
   updated: [TecASTType, number];
+  added: [TecASTType];
 }>();
 const props = defineProps<Props>();
 const showMenu = ref(false);
@@ -21,17 +22,37 @@ const buttonDimensions = computed(() =>
     ? { width: "100%", height: girth, minHeight: girth, minWidth: undefined }
     : { height: "100%", width: girth, minWidth: girth },
 );
-
+const topSelections: TecASTType["tag"][] = [
+  "TecInt",
+  "TecStr",
+  "TecRngInt",
+  "TecVar",
+  "TecBinding",
+  "TecType",
+  "TecList",
+  "TecQuery",
+];
 function deleteItem(item: TecASTType, index: number) {
   emit("removed", item, index);
 }
 function updateItem(newItem: TecASTType, index: number) {
   emit("updated", newItem, index);
 }
-function handleAddItem() {
-  // Placeholder action
-  console.log("Add item clicked");
+function handleAddItem(topS: TecASTType["tag"]) {
+  function makeTec(): TecASTType {
+    switch (topS) {
+      case "TecInt":
+        return TecInt.make({ int: 0 });
+      case "TecStr":
+        return TecStr.make({ str: "(place holder)" });
+      default:
+        throw new Error(`Unknown top selection: ${topS}`);
+    }
+  }
+
   showMenu.value = false;
+
+  emit("added", makeTec());
 }
 </script>
 
@@ -62,8 +83,8 @@ function handleAddItem() {
         </v-btn>
       </template>
       <v-list>
-        <v-list-item @click="handleAddItem">
-          <v-list-item-title>Placeholder Item 1</v-list-item-title>
+        <v-list-item v-for="s in topSelections" @click="() => handleAddItem(s)">
+          <v-list-item-title>{{ s }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>

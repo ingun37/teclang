@@ -8,9 +8,9 @@ interface Props {
 const emit = defineEmits<{
   onItemRemove: [TecASTType, number];
   updated: [TecASTType, number];
+  added: [TecASTType];
 }>();
 const props = defineProps<Props>();
-const showMenu = ref(false);
 
 function deleteItem(item: TecASTType, index: number) {
   emit("onItemRemove", item, index);
@@ -24,6 +24,7 @@ function updateItem(newItem: TecASTType, index: number) {
   <Stack
     :items="props.items"
     axis="Y"
+    @added="(x) => emit('added', x)"
     @removed="(x, y) => deleteItem(x, y)"
     @updated="(x, y) => updateItem(x, y)"
   />

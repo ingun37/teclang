@@ -71,6 +71,16 @@ function handleItemUpdate(newItem: TecAST, index: number) {
     }),
   );
 }
+function handleItemAdd(newItem: TecAST) {
+  let newParams = [...props.inputTecType.parameters].concat(newItem);
+  emit(
+    "updated",
+    TecType.make({
+      typeName: props.inputTecType.typeName,
+      parameters: newParams,
+    }),
+  );
+}
 </script>
 
 <template>
@@ -118,12 +128,18 @@ function handleItemUpdate(newItem: TecAST, index: number) {
     <v-sheet v-if="inputTecType.typeName === 'HStack'">
       <HStack
         :items="inputTecType.parameters"
-        @onItemRemove="handleItemRemove"
+        @added="(newItem) => handleItemAdd(newItem)"
+        @onItemRemove="(item, index) => handleItemRemove(item, index)"
         @updated="(newItem, index) => handleItemUpdate(newItem, index)"
       />
     </v-sheet>
     <v-sheet v-if="inputTecType.typeName === 'VStack'">
-      <VStack :items="inputTecType.parameters" />
+      <VStack
+        :items="inputTecType.parameters"
+        @added="(newItem) => handleItemAdd(newItem)"
+        @onItemRemove="(item, index) => handleItemRemove(item, index)"
+        @updated="(newItem, index) => handleItemUpdate(newItem, index)"
+      />
     </v-sheet>
     <v-sheet v-if="inputTecType.typeName === 'Zip'">
       <Zip :asts="inputTecType.parameters" />
