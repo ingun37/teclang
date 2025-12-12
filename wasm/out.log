@@ -1121,3 +1121,125 @@ App
             )
         )
     )
+---- Original Code ----
+let a = 0 in a
+---- Raw AST ----
+Let
+    ( SrcSpanInfo
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 2 9 2 23
+        , srcInfoPoints =
+            [ SrcSpan "<unknown>.hs" 2 9 2 12
+            , SrcSpan "<unknown>.hs" 2 19 2 21
+            ]
+        }
+    )
+    ( BDecls
+        ( SrcSpanInfo
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 2 13 2 18
+            , srcInfoPoints =
+                [ SrcSpan "<unknown>.hs" 2 13 2 13
+                , SrcSpan "<unknown>.hs" 2 19 2 19
+                ]
+            }
+        )
+        [ PatBind
+            ( SrcSpanInfo
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 2 13 2 18
+                , srcInfoPoints = []
+                }
+            )
+            ( PVar
+                ( SrcSpanInfo
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 2 13 2 14
+                    , srcInfoPoints = []
+                    }
+                )
+                ( Ident
+                    ( SrcSpanInfo
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 2 13 2 14
+                        , srcInfoPoints = []
+                        }
+                    ) "a"
+                )
+            )
+            ( UnGuardedRhs
+                ( SrcSpanInfo
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 2 15 2 18
+                    , srcInfoPoints =
+                        [ SrcSpan "<unknown>.hs" 2 15 2 16 ]
+                    }
+                )
+                ( Lit
+                    ( SrcSpanInfo
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 2 17 2 18
+                        , srcInfoPoints = []
+                        }
+                    )
+                    ( Int
+                        ( SrcSpanInfo
+                            { srcInfoSpan = SrcSpan "<unknown>.hs" 2 17 2 18
+                            , srcInfoPoints = []
+                            }
+                        ) 0 "0"
+                    )
+                )
+            ) Nothing
+        ]
+    )
+    ( Var
+        ( SrcSpanInfo
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 2 22 2 23
+            , srcInfoPoints = []
+            }
+        )
+        ( UnQual
+            ( SrcSpanInfo
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 2 22 2 23
+                , srcInfoPoints = []
+                }
+            )
+            ( Ident
+                ( SrcSpanInfo
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 2 22 2 23
+                    , srcInfoPoints = []
+                    }
+                ) "a"
+            )
+        )
+    )
+---- Original Code ----
+let in 0
+---- Raw AST ----
+Let
+    ( SrcSpanInfo
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 2 9 2 17
+        , srcInfoPoints =
+            [ SrcSpan "<unknown>.hs" 2 9 2 12
+            , SrcSpan "<unknown>.hs" 2 13 2 15
+            ]
+        }
+    )
+    ( BDecls
+        ( SrcSpanInfo
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 2 13 2 13
+            , srcInfoPoints =
+                [ SrcSpan "<unknown>.hs" 2 13 2 13
+                , SrcSpan "<unknown>.hs" 2 13 2 13
+                ]
+            }
+        ) []
+    )
+    ( Lit
+        ( SrcSpanInfo
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 2 16 2 17
+            , srcInfoPoints = []
+            }
+        )
+        ( Int
+            ( SrcSpanInfo
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 2 16 2 17
+                , srcInfoPoints = []
+                }
+            ) 0 "0"
+        )
+    )

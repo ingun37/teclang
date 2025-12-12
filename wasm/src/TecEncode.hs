@@ -3,8 +3,19 @@ module TecEncode where
 import Data.Functor ((<&>))
 import Language.Haskell.Exts qualified as E
 import TecTypes
+import Data.Map qualified as Map
+encodeDecl :: (Show l) => E.Decl l -> Either TecError (String, E.Exp l)
+encodeDecl (E.PatBind _ (E.PVar _ (E.Ident _ name)) (E.UnGuardedRhs _ expr) _) = Right $ (name, expr)
+encodeDecl x = Left $ TecErrorUnknownExp (show x)
 
 encode :: (Show l) => E.Exp l -> Either TecError TecAST
+encode (E.Var _ (E.UnQual _ (E.Ident _ name))) = return $ TecVar name
+encode (E.Let _ (E.BDecls _ bindings) expression) = do
+  varKVs <- traverse encodeDecl bindings
+  let varMap = Map.fromList varKVs
+  varMap' <- traverse encode varMap
+  expression' <- encode expression
+  return $ TecBinding varMap' expression'
 encode (E.App _ lhs rhs) = do
   l <- encode lhs
   r <- encode rhs

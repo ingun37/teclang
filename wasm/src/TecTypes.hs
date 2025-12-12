@@ -6,6 +6,7 @@ import Data.Aeson
     defaultOptions,
     genericToEncoding,
   )
+import Data.Map (Map)
 import GHC.Generics (Generic)
 
 data TecError
@@ -22,6 +23,8 @@ data TecAST
   | TecStr {str :: String}
   | TecRngInt {fromI :: Int, toI :: Maybe Int}
   | TecRngEnum {fromE :: String, toE :: Maybe String}
+  | TecVar {varName :: String}
+  | TecBinding {varMap :: Map String TecAST, expression :: TecAST}
   deriving (Show, Generic)
 
 instance ToJSON TecAST where
