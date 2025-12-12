@@ -2,8 +2,8 @@
   <v-container>
     <v-row
       ><v-btn v-on:click="formatCode">Format code</v-btn>
-      <v-btn v-if="tecAST === null" v-on:click="createHStack"
-        >create hstack</v-btn
+      <v-btn v-if="tecAST === null" v-on:click="onCreateSomething"
+        >create something</v-btn
       >
     </v-row>
     <v-row>
@@ -74,13 +74,7 @@ import { useAppStore } from "@/stores/app";
 import { refDebounced, useDebounceFn } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
-import {
-  decodeTecAST,
-  encodeTecAST,
-  type TecAST as TecASTType,
-  TecStr,
-  TecType,
-} from "@/schema/TecAstSchema.ts";
+import { decodeTecAST, encodeTecAST, type TecAST as TecASTType, TecBinding, TecStr } from "@/schema/TecAstSchema.ts";
 
 const appStore = useAppStore();
 
@@ -148,16 +142,11 @@ watch(
     debouncedCallback(newValue);
   },
 );
-function createHStack() {
+function onCreateSomething() {
   if (tecAST.value === null) {
-    tecAST.value = TecType.make({
-      typeName: "HStack",
-      parameters: [
-        TecType.make({
-          typeName: "Text",
-          parameters: [TecStr.make({ str: "(empty HStack)" })],
-        }),
-      ],
+    tecAST.value = TecBinding.make({
+      varMap: {},
+      expression: TecStr.make({ str: "(empty binding)" }),
     });
   }
 }

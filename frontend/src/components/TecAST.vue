@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type {TecAST} from "@/schema/TecAstSchema.ts";
+import type { TecAST } from "@/schema/TecAstSchema.ts";
 import TecType from "@/components/TecType.vue";
 
 interface Props {
@@ -28,7 +28,7 @@ function onDelete() {
     <Query :query="ast" />
   </v-sheet>
   <v-sheet v-if="ast.tag === 'TecBinding'">
-    <TecBinding :binding="ast" />
+    <TecBinding :binding="ast" @updated="(x) => emit('updated', x)" />
   </v-sheet>
   <v-sheet v-if="ast.tag === 'TecVar'"> variable:{{ ast.varName }} </v-sheet>
   <v-sheet v-if="ast.tag === 'TecInt'">{{ ast.int }}</v-sheet>
