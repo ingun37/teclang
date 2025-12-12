@@ -142,11 +142,11 @@ export function* iterateTypeNames(db: TheGraph): Generator<string> {
     Array.fromIterable(db.nodeEntries()).map((x) => x.attributes.typeName),
   );
 }
-export function* iterateIndexTuples(
+export function getAllNodesOfType(
   db: TheGraph,
   typeName: string,
-): Generator<IndexItem[]> {
-  yield* Array.fromIterable(db.nodeEntries())
-    .filter((x) => x.attributes.typeName === typeName)
-    .map((x) => x.attributes.ids);
+): { node: string; attributes: NodeAttributes }[] {
+  return Array.fromIterable(db.nodeEntries()).filter(
+    (x) => x.attributes.typeName === typeName,
+  );
 }

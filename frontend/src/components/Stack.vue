@@ -1,6 +1,11 @@
 <script lang="ts" setup>
 import TecAST from "@/components/TecAST.vue";
-import { type TecAST as TecASTType, TecBinding, TecStr, TecType } from "@/schema/TecAstSchema.ts";
+import {
+  type TecAST as TecASTType,
+  TecBinding,
+  TecStr,
+  TecType,
+} from "@/schema/TecAstSchema.ts";
 import SelectTecType from "@/components/SelectTecType.vue";
 
 interface Props {
@@ -25,15 +30,27 @@ const buttonDimensions = computed(() =>
     ? { width: "100%", height: girth, minHeight: girth, minWidth: undefined }
     : { height: "100%", width: girth, minWidth: girth },
 );
-const topSelections = ["Text", "Vertical Stack", "Horizontal Stack", "Binding"];
+type Selection =
+  | "Text"
+  | "Vertical Stack"
+  | "Horizontal Stack"
+  | "Binding"
+  | "Query";
+const topSelections: Selection[] = [
+  "Text",
+  "Vertical Stack",
+  "Horizontal Stack",
+  "Binding",
+  "Query",
+];
 function deleteItem(item: TecASTType, index: number) {
   emit("removed", item, index);
 }
 function updateItem(newItem: TecASTType, index: number) {
   emit("updated", newItem, index);
 }
-function handleAddItem(topS: string) {
-  if (topS === "TecType") {
+function handleAddItem(topS: Selection) {
+  if (topS === "Query") {
     showTypeDialog.value = true;
     return;
   }
@@ -100,7 +117,7 @@ function handleAddItem(topS: string) {
       </v-list>
     </v-menu>
 
-    <v-dialog v-model="showTypeDialog" max-width="400">
+    <v-dialog v-model="showTypeDialog">
       <v-card>
         <v-card-title>Select Type</v-card-title>
         <v-card-text>
