@@ -17,6 +17,9 @@ importers:
       '@mdi/font':
         specifier: 7.4.47
         version: 7.4.47
+      '@sigma/node-border':
+        specifier: ^3.0.0
+        version: 3.0.0(sigma@3.0.2(graphology-types@0.24.8))
       '@vueuse/core':
         specifier: ^14.1.0
         version: 14.1.0(vue@3.5.25(typescript@5.9.3))
@@ -585,6 +588,11 @@ packages:
     resolution: {integrity: sha512-UhTd8u31dXadv0MopwGgNOBpUVROFKWVQgAg5N1ESyCz8AuBcMqm4AuTjrwgQKGDfoFuz02EuMRHQIw/frmYKQ==}
     cpu: [x64]
     os: [win32]
+
+  '@sigma/node-border@3.0.0':
+    resolution: {integrity: sha512-mE3zUfjvJVuAMhSjiP/zdlkqe0OVTETxd04XHUwof01YqdzTk0OB4ACJIhWrwgsBXl7tTd9lPuKoroafLh8MtQ==}
+    peerDependencies:
+      sigma: '>=3.0.0-beta.17'
 
   '@standard-schema/spec@1.0.0':
     resolution: {integrity: sha512-m2bOd0f2RT9k8QJx1JN85cZYyH1RqFBdlwtkSlf4tBDYLCiiZnv1fIIwacK6cqwXavOydf0NPToMQgpKq+dVlA==}
@@ -2386,6 +2394,10 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.53.3':
     optional: true
+
+  '@sigma/node-border@3.0.0(sigma@3.0.2(graphology-types@0.24.8))':
+    dependencies:
+      sigma: 3.0.2(graphology-types@0.24.8)
 
   '@standard-schema/spec@1.0.0': {}
 
