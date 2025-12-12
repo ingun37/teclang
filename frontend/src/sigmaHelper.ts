@@ -3,101 +3,179 @@ import { foldIntersect, foldUnion } from "@/functions.ts";
 import Sigma from "sigma";
 import type Graph from "graphology";
 
-export function configureSigma(R: Sigma, G: Graph, defaultColor: string) {
-  const state = {
-    RNode: "",
-    R2Nodes: [] as string[],
-    REdges: [] as string[],
-    BNodes: [] as string[],
-    BEdges: [] as string[],
-    G2Nodes: [] as string[],
-    GEdges: [] as string[],
-  };
-  const GColor = "#00ff00";
-  const BColor = "#0000ff";
-  const RColor = "#ff0000";
-  function updateStyle() {
-    G.updateEachNodeAttributes((_, att) => ({
-      ...att,
-      color: defaultColor,
-      type: undefined,
-      borderColor: "black",
-    }));
-    G.updateEachEdgeAttributes((_, att) => ({
-      ...att,
-      color: defaultColor,
-    }));
-
-    state.BNodes.forEach((x) => {
-      G.updateNodeAttributes(x, (att) => ({
-        ...att,
-        color: BColor,
-      }));
-    });
-    state.BEdges.forEach((x) => G.setEdgeAttribute(x, "color", BColor));
-
-    state.G2Nodes.forEach((x) =>
-      G.updateNodeAttributes(x, (att) => ({
-        ...att,
-        type: "border",
-        borderColor: GColor,
-      })),
-    );
-    state.GEdges.forEach((x) => G.setEdgeAttribute(x, "color", GColor));
-
-    if (state.RNode !== "") {
-      G.setNodeAttribute(state.RNode, "borderColor", RColor);
-    }
-    state.R2Nodes.forEach((x) =>
-      G.updateNodeAttributes(x, (att) => ({
-        ...att,
-        type: "border",
-        borderColor: RColor,
-      })),
-    );
-    state.REdges.forEach((x) => G.setEdgeAttribute(x, "color", RColor));
-    R.refresh();
+function computeState1(G: Graph, input: { SelectedNodes: string[] }) {
+  function computeSelectedEdges() {
+    const sortedBs = input.SelectedNodes.flatMap((x) =>
+      G.undirectedEdges(x),
+    ).sort();
+    if (Array.isNonEmptyArray(sortedBs)) {
+      return Array.group(sortedBs)
+        .filter((xs) => xs.length == 2)
+        .map((x) => x[0]!);
+    } else return [];
   }
-  function updateState() {
-    if (state.RNode !== "") {
-      state.R2Nodes = G.undirectedNeighbors(state.RNode);
-      state.REdges = G.undirectedEdges(state.RNode);
-    } else {
-      state.R2Nodes = [];
-      state.REdges = [];
-    }
-
-    {
-      // Loop
-      const sortedBs = state.BNodes.flatMap((x) => G.undirectedEdges(x)).sort();
-      if (Array.isNonEmptyArray(sortedBs)) {
-        state.BEdges = Array.group(sortedBs)
-          .filter((xs) => xs.length == 2)
-          .map((x) => x[0]!);
-      } else state.BEdges = [];
-    }
-
-    state.G2Nodes = foldIntersect(
-      state.BNodes.map((x) => G.undirectedNeighbors(x)),
+  function computeAvailableNodes() {
+    return foldIntersect(
+      input.SelectedNodes.map((x) => G.undirectedNeighbors(x)),
     );
-    state.GEdges = foldIntersect([
-      foldUnion(state.BNodes.map((x) => G.undirectedEdges(x))),
-      foldUnion(state.G2Nodes.map((x) => G.undirectedEdges(x))),
+  }
+  const AvailableNodes = computeAvailableNodes();
+  function computeAvailableEdges() {
+    return foldIntersect([
+      foldUnion(input.SelectedNodes.map((x) => G.undirectedEdges(x))),
+      foldUnion(AvailableNodes.map((x) => G.undirectedEdges(x))),
     ]);
-    updateStyle();
+  }
+  return {
+    SelectedEdges: computeSelectedEdges(),
+    AvailableNodes,
+    AvailableEdges: computeAvailableEdges(),
+  };
+}
+
+function computeState2(
+  G: Graph,
+  input: {
+    HoveringNode: string;
+    SelectedNodes: string[];
+    AvailableNodes: string[];
+  },
+) {
+  const allPreviewNodes = G.undirectedNeighbors(input.HoveringNode).filter(
+    (x) => !input.SelectedNodes.includes(x),
+  );
+  const [unknown, good] = Array.partition(allPreviewNodes, (x) =>
+    input.AvailableNodes.includes(x),
+  );
+  const unknownEdges = unknown.map(
+    (x) => G.undirectedEdge(input.HoveringNode, x)!,
+  );
+  return {
+    SelectPreviewNodes: good,
+    SelectPreviewEdges: good.map(
+      (x) => G.undirectedEdge(input.HoveringNode, x)!,
+    ),
+    UnknownPreviewNodes: unknown,
+    UnknownPreviewEdges: unknownEdges,
+  };
+}
+
+export function configureSigma(R: Sigma, G: Graph, defaultColor: string) {
+  const AvailableColor = "#00ff00";
+  const SelectedColor = "#0000ff";
+  const BadColor = "#ff0000";
+  const styler = makeStyler(
+    G,
+    defaultColor,
+    SelectedColor,
+    AvailableColor,
+    BadColor,
+  );
+
+  let SelectedNodes = [] as string[];
+  function reset() {
+    styler.reset();
+    const state = computeState1(G, { SelectedNodes });
+    SelectedNodes.forEach(styler.node.fillSelected);
+    state.SelectedEdges.forEach(styler.edge.select);
+    state.AvailableNodes.forEach(styler.node.borderGood);
+    state.AvailableEdges.forEach(styler.edge.good);
+    return state;
   }
   R.addListener("clickNode", (e) => {
-    if (state.BNodes.includes(e.node))
-      state.BNodes = state.BNodes.filter((x) => x !== e.node);
-    else state.BNodes.push(e.node);
-    updateState();
+    if (SelectedNodes.includes(e.node))
+      SelectedNodes = SelectedNodes.filter((x) => x !== e.node);
+    else SelectedNodes.push(e.node);
+    reset();
   });
   R.addListener("enterNode", (e) => {
-    state.RNode = e.node;
-    updateState();
+    const state = reset();
+    const state2 = computeState2(G, {
+      HoveringNode: e.node,
+      SelectedNodes,
+      AvailableNodes: state.AvailableNodes,
+    });
+
+    state2.SelectPreviewNodes.forEach(styler.node.borderSelected);
+    state2.SelectPreviewEdges.forEach(styler.edge.select);
+
+    if (state.AvailableNodes.includes(e.node))
+      styler.node.borderSelected(e.node);
+    else if (Array.isEmptyArray(SelectedNodes))
+      styler.node.borderSelected(e.node);
+    if (Array.isEmptyArray(SelectedNodes)) {
+      state2.UnknownPreviewNodes.forEach(styler.node.borderGood);
+      state2.UnknownPreviewEdges.forEach(styler.edge.good);
+    } else {
+      state2.UnknownPreviewNodes.forEach(styler.node.borderBad);
+      state2.UnknownPreviewEdges.forEach(styler.edge.bad);
+    }
   });
   R.addListener("leaveNode", (e) => {
-    state.RNode = "";
-    updateState();
+    reset();
   });
+}
+
+function makeStyler(
+  G: Graph,
+  defaultColor: string,
+  selectedColor: string,
+  goodColor: string,
+  badColor: string,
+) {
+  return {
+    reset() {
+      G.updateEachNodeAttributes((_, att) => ({
+        ...att,
+        color: defaultColor,
+        type: undefined,
+        borderColor: "black",
+      }));
+      G.updateEachEdgeAttributes((_, att) => ({
+        ...att,
+        color: defaultColor,
+      }));
+    },
+    edge: {
+      select(e: string) {
+        G.setEdgeAttribute(e, "color", selectedColor);
+      },
+      good(e: string) {
+        G.setEdgeAttribute(e, "color", goodColor);
+      },
+      bad(e: string) {
+        G.setEdgeAttribute(e, "color", badColor);
+      },
+    },
+    node: {
+      borderGood(n: string) {
+        G.updateNodeAttributes(n, (att) => ({
+          ...att,
+          type: "border",
+          borderColor: goodColor,
+        }));
+      },
+      borderSelected(n: string) {
+        G.updateNodeAttributes(n, (att) => ({
+          ...att,
+          type: "border",
+          borderColor: selectedColor,
+        }));
+      },
+      borderBad(n: string) {
+        G.updateNodeAttributes(n, (att) => ({
+          ...att,
+          type: "border",
+          borderColor: badColor,
+        }));
+      },
+      fillSelected(n: string) {
+        G.updateNodeAttributes(n, (att) => ({
+          ...att,
+          type: undefined,
+          color: selectedColor,
+        }));
+      },
+    },
+  };
 }
