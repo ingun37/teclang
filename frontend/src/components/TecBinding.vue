@@ -1,9 +1,5 @@
 <script lang="ts" setup>
-import {
-  TecBinding as TecBindingType,
-  TecStr,
-  TecType,
-} from "@/schema/TecAstSchema.ts";
+import { TecBinding as TecBindingType, TecStr, TecType } from "@/schema/TecAstSchema.ts";
 import { pipe, Record } from "effect";
 
 const props = defineProps<{ binding: TecBindingType }>();
@@ -38,11 +34,11 @@ function onHStack() {
       <v-btn @click="onHStack">HStack</v-btn>
     </v-sheet>
     <v-sheet v-for="[k, v] in kvs">
-      <v-card :subtitle="`variable ${k}`">
+      <v-card :subtitle="`variable ${k}`" class="pa-1">
         <TecAST :ast="v" />
       </v-card>
     </v-sheet>
-    <v-card subtitle="final expression">
+    <v-card class="pa-1" subtitle="final expression">
       <TecAST :ast="binding.expression"></TecAST>
     </v-card>
   </v-sheet>
