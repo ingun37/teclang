@@ -1,11 +1,6 @@
 <script lang="ts" setup>
 import TecAST from "@/components/TecAST.vue";
-import {
-  type TecAST as TecASTType,
-  TecInt,
-  TecStr,
-  type TecType,
-} from "@/schema/TecAstSchema.ts";
+import { type TecAST as TecASTType, TecBinding, TecStr, TecType } from "@/schema/TecAstSchema.ts";
 import SelectTecType from "@/components/SelectTecType.vue";
 
 interface Props {
@@ -30,33 +25,37 @@ const buttonDimensions = computed(() =>
     ? { width: "100%", height: girth, minHeight: girth, minWidth: undefined }
     : { height: "100%", width: girth, minWidth: girth },
 );
-const topSelections: TecASTType["tag"][] = [
-  "TecInt",
-  "TecStr",
-  "TecRngInt",
-  "TecVar",
-  "TecBinding",
-  "TecType",
-  "TecList",
-  "TecQuery",
-];
+const topSelections = ["Text", "Vertical Stack", "Horizontal Stack", "Binding"];
 function deleteItem(item: TecASTType, index: number) {
   emit("removed", item, index);
 }
 function updateItem(newItem: TecASTType, index: number) {
   emit("updated", newItem, index);
 }
-function handleAddItem(topS: TecASTType["tag"]) {
+function handleAddItem(topS: string) {
   if (topS === "TecType") {
     showTypeDialog.value = true;
     return;
   }
   function makeTec(): TecASTType {
     switch (topS) {
-      case "TecInt":
-        return TecInt.make({ int: 0 });
-      case "TecStr":
+      case "Text":
         return TecStr.make({ str: "(place holder)" });
+      case "Vertical Stack":
+        return TecType.make({
+          typeName: "VStack",
+          parameters: [TecStr.make({ str: "(empty v-stack)" })],
+        });
+      case "Horizontal Stack":
+        return TecType.make({
+          typeName: "VStack",
+          parameters: [TecStr.make({ str: "(empty h-stack)" })],
+        });
+      case "Binding":
+        return TecBinding.make({
+          varMap: {},
+          expression: TecStr.make({ str: "(empty binding)" }),
+        });
       default:
         throw new Error(`Unknown top selection: ${topS}`);
     }
