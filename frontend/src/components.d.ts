@@ -30,6 +30,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     Single: typeof import('./components/Single.vue')['default']
     TecAST: typeof import('./components/TecAST.vue')['default']
+    TecBinding: typeof import('./components/TecBinding.vue')['default']
     TecType: typeof import('./components/TecType.vue')['default']
     Text: typeof import('./components/Text.vue')['default']
     VStack: typeof import('./components/VStack.vue')['default']

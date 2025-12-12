@@ -30,11 +30,28 @@ export const TecRngInt = S.Struct({
   fromI: S.Number,
   toI: S.NullOr(S.Number),
 });
-
+export const TecVar = S.Struct({
+  tag: S.tag("TecVar"),
+  varName: S.String,
+});
+export interface TecBinding {
+  tag: "TecBinding";
+  varMap: Record<string, TecAST>;
+  expression: TecAST;
+}
 export type TecInt = typeof TecInt.Type;
 export type TecStr = typeof TecStr.Type;
 export type TecRngInt = typeof TecRngInt.Type;
-export type TecAST = TecType | TecList | TecQuery | TecInt | TecStr | TecRngInt;
+export type TecVar = typeof TecVar.Type;
+export type TecAST =
+  | TecType
+  | TecList
+  | TecQuery
+  | TecInt
+  | TecStr
+  | TecRngInt
+  | TecBinding
+  | TecVar;
 
 const TecQuery = S.Struct({
   tag: S.tag("TecQuery"),
@@ -54,13 +71,24 @@ export const TecList = S.Struct({
   list: S.Array(S.suspend((): Schema<TecAST> => TecAST)),
 });
 
+export const TecBinding = S.Struct({
+  tag: S.tag("TecBinding"),
+  varMap: S.Record({
+    key: S.String,
+    value: S.suspend((): Schema<TecAST> => TecAST),
+  }),
+  expression: S.suspend((): Schema<TecAST> => TecAST),
+});
+
 export const TecAST = S.Union(
   S.suspend((): Schema<TecType> => TecType),
   S.suspend((): Schema<TecList> => TecList),
   S.suspend((): Schema<TecQuery> => TecQuery),
+  S.suspend((): Schema<TecBinding> => TecBinding),
   TecInt,
   TecStr,
   TecRngInt,
+  TecVar,
 );
 export const TecASTEquivalence = S.equivalence(TecAST);
 
