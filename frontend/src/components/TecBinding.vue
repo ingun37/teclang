@@ -12,7 +12,7 @@ const emit = defineEmits<{
 const kvs = computed(() => {
   return pipe(props.binding.varMap, Record.toEntries);
 });
-function onHStack() {
+function onStack(axis: "X" | "Y") {
   const e = props.binding.expression;
   let parameters = e.tag === "TecType" ? [...e.parameters] : [];
   if (parameters.length === 0) parameters.push(TecStr.make({ str: "(empty)" }));
@@ -21,7 +21,7 @@ function onHStack() {
     TecBindingType.make({
       varMap: props.binding.varMap,
       expression: TecType.make({
-        typeName: "HStack",
+        typeName: axis === "X" ? "HStack" : "VStack",
         parameters,
       }),
     }),
@@ -68,7 +68,8 @@ function onExpressionUpdate(newItem: TecASTType) {
 <template>
   <v-sheet class="d-flex flex-column ga-1">
     <v-sheet class="d-flex flex-row ga-1">
-      <v-btn @click="onHStack">HStack</v-btn>
+      <v-btn @click="() => onStack('X')">Horizontal Stack</v-btn>
+      <v-btn @click="() => onStack('Y')">Vertical Stack</v-btn>
     </v-sheet>
     <v-sheet v-for="[k, v] in kvs">
       <v-card :subtitle="`variable ${k}`" class="pa-1">

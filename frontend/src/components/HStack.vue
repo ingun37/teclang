@@ -18,11 +18,6 @@ function deleteItem(item: TecASTType, index: number) {
 function updateItem(newItem: TecASTType, index: number) {
   emit("updated", newItem, index);
 }
-function handleAddItem() {
-  // Placeholder action
-  console.log("Add item clicked");
-  showMenu.value = false;
-}
 </script>
 
 <template>
