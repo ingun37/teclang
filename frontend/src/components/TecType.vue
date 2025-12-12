@@ -20,27 +20,6 @@ const refined = computed((): RefinedTecType | null => {
   }
 });
 
-const isSelected = ref(false);
-const showMenu = ref(false);
-const menuX = ref(0);
-const menuY = ref(0);
-
-const handleClick = () => {
-  isSelected.value = !isSelected.value;
-};
-
-const handleContextMenu = (event: MouseEvent) => {
-  if (isSelected.value) {
-    event.preventDefault();
-    showMenu.value = false;
-    menuX.value = event.clientX;
-    menuY.value = event.clientY;
-    nextTick(() => {
-      showMenu.value = true;
-    });
-  }
-};
-
 function handleItemRemove(ast: TecAST, index: number) {
   console.log("removing", ast.tag);
   let newParams = [...props.inputTecType.parameters];
@@ -84,11 +63,7 @@ function handleItemAdd(newItem: TecAST) {
 </script>
 
 <template>
-  <div
-    :class="{ 'selected-tectype': isSelected }"
-    @contextmenu="handleContextMenu"
-    @click.stop="handleClick"
-  >
+  <div>
     <v-sheet v-if="refined">
       <v-sheet v-if="refined.typeName === 'Text'">
         <Text :text="refined.parameters[0]!.str" />
@@ -144,26 +119,7 @@ function handleItemAdd(newItem: TecAST) {
     <v-sheet v-if="inputTecType.typeName === 'Zip'">
       <Zip :asts="inputTecType.parameters" />
     </v-sheet>
-
-    <v-menu
-      v-model="showMenu"
-      :style="`position: fixed; left: ${menuX}px; top: ${menuY}px;`"
-      absolute
-    >
-      <v-list>
-        <v-list-item @click="() => emit('deleted', inputTecType)">
-          <v-list-item-title>Delete</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
   </div>
 </template>
 
-<style lang="sass" scoped>
-
-.selected-tectype
-  outline: 2px solid #1976d2
-  outline-offset: 2px
-  background-color: rgba(25, 118, 210, 0.08)
-  border-radius: 4px
-</style>
+<style lang="sass" scoped></style>
