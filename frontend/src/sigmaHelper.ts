@@ -41,11 +41,10 @@ function computeState2(
     AvailableNodes: string[];
   },
 ) {
-  const allPreviewNodes = G.undirectedNeighbors(input.HoveringNode).filter(
-    (x) => !input.SelectedNodes.includes(x),
-  );
-  const [unknown, good] = Array.partition(allPreviewNodes, (x) =>
-    input.AvailableNodes.includes(x),
+  const allPreviewNodes = G.undirectedNeighbors(input.HoveringNode);
+  const [unknown, good] = Array.partition(
+    allPreviewNodes,
+    (x) => input.AvailableNodes.includes(x) || input.SelectedNodes.includes(x),
   );
   const unknownEdges = unknown.map(
     (x) => G.undirectedEdge(input.HoveringNode, x)!,
@@ -111,7 +110,7 @@ export function configureSigma(R: Sigma, G: Graph, defaultColor: string) {
       state2.UnknownPreviewEdges.forEach(styler.edge.bad);
     }
   });
-  R.addListener("leaveNode", (e) => {
+  R.addListener("leaveNode", () => {
     reset();
   });
 }
@@ -134,17 +133,30 @@ function makeStyler(
       G.updateEachEdgeAttributes((_, att) => ({
         ...att,
         color: defaultColor,
+        zIndex: 0,
       }));
     },
     edge: {
       select(e: string) {
-        G.setEdgeAttribute(e, "color", selectedColor);
+        G.updateEdgeAttributes(e, (att) => ({
+          ...att,
+          color: selectedColor,
+          zIndex: 3,
+        }));
       },
       good(e: string) {
-        G.setEdgeAttribute(e, "color", goodColor);
+        G.updateEdgeAttributes(e, (att) => ({
+          ...att,
+          color: goodColor,
+          zIndex: 2,
+        }));
       },
       bad(e: string) {
-        G.setEdgeAttribute(e, "color", badColor);
+        G.updateEdgeAttributes(e, (att) => ({
+          ...att,
+          color: badColor,
+          zIndex: 1,
+        }));
       },
     },
     node: {

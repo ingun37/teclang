@@ -50,6 +50,7 @@ onMounted(() => {
     renderer.value.removeAllListeners();
   } else {
     const R = new Sigma(graph.value, sigmaContainer.value, {
+      zIndex: true,
       nodeProgramClasses: {
         border: createNodeBorderProgram({
           borders: [
@@ -64,7 +65,6 @@ onMounted(() => {
     });
     renderer.value = R;
     R.setSetting("nodeReducer", (node, data) => {
-      console.log("reducer is called");
       return data;
     });
   }
