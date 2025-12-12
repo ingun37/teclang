@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { TecBinding as TecBindingType, TecStr, TecType } from "@/schema/TecAstSchema.ts";
+import { TecAST as TecASTType, TecBinding as TecBindingType, TecStr, TecType } from "@/schema/TecAstSchema.ts";
 import { pipe, Record } from "effect";
+import TecAST from "@/components/TecAST.vue";
 
 const props = defineProps<{ binding: TecBindingType }>();
 
@@ -26,6 +27,42 @@ function onHStack() {
     }),
   );
 }
+function onDeleteExpression() {
+  emit(
+    "updated",
+    TecBindingType.make({
+      varMap: props.binding.varMap,
+      expression: TecStr.make({ str: "(empty)" }),
+    }),
+  );
+}
+function onDeleteVariable(varName: string) {
+  emit(
+    "updated",
+    TecBindingType.make({
+      varMap: pipe(props.binding.varMap, Record.remove(varName)),
+      expression: props.binding.expression,
+    }),
+  );
+}
+function onVariableUpdate(varName: string, newItem: TecASTType) {
+  emit(
+    "updated",
+    TecBindingType.make({
+      varMap: pipe(props.binding.varMap, Record.replace(varName, newItem)),
+      expression: props.binding.expression,
+    }),
+  );
+}
+function onExpressionUpdate(newItem: TecASTType) {
+  emit(
+    "updated",
+    TecBindingType.make({
+      varMap: props.binding.varMap,
+      expression: newItem,
+    }),
+  );
+}
 </script>
 
 <template>
@@ -35,11 +72,19 @@ function onHStack() {
     </v-sheet>
     <v-sheet v-for="[k, v] in kvs">
       <v-card :subtitle="`variable ${k}`" class="pa-1">
-        <TecAST :ast="v" />
+        <TecAST
+          :ast="v"
+          @deleted="() => onDeleteVariable(k)"
+          @updated="(x) => onVariableUpdate(k, x)"
+        />
       </v-card>
     </v-sheet>
     <v-card class="pa-1" subtitle="final expression">
-      <TecAST :ast="binding.expression"></TecAST>
+      <TecAST
+        :ast="binding.expression"
+        @deleted="onDeleteExpression"
+        @updated="(x) => onExpressionUpdate(x)"
+      ></TecAST>
     </v-card>
   </v-sheet>
 </template>

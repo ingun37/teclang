@@ -12,6 +12,7 @@ const emit = defineEmits<{
   updated: [TecAST];
 }>();
 function onDelete() {
+  console.log("Delete");
   emit("deleted", props.ast);
 }
 </script>

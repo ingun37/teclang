@@ -29,6 +29,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Single: typeof import('./components/Single.vue')['default']
+    Stack: typeof import('./components/Stack.vue')['default']
     TecAST: typeof import('./components/TecAST.vue')['default']
     TecBinding: typeof import('./components/TecBinding.vue')['default']
     TecType: typeof import('./components/TecType.vue')['default']
