@@ -1,4 +1,4 @@
-import { Array, Order, SortedSet } from "effect";
+import { Array, Order, pipe, SortedSet } from "effect";
 import type Graph from "graphology";
 
 export function foldIntersect(strings: string[][]): string[] {
@@ -35,7 +35,7 @@ export function* combination<X>(xs: X[], n: number): Generator<X[]> {
   }
 }
 
-export function iterateClique(g: Graph): string[][] {
+export function iterateClique(g: Graph): NE<string>[] {
   const subG = g.copy();
 
   const clique3s = Array.fromIterable(combination(g.nodes(), 3)).filter(
@@ -53,5 +53,26 @@ export function iterateClique(g: Graph): string[][] {
   });
 
   const clique2s = subG.undirectedEdges().map((e) => subG.extremities(e));
-  return clique3s.map(Array.fromIterable).concat(clique2s);
+
+  return pipe(
+    clique3s,
+    Array.map(([x, y, z]) => Array.make(x, y, z)),
+    Array.appendAll(clique2s),
+  );
+}
+type NE<T> = Array.NonEmptyArray<T>;
+export function transpose<A>(ass: NE<NE<A>>): NE<NE<A>> {
+  const head = ass[0];
+  if (ass.some((as) => head.length !== as.length)) {
+    throw new Error("not square");
+  }
+  return pipe(
+    head,
+    Array.map((_, i) =>
+      pipe(
+        ass,
+        Array.map((_, j) => ass[j]![i]!),
+      ),
+    ),
+  );
 }

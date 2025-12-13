@@ -6,12 +6,12 @@ import Sigma from "sigma";
 import { createNodeBorderProgram } from "@sigma/node-border";
 import { Array, pipe } from "effect";
 import { configureSigma } from "@/sigmaHelper.ts";
-import { iterateClique } from "@/functions.ts";
-import { type NodeAttributes, NodeAttributesOrder } from "@/graphdb.ts";
+import { iterateClique, transpose } from "@/functions.ts";
+import { NodeAttributesOrder } from "@/graphdb.ts";
 
 const store = useAppStore();
-const width = 1200;
-const height = 600;
+const width = 1000;
+const height = 500;
 const containerW = `${width}px`;
 const containerH = `${height}px`;
 const typeNames = computed(() => {
@@ -79,17 +79,20 @@ onMounted(() => {
         const attributes = pipe(
           cliques,
           Array.map(Array.map((x) => db.getNodeAttributes(x))),
-          (x) => x,
           Array.map(Array.sort(NodeAttributesOrder)),
           Array.sort(Array.getOrder(NodeAttributesOrder)),
           Array.groupWith(
-            (xs: NodeAttributes[], ys) =>
+            (xs, ys) =>
               xs.map((x) => x.typeName).join("-") ===
               ys.map((y) => y.typeName).join("-"),
           ),
         );
         // TODO continue here
         console.log("attributes", attributes);
+        attributes.forEach((entries) => {
+          const transposed = transpose(entries);
+          console.log("transposed", transposed);
+        });
       }
     });
   }
@@ -101,7 +104,7 @@ onMounted(() => {
     <v-container>
       <v-row>
         <v-col v-for="typeName in typeNames">
-          <v-checkbox :label="typeName" />
+          <v-checkbox :label="typeName" density="compact" />
         </v-col>
       </v-row>
     </v-container>
