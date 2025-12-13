@@ -79,7 +79,9 @@ onMounted(() => {
   <v-sheet :height="containerH" :width="containerW">
     <v-container>
       <v-row>
-        <v-col v-for="typeName in typeNames"> {{ typeName }} </v-col>
+        <v-col v-for="typeName in typeNames">
+          <v-checkbox :label="typeName" />
+        </v-col>
       </v-row>
     </v-container>
     <div ref="sigma-container" class="sigma-container"></div>
