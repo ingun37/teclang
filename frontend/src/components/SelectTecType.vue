@@ -11,12 +11,7 @@ import { nodeAttributesToQuery } from "@/transformers.ts";
 import type { TecQuery } from "@/schema/TecAstSchema.ts";
 import TecLang from "@/components/TecLang.vue";
 import { nonNull } from "@/nonnull.ts";
-import {
-  type GNode,
-  gNodeEqById0,
-  gNodeEqByTypeName,
-  gNodeOrder,
-} from "@/GNode.ts";
+import { type GNode, gNodeEqById0, gNodeEqByTypeName, gNodeOrder } from "@/GNode.ts";
 
 const store = useAppStore();
 const width = 1000;
@@ -45,20 +40,23 @@ onMounted(() => {
   );
 
   const unitW = width / groupedByTypeName.length;
+  let offsetX = 0;
   const size = 8;
   const defaultColor = "#ccc";
   groupedByTypeName.forEach((entries, i) => {
     const groupedById0 = pipe(entries, Array.groupWith(gNodeEqById0));
 
     const hSize = groupedById0[0].length;
-    const unitW2 = unitW / hSize;
+    const thisW = unitW * (1 + Math.log(hSize));
+
+    const unitW2 = thisW / hSize;
     const vSize = groupedById0.length;
     const unitH = height / vSize;
 
     groupedById0.forEach((entries, j) => {
       entries.forEach((entry, i2) => {
         graph.value.addNode(entry.node, {
-          x: unitW * i + unitW2 * i2 + unitW2 / 2,
+          x: offsetX + unitW2 * i2 + unitW2 / 2,
           y: -unitH * j + (unitH * (vSize - 1)) / 2,
           size,
           label: entry.attributes.ids.map((x) => x.toString()).join("-"),
@@ -66,6 +64,8 @@ onMounted(() => {
         });
       });
     });
+
+    offsetX += thisW;
   });
   db.forEachUndirectedEdge((e, _, source, target) =>
     graph.value.addUndirectedEdge(source, target),

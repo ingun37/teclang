@@ -1,5 +1,5 @@
-import {Array, Order} from "effect";
-import {type IndexItem, IndexItemOrder} from "@/schema/IndexItem.ts";
+import { Array, Order } from "effect";
+import { type IndexItem, IndexItemOrder } from "@/schema/IndexItem.ts";
 
 export type NodeAttributes = {
   typeName: string;
