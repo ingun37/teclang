@@ -1,13 +1,14 @@
-import type { NodeAttributes, TheGraph } from "@/graphdb.ts";
+import type { TheGraph } from "@/graphdb.ts";
 import {
   decodeGenericIndexSets,
-  type IndexItem,
   type IndexList,
   type IndexRange,
   type IndexSet,
 } from "@/schema/TecRefined.ts";
 import { Array, Effect } from "effect";
 import type { TecQuery, TecType } from "@/schema/TecAstSchema.ts";
+import type { IndexItem } from "@/schema/IndexItem.ts";
+import type { NodeAttributes } from "@/NodeAttributes.ts";
 
 function* iterateIndexSet(p: IndexSet): Generator<IndexItem> {
   switch (p._tag) {
@@ -138,13 +139,5 @@ export function* iterateQuery(
 export function* iterateTypeNames(db: TheGraph): Generator<string> {
   yield* new Set(
     Array.fromIterable(db.nodeEntries()).map((x) => x.attributes.typeName),
-  );
-}
-export function getAllNodesOfType(
-  db: TheGraph,
-  typeName: string,
-): { node: string; attributes: NodeAttributes }[] {
-  return Array.fromIterable(db.nodeEntries()).filter(
-    (x) => x.attributes.typeName === typeName,
   );
 }

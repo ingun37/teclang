@@ -1,11 +1,10 @@
 import { Array as A, Array, pipe } from "effect";
-import type { NodeAttributes } from "@/graphdb.ts";
 import { transpose } from "@/functions.ts";
-import { type IndexItem } from "@/schema/TecRefined.ts";
 import * as Raw from "@/schema/TecAstSchema.ts";
 import { TecQuery, TecType } from "@/schema/TecAstSchema.ts";
+import type { IndexItem } from "@/schema/IndexItem.ts";
+import type { NodeAttributes } from "@/NodeAttributes.ts";
 
-type NE<T> = Array.NonEmptyArray<T>;
 type RNE<T> = Array.NonEmptyReadonlyArray<T>;
 export function indexItemsToTec(ids: RNE<IndexItem>) {
   if (ids.some((id) => typeof id !== typeof ids[0]))

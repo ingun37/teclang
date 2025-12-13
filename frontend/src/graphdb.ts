@@ -1,21 +1,12 @@
 import Graph from "graphology";
-import { Array, Order } from "effect";
-import { type IndexItem, IndexItemOrder } from "@/schema/TecRefined.ts";
+import { Array } from "effect";
+import { type IndexItem } from "@/schema/IndexItem.ts";
+import type { NodeAttributes } from "@/NodeAttributes.ts";
 
 export type EdgeAttributes = {
   edgeNode: string;
 };
-export type NodeAttributes = {
-  typeName: string;
-  ids: Array.NonEmptyArray<IndexItem>;
-  meta: any;
-};
 
-export const NodeAttributesOrder: Order.Order<NodeAttributes> = (x, y) => {
-  const a = Order.string(x.typeName, y.typeName);
-  if (a !== 0) return a;
-  return Array.getOrder(IndexItemOrder)(x.ids, y.ids);
-};
 export type TheGraph = Graph<NodeAttributes, EdgeAttributes, any>;
 
 export function createGraphDB(): TheGraph {

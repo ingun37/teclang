@@ -5,7 +5,8 @@ import { useAppStore } from "@/stores/app.ts";
 import { Array, flow, Order as O, pipe } from "effect";
 import { nonNull } from "@/nonnull.ts";
 import { isNonEmptyArray } from "effect/Array";
-import type { NodeAttributes } from "@/graphdb.ts";
+
+import type { NodeAttributes } from "@/NodeAttributes.ts";
 
 const props = defineProps<{ pom: Pom }>();
 type Item = { X: string; Y: string; value: number };

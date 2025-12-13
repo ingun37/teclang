@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import type { TypedEntry } from "@/schema/IterateTec.ts";
 import { useAppStore } from "@/stores/app.ts";
-import type { NodeAttributes } from "@/graphdb.ts";
+
+import type { NodeAttributes } from "@/NodeAttributes.ts";
 
 const props = defineProps<{
   readonly item: TypedEntry;

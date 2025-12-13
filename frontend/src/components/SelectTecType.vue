@@ -11,7 +11,12 @@ import { nodeAttributesToQuery } from "@/transformers.ts";
 import type { TecQuery } from "@/schema/TecAstSchema.ts";
 import TecLang from "@/components/TecLang.vue";
 import { nonNull } from "@/nonnull.ts";
-import { type GNode, gNodeEqById0, gNodeEqByTypeName, gNodeOrder } from "@/GNode.ts";
+import {
+  type GNode,
+  gNodeEqById0,
+  gNodeEqByTypeName,
+  gNodeOrder,
+} from "@/GNode.ts";
 
 const store = useAppStore();
 const width = 1000;

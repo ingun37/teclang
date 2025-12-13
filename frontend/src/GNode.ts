@@ -1,6 +1,7 @@
-import { type NodeAttributes, NodeAttributesOrder } from "@/graphdb.ts";
 import { Equivalence, Order } from "effect";
-import { IndexItemEq } from "@/schema/TecRefined.ts";
+
+import { IndexItemEq } from "@/schema/IndexItem.ts";
+import { type NodeAttributes, NodeAttributesOrder } from "@/NodeAttributes.ts";
 
 export type GNode = { node: string; attributes: NodeAttributes };
 export const gNodeOrder = Order.mapInput((x: GNode) => x.attributes)(

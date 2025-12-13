@@ -9,7 +9,7 @@ import {
   TecStr,
   TecType,
 } from "../src/schema/TecAstSchema";
-import { NodeAttributes, NodeAttributesOrder } from "../src/graphdb";
+import { NodeAttributes, NodeAttributesOrder } from "../src/NodeAttributes";
 
 test("combination", () => {
   expect(Array.fromIterable(combination([1], 1))).toStrictEqual([[1]]);
