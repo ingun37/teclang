@@ -1,4 +1,12 @@
-import { Array as A, Effect, Either as E, Order, ParseResult, pipe, Schema as S } from "effect";
+import {
+  Array as A,
+  Effect,
+  Either as E,
+  Order,
+  ParseResult,
+  pipe,
+  Schema as S,
+} from "effect";
 import * as Raw from "./TecAstSchema";
 import type { ParseError } from "effect/ParseResult";
 

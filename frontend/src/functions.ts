@@ -38,18 +38,22 @@ export function* combination<X>(xs: X[], n: number): Generator<X[]> {
 export function iterateClique(g: Graph): NE<string>[] {
   const subG = g.copy();
 
-  const clique3s = Array.fromIterable(combination(g.nodes(), 3)).filter(
+  const clique3s = Array.fromIterable(combination(g.nodes(), 3)).flatMap(
     ([x, y, z]) => {
-      return (
-        subG.areUndirectedNeighbors(x, y) &&
-        subG.areUndirectedNeighbors(y, z) &&
-        subG.areUndirectedNeighbors(z, x)
-      );
+      const xy = subG.undirectedEdge(x, y);
+      if (!xy) return [];
+      const yz = subG.undirectedEdge(y, z);
+      if (!yz) return [];
+      const zx = subG.undirectedEdge(z, x);
+      if (!zx) return [];
+      return {
+        nodes: Array.make(x, y, z),
+        edges: Array.make(xy, yz, zx),
+      };
     },
   );
-
-  new Set(clique3s.flat()).forEach((x) => {
-    subG.dropNode(x);
+  new Set(clique3s.flatMap((x) => x.edges)).forEach((x) => {
+    subG.dropEdge(x);
   });
 
   const clique2s = subG.undirectedEdges().map((e) => subG.extremities(e));
@@ -62,7 +66,7 @@ export function iterateClique(g: Graph): NE<string>[] {
 
   return pipe(
     clique3s,
-    Array.map(([x, y, z]) => Array.make(x, y, z)),
+    Array.map((x) => x.nodes),
     Array.appendAll(clique2s),
     // Array.appendAll(clique1s),
   );

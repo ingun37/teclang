@@ -104,7 +104,6 @@ export function configureSigma(
     SelectedNodes.forEach((n) => subG.addNode(n));
     state.SelectedEdges.forEach((e) => {
       const [x, y] = G.extremities(e);
-      console.log("connecting", x, y);
       subG.addUndirectedEdge(x, y);
     });
     try {

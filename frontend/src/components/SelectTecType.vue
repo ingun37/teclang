@@ -4,10 +4,10 @@ import { getAllNodesOfType, iterateTypeNames } from "@/schema/IterateTec.ts";
 import Graph from "graphology";
 import Sigma from "sigma";
 import { createNodeBorderProgram } from "@sigma/node-border";
-import { Array, pipe } from "effect";
+import { Array, Order, pipe } from "effect";
 import { configureSigma } from "@/sigmaHelper.ts";
 import { iterateClique } from "@/functions.ts";
-import { NodeAttributesOrder } from "@/graphdb.ts";
+import { type NodeAttributes, NodeAttributesOrder } from "@/graphdb.ts";
 import { nodeAttributesToQuery } from "@/transformers.ts";
 import type { TecQuery } from "@/schema/TecAstSchema.ts";
 import TecLang from "@/components/TecLang.vue";
@@ -84,7 +84,11 @@ onMounted(() => {
           cliques,
           Array.map(Array.map((x) => db.getNodeAttributes(x))),
           Array.map(Array.sort(NodeAttributesOrder)),
-          Array.sort(Array.getOrder(NodeAttributesOrder)),
+          Array.sort(
+            Array.getOrder(
+              Order.mapInput((x: NodeAttributes) => x.typeName)(Order.string),
+            ),
+          ),
           Array.groupWith(
             (xs, ys) =>
               xs.map((x) => x.typeName).join("-") ===

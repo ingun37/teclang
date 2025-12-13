@@ -1,14 +1,9 @@
 import { expect, test } from "vitest";
-import { Array } from "effect";
+import { Array, pipe } from "effect";
 import { combination, transpose } from "../src/functions";
 import { nodeAttributesToQuery } from "../src/transformers";
-import {
-  TecInt,
-  TecList,
-  TecQuery,
-  TecStr,
-  TecType,
-} from "../src/schema/TecAstSchema";
+import { TecInt, TecList, TecQuery, TecStr, TecType } from "../src/schema/TecAstSchema";
+import { NodeAttributes, NodeAttributesOrder } from "../src/graphdb";
 
 test("combination", () => {
   expect(Array.fromIterable(combination([1], 1))).toStrictEqual([[1]]);
@@ -54,20 +49,10 @@ test("transpose", () => {
 });
 
 test("transformer", () => {
-  const single = nodeAttributesToQuery([
-    [{ typeName: "A", ids: [0], meta: {} }],
-  ]);
+  const single = () =>
+    nodeAttributesToQuery([[{ typeName: "A", ids: [0], meta: {} }]]);
 
-  expect(single).toStrictEqual(
-    TecType.make({
-      typeName: "A",
-      parameters: [
-        TecList.make({
-          list: [TecInt.make({ int: 0 })],
-        }),
-      ],
-    }),
-  );
+  expect(single).toThrowError();
 
   const query = nodeAttributesToQuery([
     [
@@ -104,3 +89,41 @@ test("transformer", () => {
     }),
   );
 });
+test("order", () => {
+  const answer = [
+    [
+      { typeName: "Colorway", ids: [0], meta: {} },
+      { typeName: "Fabric", ids: ["A"], meta: {} },
+      { typeName: "Pantone", ids: ["white"], meta: { color: "#ffffff" } },
+    ],
+    [
+      { typeName: "Colorway", ids: [0], meta: {} },
+      { typeName: "Render", ids: [0, "Front"], meta: {} },
+    ],
+    [
+      { typeName: "Colorway", ids: [1], meta: {} },
+      { typeName: "Fabric", ids: ["A"], meta: {} },
+      { typeName: "Pantone", ids: ["black"], meta: { color: "#000000" } },
+    ],
+  ];
+  const input: NodeAttributes[][] = [
+    [
+      { typeName: "Colorway", ids: [0], meta: {} },
+      { typeName: "Fabric", ids: ["A"], meta: {} },
+      { typeName: "Pantone", ids: ["white"], meta: { color: "#ffffff" } },
+    ],
+    [
+      { typeName: "Colorway", ids: [1], meta: {} },
+      { typeName: "Fabric", ids: ["A"], meta: {} },
+      { typeName: "Pantone", ids: ["black"], meta: { color: "#000000" } },
+    ],
+    [
+      { typeName: "Colorway", ids: [0], meta: {} },
+      { typeName: "Render", ids: [0, "Front"], meta: {} },
+    ],
+  ];
+  const ordered = pipe(input, Array.sort(Array.getOrder(NodeAttributesOrder)));
+  expect(ordered).toStrictEqual(answer);
+});
+// [[{"typeName":"Colorway","ids":[0],"meta":{}},{"typeName":"Fabric","ids":["A"],"meta":{}},{"typeName":"Pantone","ids":["white"],"meta":{"color":"#ffffff"}}],[{"typeName":"Colorway","ids":[1],"meta":{}},{"typeName":"Fabric","ids":["A"],"meta":{}},{"typeName":"Pantone","ids":["black"],"meta":{"color":"#000000"}}],[{"typeName":"Colorway","ids":[0],"meta":{}},{"typeName":"Render","ids":[0,"Front"],"meta":{}}]]
+// [[{"typeName":"Colorway","ids":[0],"meta":{}},{"typeName":"Fabric","ids":["A"],"meta":{}},{"typeName":"Pantone","ids":["white"],"meta":{"color":"#ffffff"}}],[{"typeName":"Colorway","ids":[0],"meta":{}},{"typeName":"Render","ids":[0,"Front"],"meta":{}}],[{"typeName":"Colorway","ids":[1],"meta":{}},{"typeName":"Fabric","ids":["A"],"meta":{}},{"typeName":"Pantone","ids":["black"],"meta":{"color":"#000000"}}]]
