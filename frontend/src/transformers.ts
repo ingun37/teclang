@@ -11,6 +11,7 @@ export function indexItemsToTec(ids: A.NonEmptyArray<IndexItem>) {
     throw new Error("IndexItem type mismatch");
   return pipe(
     ids,
+    A.dedupeAdjacent,
     A.map((id) => {
       if (typeof id === "number") return Raw.TecInt.make({ int: id });
       else return Raw.TecStr.make({ str: id });
