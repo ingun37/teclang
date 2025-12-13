@@ -1,4 +1,5 @@
 import { Array, Order, SortedSet } from "effect";
+import type Graph from "graphology";
 
 export function foldIntersect(strings: string[][]): string[] {
   const sets = strings.map(SortedSet.fromIterable(Order.string));
@@ -26,4 +27,25 @@ export function* combination<X>(xs: X[], n: number): Generator<X[]> {
     for (const chain of combination(xs.slice(i + 1), n - 1))
       yield [xs[i]!, ...chain];
   }
+}
+
+export function iterateClique(g: Graph): string[][] {
+  const subG = g.copy();
+
+  const clique3s = Array.fromIterable(combination(g.nodes(), 3)).filter(
+    ([x, y, z]) => {
+      return (
+        subG.areUndirectedNeighbors(x, y) &&
+        subG.areUndirectedNeighbors(y, z) &&
+        subG.areUndirectedNeighbors(z, x)
+      );
+    },
+  );
+
+  new Set(clique3s.flat()).forEach((x) => {
+    subG.dropNode(x);
+  });
+
+  const clique2s = subG.undirectedEdges().map((e) => subG.extremities(e));
+  return clique3s.map(Array.fromIterable).concat(clique2s);
 }

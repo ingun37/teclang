@@ -1,5 +1,5 @@
 import { Array } from "effect";
-import { combination, foldIntersect, foldUnion } from "@/functions.ts";
+import { foldIntersect, foldUnion } from "@/functions.ts";
 import Sigma from "sigma";
 import Graph from "graphology";
 import parseColor from "color-parse";
@@ -60,7 +60,12 @@ function computeState2(
   };
 }
 
-export function configureSigma(R: Sigma, G: Graph, defaultColor: string) {
+export function configureSigma(
+  R: Sigma,
+  G: Graph,
+  defaultColor: string,
+  onSelect: (subGraph: Graph) => void,
+) {
   const AvailableColor = "#00ff00";
   const SelectedColor = "#0000ff";
   const BadColor = "#ff0000";
@@ -95,25 +100,7 @@ export function configureSigma(R: Sigma, G: Graph, defaultColor: string) {
       console.log("connecting", x, y);
       subG.addUndirectedEdge(x, y);
     });
-
-    const clique3s = Array.fromIterable(combination(SelectedNodes, 3)).filter(
-      ([x, y, z]) => {
-        return (
-          subG.areUndirectedNeighbors(x, y) &&
-          subG.areUndirectedNeighbors(y, z) &&
-          subG.areUndirectedNeighbors(z, x)
-        );
-      },
-    );
-
-    new Set(clique3s.flat()).forEach((x) => {
-      subG.dropNode(x);
-    });
-
-    const clique2s = subG.undirectedEdges().map((e) => subG.extremities(e));
-
-    console.log("clique3s", clique3s);
-    console.log("clique2s", clique2s);
+    onSelect(subG);
   });
   R.addListener("enterNode", (e) => {
     const state = reset();

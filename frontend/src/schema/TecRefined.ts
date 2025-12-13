@@ -2,6 +2,7 @@ import {
   Array as A,
   Effect,
   Either as E,
+  Order,
   ParseResult,
   pipe,
   Schema as S,
@@ -148,6 +149,15 @@ export type StringSet = typeof StringSet.Type;
 const IndexSet = S.Union(IntSet, EnumSet, StringSet);
 export type IndexSet = typeof IndexSet.Type;
 export type IndexItem = number | string;
+export const IndexItemOrder: Order.Order<IndexItem> = (x, y) => {
+  if (typeof x === "number") {
+    if (typeof y === "number") return Order.number(x, y);
+    else return -1;
+  } else {
+    if (typeof y === "number") return 1;
+    else return Order.string(x, y);
+  }
+};
 export function decodeGenericIndexSets(
   asts: readonly Raw.TecAST[],
 ): Effect.Effect<IndexSet[], ParseError> {

@@ -4,8 +4,10 @@ import { getAllNodesOfType, iterateTypeNames } from "@/schema/IterateTec.ts";
 import Graph from "graphology";
 import Sigma from "sigma";
 import { createNodeBorderProgram } from "@sigma/node-border";
-import { Array } from "effect";
+import { Array, pipe } from "effect";
 import { configureSigma } from "@/sigmaHelper.ts";
+import { iterateClique } from "@/functions.ts";
+import { type NodeAttributes, NodeAttributesOrder } from "@/graphdb.ts";
 
 const store = useAppStore();
 const width = 1200;
@@ -70,7 +72,26 @@ onMounted(() => {
   }
 
   if (renderer.value) {
-    configureSigma(renderer.value as any, graph.value, defaultColor);
+    configureSigma(renderer.value as any, graph.value, defaultColor, (subG) => {
+      const cliques = iterateClique(subG);
+      console.log("cliques", cliques);
+      if (Array.isNonEmptyArray(cliques)) {
+        const attributes = pipe(
+          cliques,
+          Array.map(Array.map((x) => db.getNodeAttributes(x))),
+          (x) => x,
+          Array.map(Array.sort(NodeAttributesOrder)),
+          Array.sort(Array.getOrder(NodeAttributesOrder)),
+          Array.groupWith(
+            (xs: NodeAttributes[], ys) =>
+              xs.map((x) => x.typeName).join("-") ===
+              ys.map((y) => y.typeName).join("-"),
+          ),
+        );
+        // TODO continue here
+        console.log("attributes", attributes);
+      }
+    });
   }
 });
 </script>
