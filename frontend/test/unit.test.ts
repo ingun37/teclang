@@ -15,6 +15,13 @@ test("combination", () => {
   expect(Array.fromIterable(combination([1], 1))).toStrictEqual([[1]]);
 
   expect(Array.fromIterable(combination([1, 2], 1))).toStrictEqual([[1], [2]]);
+  expect(Array.fromIterable(combination([1, 2, 3], 2))).toStrictEqual([
+    [1, 2],
+    [1, 3],
+    [2, 3],
+  ]);
+  expect(Array.fromIterable(combination([1, 2], 2))).toStrictEqual([[1, 2]]);
+  expect(Array.fromIterable(combination([1], 2))).toStrictEqual([]);
   expect(Array.fromIterable(combination([1, 2, 3], 3))).toStrictEqual([
     [1, 2, 3],
   ]);

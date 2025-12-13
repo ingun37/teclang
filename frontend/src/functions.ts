@@ -18,6 +18,7 @@ export function foldUnion(strings: string[][]): string[] {
     Array.reduce(sets, SortedSet.empty(Order.string), SortedSet.union<string>),
   );
 }
+export function combination<X>(xs: X[], n: 2): Generator<[X, X]>;
 export function combination<X>(xs: X[], n: 3): Generator<[X, X, X]>;
 export function combination<X>(xs: X[], n: number): Generator<X[]>;
 export function* combination<X>(xs: X[], n: number): Generator<X[]> {

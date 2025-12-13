@@ -6,11 +6,12 @@ import Sigma from "sigma";
 import { createNodeBorderProgram } from "@sigma/node-border";
 import { Array, flow, Order, pipe } from "effect";
 import { configureSigma } from "@/sigmaHelper.ts";
-import { iterateClique } from "@/functions.ts";
+import { combination, iterateClique } from "@/functions.ts";
 import { type NodeAttributes, NodeAttributesOrder } from "@/graphdb.ts";
 import { nodeAttributesToQuery } from "@/transformers.ts";
 import type { TecQuery } from "@/schema/TecAstSchema.ts";
 import TecLang from "@/components/TecLang.vue";
+import { nonNull } from "@/nonnull.ts";
 
 const store = useAppStore();
 const width = 1000;
@@ -55,7 +56,7 @@ onMounted(() => {
   if (renderer.value) {
     renderer.value.removeAllListeners();
   } else {
-    const R = new Sigma(graph.value, sigmaContainer.value, {
+    renderer.value = new Sigma(graph.value, sigmaContainer.value, {
       zIndex: true,
       nodeProgramClasses: {
         border: createNodeBorderProgram({
@@ -68,33 +69,68 @@ onMounted(() => {
           ],
         }),
       },
-    });
-    renderer.value = R;
-    R.setSetting("nodeReducer", (node, data) => {
-      return data;
+      enableEdgeEvents: true,
     });
   }
+  type RNE<T> = Array.NonEmptyReadonlyArray<T>;
 
   if (renderer.value) {
-    configureSigma(renderer.value as any, graph.value, defaultColor, (subG) => {
-      const cliques = iterateClique(subG);
-      const orderByJustTypeName: Order.Order<
-        Array.NonEmptyReadonlyArray<NodeAttributes>
-      > = Array.getOrder(
-        Order.mapInput((x: NodeAttributes) => x.typeName)(Order.string),
-      );
-      const equalByJustTypeName = flow(orderByJustTypeName, (x) => x === 0);
-      if (Array.isNonEmptyArray(cliques)) {
-        queries.value = pipe(
-          cliques,
-          Array.map(Array.map((x) => db.getNodeAttributes(x))),
-          Array.map(Array.sort(NodeAttributesOrder)),
-          Array.sort(orderByJustTypeName),
-          Array.groupWith(equalByJustTypeName),
-          Array.map(nodeAttributesToQuery),
+    let islandEdgesState: string[][] = [];
+    configureSigma(
+      renderer.value as any,
+      graph.value,
+      defaultColor,
+      (subG) => {
+        const cliques = iterateClique(subG);
+        type Ex = {
+          attributes: NodeAttributes;
+          node: string;
+        };
+        const make = (n: string): Ex => ({
+          attributes: db.getNodeAttributes(n),
+          node: n,
+        });
+        const order = Order.mapInput((x: Ex) => x.attributes)(
+          NodeAttributesOrder,
         );
-      } else queries.value = [];
-    });
+
+        const orderByJustTypeName: Order.Order<RNE<Ex>> = Array.getOrder(
+          Order.mapInput((x: Ex) => x.attributes.typeName)(Order.string),
+        );
+
+        const equalByJustTypeName = flow(orderByJustTypeName, (x) => x === 0);
+        if (Array.isNonEmptyArray(cliques)) {
+          const categories = pipe(
+            cliques,
+            Array.map(Array.map(make)),
+            Array.map(Array.sort(order)),
+            Array.sort(orderByJustTypeName),
+            Array.groupWith(equalByJustTypeName),
+          );
+
+          islandEdgesState = pipe(
+            categories,
+            Array.map(
+              Array.flatMap((xxx) =>
+                Array.fromIterable(
+                  combination(
+                    xxx.map((x) => x.node),
+                    2,
+                  ),
+                ).map(([x, y]) => nonNull(graph.value.undirectedEdge(x, y))),
+              ),
+            ),
+          );
+
+          queries.value = pipe(
+            categories,
+            Array.map(Array.map(Array.map((x) => x.attributes))),
+            Array.map(nodeAttributesToQuery),
+          );
+        } else queries.value = [];
+      },
+      (e) => islandEdgesState.find((xs) => xs.includes(e)) ?? [],
+    );
   }
 });
 </script>

@@ -71,6 +71,7 @@ export function configureSigma(
   G: Graph,
   defaultColor: string,
   onSelect: (subGraph: Graph) => void,
+  getSameCategoryEdges: (e: string) => string[],
 ) {
   const AvailableColor = "#00ff00";
   const SelectedColor = "#0000ff";
@@ -139,6 +140,13 @@ export function configureSigma(
   R.addListener("leaveNode", () => {
     reset();
   });
+  R.addListener("enterEdge", (event) => {
+    const edges = getSameCategoryEdges(event.edge);
+    edges.forEach(styler.edge.sameCategory);
+  });
+  R.addListener("leaveEdge", () => {
+    reset();
+  });
 }
 
 function makeStyler(
@@ -170,14 +178,25 @@ function makeStyler(
       G.updateEachEdgeAttributes((_, att) => ({
         ...att,
         color: defaultColor,
+        size: 1,
         zIndex: 0,
       }));
     },
     edge: {
-      select(e: string) {
+      sameCategory(e: string) {
         G.updateEdgeAttributes(e, (att) => ({
           ...att,
           color: selectedColor,
+          size: 4,
+          zIndex: 4,
+        }));
+      },
+      select(e: string) {
+        G.updateEdgeAttributes(e, (att) => ({
+          ...att,
+          color: selectedFillColor,
+          size: 3,
+
           zIndex: 3,
         }));
       },
@@ -185,6 +204,8 @@ function makeStyler(
         G.updateEdgeAttributes(e, (att) => ({
           ...att,
           color: goodColor,
+          size: 2,
+
           zIndex: 2,
         }));
       },
