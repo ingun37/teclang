@@ -2,6 +2,7 @@ import { Array } from "effect";
 import { combination, foldIntersect, foldUnion } from "@/functions.ts";
 import Sigma from "sigma";
 import Graph from "graphology";
+import parseColor from "color-parse";
 
 function computeState1(G: Graph, input: { SelectedNodes: string[] }) {
   function computeSelectedEdges() {
@@ -149,6 +150,17 @@ function makeStyler(
   goodColor: string,
   badColor: string,
 ) {
+  const selectedColorValue = parseColor(selectedColor);
+  if (selectedColorValue.space !== "rgb") throw new Error("expected rgb color");
+  const selectedFillColor =
+    "#" +
+    selectedColorValue.values
+      .map((x) =>
+        Math.min(255, x + 128)
+          .toString(16)
+          .padStart(2, "0"),
+      )
+      .join("");
   return {
     reset() {
       G.updateEachNodeAttributes((_, att) => ({
@@ -212,7 +224,7 @@ function makeStyler(
         G.updateNodeAttributes(n, (att) => ({
           ...att,
           type: undefined,
-          color: selectedColor,
+          color: selectedFillColor,
         }));
       },
     },
