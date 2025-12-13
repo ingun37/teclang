@@ -1,12 +1,4 @@
-import {
-  Array as A,
-  Effect,
-  Either as E,
-  Order,
-  ParseResult,
-  pipe,
-  Schema as S,
-} from "effect";
+import { Array as A, Effect, Either as E, Order, ParseResult, pipe, Schema as S } from "effect";
 import * as Raw from "./TecAstSchema";
 import type { ParseError } from "effect/ParseResult";
 
@@ -89,7 +81,13 @@ const EnumSet = S.transformOrFail(S.Union(Raw.TecType, Raw.TecList), _EnumSet, {
       case "TecList":
         return pipe(
           input.list,
-          A.map((x) => S.decodeUnknownEither(NullaryCon)(x)),
+          A.map((x) =>
+            S.decodeUnknownEither(NullaryCon)(x).pipe(
+              E.orElse(() =>
+                S.decodeUnknownEither(Raw.TecStr)(x).pipe(E.map((x) => x.str)),
+              ),
+            ),
+          ),
           E.all,
           E.map((enums) => _EnumSet.make({ enums })),
           E.mapLeft((e) => e.issue),

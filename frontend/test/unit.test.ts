@@ -54,6 +54,21 @@ test("transpose", () => {
 });
 
 test("transformer", () => {
+  const single = nodeAttributesToQuery([
+    [{ typeName: "A", ids: [0], meta: {} }],
+  ]);
+
+  expect(single).toStrictEqual(
+    TecType.make({
+      typeName: "A",
+      parameters: [
+        TecList.make({
+          list: [TecInt.make({ int: 0 })],
+        }),
+      ],
+    }),
+  );
+
   const query = nodeAttributesToQuery([
     [
       { typeName: "A", ids: [0], meta: {} },

@@ -5,6 +5,11 @@ import Graph from "graphology";
 import parseColor from "color-parse";
 
 function computeState1(G: Graph, input: { SelectedNodes: string[] }) {
+  function computeSingleNodes() {
+    return input.SelectedNodes.filter((x) =>
+      input.SelectedNodes.every((y) => !G.areUndirectedNeighbors(x, y)),
+    );
+  }
   function computeSelectedEdges() {
     const sortedBs = input.SelectedNodes.flatMap((x) =>
       G.undirectedEdges(x),
@@ -28,6 +33,7 @@ function computeState1(G: Graph, input: { SelectedNodes: string[] }) {
     ]);
   }
   return {
+    SingleNodes: computeSingleNodes(),
     SelectedEdges: computeSelectedEdges(),
     AvailableNodes,
     AvailableEdges: computeAvailableEdges(),
@@ -82,6 +88,7 @@ export function configureSigma(
     styler.reset();
     const state = computeState1(G, { SelectedNodes });
     SelectedNodes.forEach(styler.node.fillSelected);
+    state.SingleNodes.forEach(styler.node.single);
     state.SelectedEdges.forEach(styler.edge.select);
     state.AvailableNodes.forEach(styler.node.borderGood);
     state.AvailableEdges.forEach(styler.edge.good);
@@ -191,6 +198,13 @@ function makeStyler(
       },
     },
     node: {
+      single(n: string) {
+        G.updateNodeAttributes(n, (att) => ({
+          ...att,
+          type: undefined,
+          color: "#eecc00",
+        }));
+      },
       borderGood(n: string) {
         G.updateNodeAttributes(n, (att) => ({
           ...att,

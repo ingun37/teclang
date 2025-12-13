@@ -54,10 +54,17 @@ export function iterateClique(g: Graph): NE<string>[] {
 
   const clique2s = subG.undirectedEdges().map((e) => subG.extremities(e));
 
+  new Set(clique2s.flat()).forEach((x) => {
+    subG.dropNode(x);
+  });
+
+  // const clique1s = subG.nodes().map((x) => Array.make(x));
+
   return pipe(
     clique3s,
     Array.map(([x, y, z]) => Array.make(x, y, z)),
     Array.appendAll(clique2s),
+    // Array.appendAll(clique1s),
   );
 }
 type NE<T> = Array.NonEmptyArray<T>;

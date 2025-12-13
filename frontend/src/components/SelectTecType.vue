@@ -78,9 +78,9 @@ onMounted(() => {
   if (renderer.value) {
     configureSigma(renderer.value as any, graph.value, defaultColor, (subG) => {
       const cliques = iterateClique(subG);
-      console.log("cliques", cliques);
+
       if (Array.isNonEmptyArray(cliques)) {
-        const qs = pipe(
+        queries.value = pipe(
           cliques,
           Array.map(Array.map((x) => db.getNodeAttributes(x))),
           Array.map(Array.sort(NodeAttributesOrder)),
@@ -92,8 +92,7 @@ onMounted(() => {
           ),
           Array.map(nodeAttributesToQuery),
         );
-        queries.value = qs;
-      }
+      } else queries.value = [];
     });
   }
 });
@@ -115,9 +114,9 @@ onMounted(() => {
         </v-col>
       </v-row>
       <v-row>
-        <v-col v-for="query in queries" cols="12">
-          <TecLang :tec-ast="query" />
-          <Query :query="query" />
+        <v-col v-for="ast in queries" cols="12">
+          <TecLang :tec-ast="ast" />
+          <Query :query="ast" />
         </v-col>
       </v-row>
     </v-container>
