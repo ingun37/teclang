@@ -4,7 +4,7 @@ import {
   type IndexItem,
   type IndexList,
   type IndexRange,
-  type IndexSet
+  type IndexSet,
 } from "@/schema/TecRefined.ts";
 import { Array, Effect } from "effect";
 import type { TecQuery, TecType } from "@/schema/TecAstSchema.ts";

@@ -9,6 +9,7 @@ import { configureSigma } from "@/sigmaHelper.ts";
 import { iterateClique } from "@/functions.ts";
 import { NodeAttributesOrder } from "@/graphdb.ts";
 import { nodeAttributesToQuery } from "@/transformers.ts";
+import type { TecQuery } from "@/schema/TecAstSchema.ts";
 
 const store = useAppStore();
 const width = 1000;
@@ -22,6 +23,7 @@ const typeNames = computed(() => {
 const sigmaContainer = useTemplateRef("sigma-container");
 const graph = ref(new Graph());
 const renderer = ref<Sigma | null>(null);
+const queries = ref<readonly TecQuery[]>([]);
 onMounted(() => {
   if (!sigmaContainer.value) return;
   graph.value.clear();
@@ -77,7 +79,7 @@ onMounted(() => {
       const cliques = iterateClique(subG);
       console.log("cliques", cliques);
       if (Array.isNonEmptyArray(cliques)) {
-        const queries = pipe(
+        const qs = pipe(
           cliques,
           Array.map(Array.map((x) => db.getNodeAttributes(x))),
           Array.map(Array.sort(NodeAttributesOrder)),
@@ -89,8 +91,7 @@ onMounted(() => {
           ),
           Array.map(nodeAttributesToQuery),
         );
-
-        console.log("queries", queries);
+        queries.value = qs;
       }
     });
   }
@@ -98,15 +99,26 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-sheet :height="containerH" :width="containerW">
+  <v-sheet>
     <v-container>
       <v-row>
         <v-col v-for="typeName in typeNames">
           <v-checkbox :label="typeName" density="compact" />
         </v-col>
       </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-sheet :height="containerH" :width="containerW">
+            <div ref="sigma-container" class="sigma-container"></div>
+          </v-sheet>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col v-for="query in queries" cols="12">
+          <Query :query="query" />
+        </v-col>
+      </v-row>
     </v-container>
-    <div ref="sigma-container" class="sigma-container"></div>
   </v-sheet>
 </template>
 
