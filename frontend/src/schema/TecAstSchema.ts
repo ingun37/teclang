@@ -53,7 +53,7 @@ export type TecAST =
   | TecBinding
   | TecVar;
 
-const TecQuery = S.Struct({
+export const TecQuery = S.Struct({
   tag: S.tag("TecQuery"),
   op: S.Literal(":-"),
   left: S.suspend((): Schema<TecType | TecQuery> => S.Union(TecType, TecQuery)),

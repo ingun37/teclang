@@ -6,8 +6,9 @@ import Sigma from "sigma";
 import { createNodeBorderProgram } from "@sigma/node-border";
 import { Array, pipe } from "effect";
 import { configureSigma } from "@/sigmaHelper.ts";
-import { iterateClique, transpose } from "@/functions.ts";
+import { iterateClique } from "@/functions.ts";
 import { NodeAttributesOrder } from "@/graphdb.ts";
+import { nodeAttributesToQuery } from "@/transformers.ts";
 
 const store = useAppStore();
 const width = 1000;
@@ -76,7 +77,7 @@ onMounted(() => {
       const cliques = iterateClique(subG);
       console.log("cliques", cliques);
       if (Array.isNonEmptyArray(cliques)) {
-        const attributes = pipe(
+        const queries = pipe(
           cliques,
           Array.map(Array.map((x) => db.getNodeAttributes(x))),
           Array.map(Array.sort(NodeAttributesOrder)),
@@ -86,13 +87,10 @@ onMounted(() => {
               xs.map((x) => x.typeName).join("-") ===
               ys.map((y) => y.typeName).join("-"),
           ),
+          Array.map(nodeAttributesToQuery),
         );
-        // TODO continue here
-        console.log("attributes", attributes);
-        attributes.forEach((entries) => {
-          const transposed = transpose(entries);
-          console.log("transposed", transposed);
-        });
+
+        console.log("queries", queries);
       }
     });
   }

@@ -4,7 +4,7 @@ import {
   type IndexItem,
   type IndexList,
   type IndexRange,
-  type IndexSet,
+  type IndexSet
 } from "@/schema/TecRefined.ts";
 import { Array, Effect } from "effect";
 import type { TecQuery, TecType } from "@/schema/TecAstSchema.ts";
@@ -71,7 +71,6 @@ export function* iterateIndexSetsDB(
   const total = Array.fromIterable(itertateIndexSets(parameters));
 
   const nodes = db.filterNodes((node, att: NodeAttributes) => {
-    if (att._tag !== "TypeNode") return false;
     if (att.typeName !== typeName) return false;
     return total.some((expIds) =>
       Array.zip(expIds, att.ids).every(([a, b]) => {
@@ -85,7 +84,6 @@ export function* iterateIndexSetsDB(
 
   const validIds = nodes.flatMap((node): Entry[] => {
     const na: NodeAttributes = db.getNodeAttributes(node);
-    if (na._tag !== "TypeNode") return [];
     return [{ node, indexSet: na.ids }];
   });
   // .flatMap((x) => (x._tag === "TypeNode" ? [x] : []))

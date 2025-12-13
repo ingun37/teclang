@@ -100,7 +100,12 @@ export function configureSigma(
       console.log("connecting", x, y);
       subG.addUndirectedEdge(x, y);
     });
-    onSelect(subG);
+    try {
+      onSelect(subG);
+    } catch (e) {
+      console.warn("onSelect exception is ignored");
+      console.error(e);
+    }
   });
   R.addListener("enterNode", (e) => {
     const state = reset();

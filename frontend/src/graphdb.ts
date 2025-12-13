@@ -6,9 +6,8 @@ export type EdgeAttributes = {
   edgeNode: string;
 };
 export type NodeAttributes = {
-  _tag: "TypeNode";
   typeName: string;
-  ids: IndexItem[];
+  ids: Array.NonEmptyArray<IndexItem>;
   meta: any;
 };
 
@@ -24,11 +23,14 @@ export function createGraphDB(): TheGraph {
 
   const rng = (n: number) => Array.range(0, n - 1);
 
-  function addNode(typeName: string, ids: IndexItem[], meta?: any) {
+  function addNode(
+    typeName: string,
+    ids: Array.NonEmptyArray<IndexItem>,
+    meta?: any,
+  ) {
     const idPart = ids.map((x) => x.toString()).join("-");
     let node = `${typeName}-${idPart}`;
     return graph.addNode(`${node}`, {
-      _tag: "TypeNode",
       typeName,
       ids,
       meta: meta ?? {},
