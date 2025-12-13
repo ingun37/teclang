@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "test": "vitest"
+
   },
   "dependencies": {
     "@bjorn3/browser_wasi_shim": "^0.4.2",
@@ -44,6 +46,7 @@
     "vite": "^7.1.5",
     "vite-plugin-vue-layouts-next": "^1.0.0",
     "vite-plugin-vuetify": "^2.1.2",
+    "vitest": "^4.0.15",
     "vue-tsc": "^3.0.7"
   }
 }

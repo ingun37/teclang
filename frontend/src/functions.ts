@@ -21,9 +21,15 @@ export function foldUnion(strings: string[][]): string[] {
 export function combination<X>(xs: X[], n: 3): Generator<[X, X, X]>;
 export function combination<X>(xs: X[], n: number): Generator<X[]>;
 export function* combination<X>(xs: X[], n: number): Generator<X[]> {
-  if (xs.length < n) return;
-  if (n === 0) yield [];
-  for (let i = 0; i < n; i++) {
+  if (xs.length < n) {
+    return;
+  }
+  if (n === 0) {
+    yield [];
+    return;
+  }
+
+  for (let i = 0; i < xs.length - n + 1; i++) {
     for (const chain of combination(xs.slice(i + 1), n - 1))
       yield [xs[i]!, ...chain];
   }
