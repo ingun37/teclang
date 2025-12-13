@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import { useAppStore } from "@/stores/app.ts";
-import { getAllNodesOfType, iterateTypeNames } from "@/schema/IterateTec.ts";
+import { iterateTypeNames } from "@/schema/IterateTec.ts";
 import Graph from "graphology";
 import Sigma from "sigma";
 import { createNodeBorderProgram } from "@sigma/node-border";
 import { Array, flow, Order, pipe } from "effect";
 import { configureSigma } from "@/sigmaHelper.ts";
 import { combination, iterateClique } from "@/functions.ts";
-import { type NodeAttributes, NodeAttributesOrder } from "@/graphdb.ts";
 import { nodeAttributesToQuery } from "@/transformers.ts";
 import type { TecQuery } from "@/schema/TecAstSchema.ts";
 import TecLang from "@/components/TecLang.vue";
 import { nonNull } from "@/nonnull.ts";
+import { type GNode, gNodeEqById0, gNodeEqByTypeName, gNodeOrder } from "@/GNode.ts";
 
 const store = useAppStore();
 const width = 1000;
@@ -31,21 +31,34 @@ onMounted(() => {
   graph.value.clear();
 
   const db = store.graphDB;
-  const typeNames = Array.fromIterable(iterateTypeNames(db));
-  const unitW = width / typeNames.length;
+  const entries = Array.fromIterable(db.nodeEntries());
+  if (!Array.isNonEmptyArray(entries)) throw new Error("no nodes in graphdb");
+  const groupedByTypeName = pipe(
+    entries,
+    Array.sort(gNodeOrder),
+    Array.groupWith(gNodeEqByTypeName),
+  );
+
+  const unitW = width / groupedByTypeName.length;
   const size = 8;
   const defaultColor = "#ccc";
-  typeNames.forEach((typeName, i) => {
-    const entries = getAllNodesOfType(db, typeName);
-    const unitH = height / entries.length;
+  groupedByTypeName.forEach((entries, i) => {
+    const groupedById0 = pipe(entries, Array.groupWith(gNodeEqById0));
 
-    entries.forEach((entry, j) => {
-      graph.value.addNode(entry.node, {
-        x: unitW * i,
-        y: -unitH * j,
-        size,
-        label: entry.attributes.ids.map((x) => x.toString()).join("-"),
-        color: defaultColor,
+    const hSize = groupedById0[0].length;
+    const unitW2 = unitW / hSize;
+    const vSize = groupedById0.length;
+    const unitH = height / vSize;
+
+    groupedById0.forEach((entries, j) => {
+      entries.forEach((entry, i2) => {
+        graph.value.addNode(entry.node, {
+          x: unitW * i + unitW2 * i2 + unitW2 / 2,
+          y: -unitH * j + (unitH * (vSize - 1)) / 2,
+          size,
+          label: entry.attributes.ids.map((x) => x.toString()).join("-"),
+          color: defaultColor,
+        });
       });
     });
   });
@@ -82,20 +95,13 @@ onMounted(() => {
       defaultColor,
       (subG) => {
         const cliques = iterateClique(subG);
-        type Ex = {
-          attributes: NodeAttributes;
-          node: string;
-        };
-        const make = (n: string): Ex => ({
+        const make = (n: string): GNode => ({
           attributes: db.getNodeAttributes(n),
           node: n,
         });
-        const order = Order.mapInput((x: Ex) => x.attributes)(
-          NodeAttributesOrder,
-        );
 
-        const orderByJustTypeName: Order.Order<RNE<Ex>> = Array.getOrder(
-          Order.mapInput((x: Ex) => x.attributes.typeName)(Order.string),
+        const orderByJustTypeName: Order.Order<RNE<GNode>> = Array.getOrder(
+          Order.mapInput((x: GNode) => x.attributes.typeName)(Order.string),
         );
 
         const equalByJustTypeName = flow(orderByJustTypeName, (x) => x === 0);
@@ -103,7 +109,7 @@ onMounted(() => {
           const categories = pipe(
             cliques,
             Array.map(Array.map(make)),
-            Array.map(Array.sort(order)),
+            Array.map(Array.sort(gNodeOrder)),
             Array.sort(orderByJustTypeName),
             Array.groupWith(equalByJustTypeName),
           );

@@ -2,6 +2,7 @@ import {
   Array as A,
   Effect,
   Either as E,
+  Equivalence,
   Order,
   ParseResult,
   pipe,
@@ -164,6 +165,8 @@ export const IndexItemOrder: Order.Order<IndexItem> = (x, y) => {
     else return Order.string(x, y);
   }
 };
+export const IndexItemEq: Equivalence.Equivalence<IndexItem> = (x, y) =>
+  x === y;
 export function decodeGenericIndexSets(
   asts: readonly Raw.TecAST[],
 ): Effect.Effect<IndexSet[], ParseError> {
