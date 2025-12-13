@@ -72,7 +72,8 @@ export function iterateClique(g: Graph): NE<string>[] {
   );
 }
 type NE<T> = Array.NonEmptyArray<T>;
-export function transpose<A>(ass: NE<NE<A>>): NE<NE<A>> {
+type RNE<T> = Array.NonEmptyReadonlyArray<T>;
+export function transpose<A>(ass: RNE<RNE<A>>): RNE<RNE<A>> {
   const head = ass[0];
   if (ass.some((as) => head.length !== as.length)) {
     throw new Error("not square");

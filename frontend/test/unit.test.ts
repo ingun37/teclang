@@ -2,7 +2,13 @@ import { expect, test } from "vitest";
 import { Array, pipe } from "effect";
 import { combination, transpose } from "../src/functions";
 import { nodeAttributesToQuery } from "../src/transformers";
-import { TecInt, TecList, TecQuery, TecStr, TecType } from "../src/schema/TecAstSchema";
+import {
+  TecInt,
+  TecList,
+  TecQuery,
+  TecStr,
+  TecType,
+} from "../src/schema/TecAstSchema";
 import { NodeAttributes, NodeAttributesOrder } from "../src/graphdb";
 
 test("combination", () => {

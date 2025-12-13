@@ -4,7 +4,7 @@ import { getAllNodesOfType, iterateTypeNames } from "@/schema/IterateTec.ts";
 import Graph from "graphology";
 import Sigma from "sigma";
 import { createNodeBorderProgram } from "@sigma/node-border";
-import { Array, Order, pipe } from "effect";
+import { Array, flow, Order, pipe } from "effect";
 import { configureSigma } from "@/sigmaHelper.ts";
 import { iterateClique } from "@/functions.ts";
 import { type NodeAttributes, NodeAttributesOrder } from "@/graphdb.ts";
@@ -78,22 +78,19 @@ onMounted(() => {
   if (renderer.value) {
     configureSigma(renderer.value as any, graph.value, defaultColor, (subG) => {
       const cliques = iterateClique(subG);
-
+      const orderByJustTypeName: Order.Order<
+        Array.NonEmptyReadonlyArray<NodeAttributes>
+      > = Array.getOrder(
+        Order.mapInput((x: NodeAttributes) => x.typeName)(Order.string),
+      );
+      const equalByJustTypeName = flow(orderByJustTypeName, (x) => x === 0);
       if (Array.isNonEmptyArray(cliques)) {
         queries.value = pipe(
           cliques,
           Array.map(Array.map((x) => db.getNodeAttributes(x))),
           Array.map(Array.sort(NodeAttributesOrder)),
-          Array.sort(
-            Array.getOrder(
-              Order.mapInput((x: NodeAttributes) => x.typeName)(Order.string),
-            ),
-          ),
-          Array.groupWith(
-            (xs, ys) =>
-              xs.map((x) => x.typeName).join("-") ===
-              ys.map((y) => y.typeName).join("-"),
-          ),
+          Array.sort(orderByJustTypeName),
+          Array.groupWith(equalByJustTypeName),
           Array.map(nodeAttributesToQuery),
         );
       } else queries.value = [];

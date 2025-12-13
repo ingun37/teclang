@@ -6,7 +6,8 @@ import * as Raw from "@/schema/TecAstSchema.ts";
 import { TecQuery, TecType } from "@/schema/TecAstSchema.ts";
 
 type NE<T> = Array.NonEmptyArray<T>;
-export function indexItemsToTec(ids: A.NonEmptyArray<IndexItem>) {
+type RNE<T> = Array.NonEmptyReadonlyArray<T>;
+export function indexItemsToTec(ids: RNE<IndexItem>) {
   if (ids.some((id) => typeof id !== typeof ids[0]))
     throw new Error("IndexItem type mismatch");
   return pipe(
@@ -21,7 +22,7 @@ export function indexItemsToTec(ids: A.NonEmptyArray<IndexItem>) {
 }
 
 export function nodeAttributesToQuery(
-  entries: NE<NE<NodeAttributes>>,
+  entries: RNE<RNE<NodeAttributes>>,
 ): TecQuery {
   const tecTypesWithRangeParameters = pipe(
     entries,
