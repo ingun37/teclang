@@ -10,6 +10,7 @@ import { iterateClique } from "@/functions.ts";
 import { NodeAttributesOrder } from "@/graphdb.ts";
 import { nodeAttributesToQuery } from "@/transformers.ts";
 import type { TecQuery } from "@/schema/TecAstSchema.ts";
+import TecLang from "@/components/TecLang.vue";
 
 const store = useAppStore();
 const width = 1000;
@@ -21,9 +22,9 @@ const typeNames = computed(() => {
   return Array.fromIterable(iterateTypeNames(db));
 });
 const sigmaContainer = useTemplateRef("sigma-container");
-const graph = ref(new Graph());
-const renderer = ref<Sigma | null>(null);
-const queries = ref<readonly TecQuery[]>([]);
+const graph = shallowRef(new Graph());
+const renderer = shallowRef<Sigma | null>(null);
+const queries = shallowRef<readonly TecQuery[]>([]);
 onMounted(() => {
   if (!sigmaContainer.value) return;
   graph.value.clear();
@@ -115,6 +116,7 @@ onMounted(() => {
       </v-row>
       <v-row>
         <v-col v-for="query in queries" cols="12">
+          <TecLang :tec-ast="query" />
           <Query :query="query" />
         </v-col>
       </v-row>

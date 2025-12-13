@@ -161,8 +161,7 @@ watch(tecAST, async (newValue) => {
   const jsonStr = encodeTecAST(newValue).trim();
   console.log("converting ast back to haskell code ...", jsonStr);
   if (jsonStr) {
-    const haskellCodeTask: Promise<string> =
-      appStore.wasmInstance.makeHaskell(jsonStr);
+    const haskellCodeTask = appStore.wasmInstance!.makeHaskell(jsonStr);
     appStore.textValue = await haskellCodeTask;
   }
 });

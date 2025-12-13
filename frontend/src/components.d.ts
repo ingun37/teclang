@@ -33,6 +33,7 @@ declare module 'vue' {
     Stack: typeof import('./components/Stack.vue')['default']
     TecAST: typeof import('./components/TecAST.vue')['default']
     TecBinding: typeof import('./components/TecBinding.vue')['default']
+    TecLang: typeof import('./components/TecLang.vue')['default']
     TecType: typeof import('./components/TecType.vue')['default']
     Text: typeof import('./components/Text.vue')['default']
     VStack: typeof import('./components/VStack.vue')['default']
