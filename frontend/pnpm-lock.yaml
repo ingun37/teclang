@@ -29,6 +29,12 @@ importers:
       graphology:
         specifier: ^0.26.0
         version: 0.26.0(graphology-types@0.24.8)
+      graphology-components:
+        specifier: ^1.5.4
+        version: 1.5.4(graphology-types@0.24.8)
+      graphology-traversal:
+        specifier: ^0.3.1
+        version: 0.3.1(graphology-types@0.24.8)
       pinia:
         specifier: ^3.0.3
         version: 3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))
@@ -1239,6 +1245,21 @@ packages:
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
+  graphology-components@1.5.4:
+    resolution: {integrity: sha512-O37vC226wgnN0C6FUWHNe4fbTzaF51CcQjwX3naId/QTzH/PkUtXaanCShj9ws5Vju+z4u3zvSeEZE84Bo9jlA==}
+    peerDependencies:
+      graphology-types: '>=0.19.0'
+
+  graphology-indices@0.17.0:
+    resolution: {integrity: sha512-A7RXuKQvdqSWOpn7ZVQo4S33O0vCfPBnUSf7FwE0zNCasqwZVUaCXePuWo5HBpWw68KJcwObZDHpFk6HKH6MYQ==}
+    peerDependencies:
+      graphology-types: '>=0.20.0'
+
+  graphology-traversal@0.3.1:
+    resolution: {integrity: sha512-lGLrLKEDKtNgAKgHVhVftKf3cb/nuWwuVPQZHXRnN90JWn0RSjco/s+NB2ARSlMapEMlbnPgv6j++427yTnU3Q==}
+    peerDependencies:
+      graphology-types: '>=0.20.0'
+
   graphology-types@0.24.8:
     resolution: {integrity: sha512-hDRKYXa8TsoZHjgEaysSRyPdT6uB78Ci8WnjgbStlQysz7xR52PInxNsmnB7IBOM1BhikxkNyCVEFgmPKnpx3Q==}
 
@@ -1407,6 +1428,9 @@ packages:
   mlly@1.8.0:
     resolution: {integrity: sha512-l8D9ODSRWLe2KHJSifWGwBqpTZXIXTeo8mlKjY+E2HAakaTeNpqAyBZ8GSqLzHgw4XmHmC8whvpjJNMbFZN7/g==}
 
+  mnemonist@0.39.8:
+    resolution: {integrity: sha512-vyWo2K3fjrUw8YeeZ1zF0fy6Mu59RHokURlld8ymdUPjMlD9EC9ov1/YPqTgqRvUN9nTr3Gqfz29LYAmu0PHPQ==}
+
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
@@ -1451,6 +1475,9 @@ packages:
     resolution: {integrity: sha512-7eM+hpOtrKrBDCh7Ypu2lJ9Z7PNZBdi/8AT3AX8xoCj43BBVHD0hPSTEvMtkMpfs8FCqBGhxB+uToIQimA111g==}
     engines: {node: ^14.16.0 || >=16.10.0}
     hasBin: true
+
+  obliterator@2.0.5:
+    resolution: {integrity: sha512-42CPE9AhahZRsMNslczq0ctAEtqk8Eka26QofnqC346BZdHDySk3LWka23LI7ULIw11NmltpiLagIq8gBozxTw==}
 
   ohash@2.0.11:
     resolution: {integrity: sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ==}
@@ -3160,6 +3187,24 @@ snapshots:
 
   graphemer@1.4.0: {}
 
+  graphology-components@1.5.4(graphology-types@0.24.8):
+    dependencies:
+      graphology-indices: 0.17.0(graphology-types@0.24.8)
+      graphology-types: 0.24.8
+      graphology-utils: 2.5.2(graphology-types@0.24.8)
+
+  graphology-indices@0.17.0(graphology-types@0.24.8):
+    dependencies:
+      graphology-types: 0.24.8
+      graphology-utils: 2.5.2(graphology-types@0.24.8)
+      mnemonist: 0.39.8
+
+  graphology-traversal@0.3.1(graphology-types@0.24.8):
+    dependencies:
+      graphology-indices: 0.17.0(graphology-types@0.24.8)
+      graphology-types: 0.24.8
+      graphology-utils: 2.5.2(graphology-types@0.24.8)
+
   graphology-types@0.24.8: {}
 
   graphology-utils@2.5.2(graphology-types@0.24.8):
@@ -3301,6 +3346,10 @@ snapshots:
       pkg-types: 1.3.1
       ufo: 1.6.1
 
+  mnemonist@0.39.8:
+    dependencies:
+      obliterator: 2.0.5
+
   ms@2.1.3: {}
 
   muggle-string@0.4.1: {}
@@ -3342,6 +3391,8 @@ snapshots:
       pathe: 2.0.3
       pkg-types: 2.3.0
       tinyexec: 1.0.2
+
+  obliterator@2.0.5: {}
 
   ohash@2.0.11: {}
 

@@ -19,6 +19,8 @@
     "@vueuse/core": "^14.1.0",
     "effect": "^3.19.9",
     "graphology": "^0.26.0",
+    "graphology-components": "^1.5.4",
+    "graphology-traversal": "^0.3.1",
     "pinia": "^3.0.3",
     "prettier": "^3.7.4",
     "sigma": "^3.0.2",
