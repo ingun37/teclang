@@ -5,12 +5,16 @@ import parseColor from "color-parse";
 import { VisualGraphState, type VState } from "@/VisualGraphState.ts";
 import type { VGraph } from "@/VGraph.ts";
 
+export interface NodeController {
+  selectNodes(nodes: string[]): void;
+  deselectNodes(nodes: string[]): void;
+}
 export function configureSigma(
   R: Sigma,
   G: VGraph,
   defaultColor: string,
   onSelect: (state: VState) => void,
-) {
+): NodeController {
   const AvailableColor = "#00ff00";
   const SelectedColor = "#0000ff";
   const BadColor = "#ff0000";
@@ -70,6 +74,15 @@ export function configureSigma(
   R.addListener("leaveEdge", () => {
     reset(visualGraphState.unhoverEdge());
   });
+
+  return {
+    selectNodes(nodes: string[]) {
+      onSelect(reset(visualGraphState.selectNodes(nodes)));
+    },
+    deselectNodes(nodes: string[]) {
+      onSelect(reset(visualGraphState.deselectNodes(nodes)));
+    },
+  };
 }
 
 function makeStyler(

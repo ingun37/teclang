@@ -39,6 +39,18 @@ export class VisualGraphState {
     return this.computeState();
   }
 
+  selectNodes(nodes: string[]) {
+    for (const node of nodes) {
+      if (!this.SelectedNodes.includes(node)) this.SelectedNodes.push(node);
+    }
+    return this.computeState();
+  }
+
+  deselectNodes(nodes: string[]) {
+    this.SelectedNodes = this.SelectedNodes.filter((x) => !nodes.includes(x));
+    return this.computeState();
+  }
+
   hoverNode(node: string) {
     this.HoveringNode = node;
     return this.computeState();

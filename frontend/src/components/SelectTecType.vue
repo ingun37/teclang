@@ -5,15 +5,16 @@ import Graph from "graphology";
 import Sigma from "sigma";
 import { createNodeBorderProgram } from "@sigma/node-border";
 import { Array, pipe } from "effect";
-import { configureSigma } from "@/sigmaHelper.ts";
+import { configureSigma, type NodeController } from "@/sigmaHelper.ts";
 import type { TecQuery } from "@/schema/TecAstSchema.ts";
 import TecLang from "@/components/TecLang.vue";
 import { gNodeEqById0, gNodeEqByTypeName, gNodeOrder } from "@/GNode.ts";
 import type { VGraph, VNodeAttributes } from "@/VGraph.ts";
 import { nodeAttributesToQuery } from "@/transformers.ts";
 import { transpose } from "@/functions.ts";
-import { IndexItemEq } from "@/schema/IndexItem.ts";
+import { type IndexItem, IndexItemEq } from "@/schema/IndexItem.ts";
 import type { AllOccurrences, Occurrence } from "@/Occurrence.ts";
+import { nonNull } from "@/nonnull.ts";
 
 const store = useAppStore();
 const width = 1000;
@@ -29,6 +30,8 @@ const graph = shallowRef<VGraph>(new Graph());
 const renderer = shallowRef<Sigma<VNodeAttributes> | null>(null);
 const queries = shallowRef<readonly TecQuery[]>([]);
 const allOccurrences = shallowRef<AllOccurrences[]>([]);
+const nodeController = shallowRef<NodeController | null>(null);
+
 onMounted(() => {
   if (!sigmaContainer.value) return;
   graph.value.clear();
@@ -116,7 +119,7 @@ onMounted(() => {
   }
 
   if (renderer.value) {
-    configureSigma(
+    nodeController.value = configureSigma(
       renderer.value as any,
       graph.value,
       defaultColor,
@@ -127,18 +130,31 @@ onMounted(() => {
             Array.map(Array.map(Array.map((x) => x.attributes))),
             Array.map(nodeAttributesToQuery),
           );
+        else queries.value = [];
       },
     );
   }
 });
-function onOccurrencesClick(typeName: string, idIdx: number, o: Occurrence) {
-  console.log(
-    "Selecting all",
-    typeName,
-    idIdx,
-    "'th ids:",
-    o.all.map((x) => x.toString()).join(", "),
-  );
+function onAllClick(typeName: string, checked: boolean) {
+  const nodes = useAppStore().graphDB.filterNodes((n, a) => {
+    return a.typeName === typeName;
+  });
+  if (checked) nodeController.value?.selectNodes(nodes);
+  else nodeController.value?.deselectNodes(nodes);
+}
+function onOccurrencesClick(
+  typeName: string,
+  idIdx: number,
+  indexItem: IndexItem,
+  checked: boolean,
+) {
+  const nodes = useAppStore().graphDB.filterNodes((n, a) => {
+    return (
+      a.typeName === typeName && IndexItemEq(indexItem, nonNull(a.ids[idIdx]))
+    );
+  });
+  if (checked) nodeController.value?.selectNodes(nodes);
+  else nodeController.value?.deselectNodes(nodes);
 }
 </script>
 
@@ -148,15 +164,43 @@ function onOccurrencesClick(typeName: string, idIdx: number, o: Occurrence) {
       <v-row>
         <v-col v-for="occurrences in allOccurrences">
           {{ occurrences.typeName }}
-
-          <v-sheet class="d-flex flex-row">
-            <v-btn
-              v-for="(o, i) in occurrences.occurrences"
-              :key="i"
-              density="compact"
-              v-on:click="onOccurrencesClick(occurrences.typeName, i, o)"
-              >all</v-btn
+          <v-checkbox
+            density="compact"
+            hide-details
+            label="all"
+            @change="
+              (x: Event) => {
+                onAllClick(
+                  occurrences.typeName,
+                  (x.target as any).checked ?? false,
+                );
+              }
+            "
+          />
+          <v-sheet class="d-flex row">
+            <v-sheet
+              v-for="(o, idIndex) in occurrences.occurrences"
+              :key="idIndex"
+              class="d-flex flex-column"
             >
+              <v-checkbox
+                v-for="(indexItem, i) in o.all"
+                :key="i"
+                :label="nonNull(indexItem).toString()"
+                density="compact"
+                hide-details
+                @change="
+                  (x: Event) => {
+                    onOccurrencesClick(
+                      occurrences.typeName,
+                      idIndex,
+                      indexItem,
+                      (x.target as any).checked ?? false,
+                    );
+                  }
+                "
+              ></v-checkbox>
+            </v-sheet>
           </v-sheet>
         </v-col>
       </v-row>
