@@ -1,77 +1,15 @@
 import { Array } from "effect";
-import { foldIntersect, foldUnion } from "@/functions.ts";
 import Sigma from "sigma";
 import Graph from "graphology";
 import parseColor from "color-parse";
-
-function computeState1(G: Graph, input: { SelectedNodes: string[] }) {
-  function computeSingleNodes() {
-    return input.SelectedNodes.filter((x) =>
-      input.SelectedNodes.every((y) => !G.areUndirectedNeighbors(x, y)),
-    );
-  }
-  function computeSelectedEdges() {
-    const sortedBs = input.SelectedNodes.flatMap((x) =>
-      G.undirectedEdges(x),
-    ).sort();
-    if (Array.isNonEmptyArray(sortedBs)) {
-      return Array.group(sortedBs)
-        .filter((xs) => xs.length == 2)
-        .map((x) => x[0]!);
-    } else return [];
-  }
-  function computeAvailableNodes() {
-    return foldIntersect(
-      input.SelectedNodes.map((x) => G.undirectedNeighbors(x)),
-    );
-  }
-  const AvailableNodes = computeAvailableNodes();
-  function computeAvailableEdges() {
-    return foldIntersect([
-      foldUnion(input.SelectedNodes.map((x) => G.undirectedEdges(x))),
-      foldUnion(AvailableNodes.map((x) => G.undirectedEdges(x))),
-    ]);
-  }
-  return {
-    SingleNodes: computeSingleNodes(),
-    SelectedEdges: computeSelectedEdges(),
-    AvailableNodes,
-    AvailableEdges: computeAvailableEdges(),
-  };
-}
-
-function computeState2(
-  G: Graph,
-  input: {
-    HoveringNode: string;
-    SelectedNodes: string[];
-    AvailableNodes: string[];
-  },
-) {
-  const allPreviewNodes = G.undirectedNeighbors(input.HoveringNode);
-  const [unknown, good] = Array.partition(
-    allPreviewNodes,
-    (x) => input.AvailableNodes.includes(x) || input.SelectedNodes.includes(x),
-  );
-  const unknownEdges = unknown.map(
-    (x) => G.undirectedEdge(input.HoveringNode, x)!,
-  );
-  return {
-    SelectPreviewNodes: good,
-    SelectPreviewEdges: good.map(
-      (x) => G.undirectedEdge(input.HoveringNode, x)!,
-    ),
-    UnknownPreviewNodes: unknown,
-    UnknownPreviewEdges: unknownEdges,
-  };
-}
+import { VisualGraphState, type VState } from "@/VisualGraphState.ts";
+import type { VGraph } from "@/VGraph.ts";
 
 export function configureSigma(
   R: Sigma,
-  G: Graph,
+  G: VGraph,
   defaultColor: string,
-  onSelect: (subGraph: Graph) => void,
-  getSameCategoryEdges: (e: string) => string[],
+  onSelect: (state: VState) => void,
 ) {
   const AvailableColor = "#00ff00";
   const SelectedColor = "#0000ff";
@@ -84,68 +22,53 @@ export function configureSigma(
     BadColor,
   );
 
-  let SelectedNodes = [] as string[];
-  function reset() {
+  const visualGraphState = new VisualGraphState(G);
+  function reset(state: VState) {
     styler.reset();
-    const state = computeState1(G, { SelectedNodes });
-    SelectedNodes.forEach(styler.node.fillSelected);
+
+    state.SelectedNodes.forEach(styler.node.fillSelected);
     state.SingleNodes.forEach(styler.node.single);
     state.SelectedEdges.forEach(styler.edge.select);
     state.AvailableNodes.forEach(styler.node.borderGood);
     state.AvailableEdges.forEach(styler.edge.good);
+
+    if (state.preview) {
+      state.preview.SelectPreviewNodes.forEach(styler.node.borderSelected);
+      state.preview.SelectPreviewEdges.forEach(styler.edge.select);
+      styler.node.borderSelected(state.preview.hoveringNode);
+      if (Array.isEmptyArray(state.SelectedNodes)) {
+        state.preview.UnknownPreviewNodes.forEach(styler.node.borderGood);
+        state.preview.UnknownPreviewEdges.forEach(styler.edge.good);
+      } else {
+        state.preview.UnknownPreviewNodes.forEach(styler.node.borderBad);
+        state.preview.UnknownPreviewEdges.forEach(styler.edge.bad);
+      }
+    }
+    if (state.categories && state.HoveringEdge !== "") {
+      const category = state.categories.edgeCategories.find((xs) =>
+        xs.includes(state.HoveringEdge),
+      );
+      if (category) {
+        category.forEach(styler.edge.sameCategory);
+      }
+    }
+
     return state;
   }
   R.addListener("clickNode", (e) => {
-    if (SelectedNodes.includes(e.node))
-      SelectedNodes = SelectedNodes.filter((x) => x !== e.node);
-    else SelectedNodes.push(e.node);
-
-    const state = reset();
-    const subG = new Graph();
-    SelectedNodes.forEach((n) => subG.addNode(n));
-    state.SelectedEdges.forEach((e) => {
-      const [x, y] = G.extremities(e);
-      subG.addUndirectedEdge(x, y);
-    });
-    try {
-      onSelect(subG);
-    } catch (e) {
-      console.warn("onSelect exception is ignored");
-      console.error(e);
-    }
+    onSelect(reset(visualGraphState.toggleNode(e.node)));
   });
   R.addListener("enterNode", (e) => {
-    const state = reset();
-    const state2 = computeState2(G, {
-      HoveringNode: e.node,
-      SelectedNodes,
-      AvailableNodes: state.AvailableNodes,
-    });
-
-    state2.SelectPreviewNodes.forEach(styler.node.borderSelected);
-    state2.SelectPreviewEdges.forEach(styler.edge.select);
-
-    if (state.AvailableNodes.includes(e.node))
-      styler.node.borderSelected(e.node);
-    else if (Array.isEmptyArray(SelectedNodes))
-      styler.node.borderSelected(e.node);
-    if (Array.isEmptyArray(SelectedNodes)) {
-      state2.UnknownPreviewNodes.forEach(styler.node.borderGood);
-      state2.UnknownPreviewEdges.forEach(styler.edge.good);
-    } else {
-      state2.UnknownPreviewNodes.forEach(styler.node.borderBad);
-      state2.UnknownPreviewEdges.forEach(styler.edge.bad);
-    }
+    reset(visualGraphState.hoverNode(e.node));
   });
   R.addListener("leaveNode", () => {
-    reset();
+    reset(visualGraphState.unhoverNode());
   });
   R.addListener("enterEdge", (event) => {
-    const edges = getSameCategoryEdges(event.edge);
-    edges.forEach(styler.edge.sameCategory);
+    reset(visualGraphState.hoverEdge(event.edge));
   });
   R.addListener("leaveEdge", () => {
-    reset();
+    reset(visualGraphState.unhoverEdge());
   });
 }
 

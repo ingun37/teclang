@@ -4,14 +4,13 @@ import { iterateTypeNames } from "@/schema/IterateTec.ts";
 import Graph from "graphology";
 import Sigma from "sigma";
 import { createNodeBorderProgram } from "@sigma/node-border";
-import { Array, flow, Order, pipe } from "effect";
+import { Array, pipe } from "effect";
 import { configureSigma } from "@/sigmaHelper.ts";
-import { combination, iterateClique } from "@/functions.ts";
-import { nodeAttributesToQuery } from "@/transformers.ts";
 import type { TecQuery } from "@/schema/TecAstSchema.ts";
 import TecLang from "@/components/TecLang.vue";
-import { nonNull } from "@/nonnull.ts";
-import { type GNode, gNodeEqById0, gNodeEqByTypeName, gNodeOrder } from "@/GNode.ts";
+import { gNodeEqById0, gNodeEqByTypeName, gNodeOrder } from "@/GNode.ts";
+import type { VGraph, VNodeAttributes } from "@/VGraph.ts";
+import { nodeAttributesToQuery } from "@/transformers.ts";
 
 const store = useAppStore();
 const width = 1000;
@@ -23,8 +22,8 @@ const typeNames = computed(() => {
   return Array.fromIterable(iterateTypeNames(db));
 });
 const sigmaContainer = useTemplateRef("sigma-container");
-const graph = shallowRef(new Graph());
-const renderer = shallowRef<Sigma | null>(null);
+const graph = shallowRef<VGraph>(new Graph());
+const renderer = shallowRef<Sigma<VNodeAttributes> | null>(null);
 const queries = shallowRef<readonly TecQuery[]>([]);
 onMounted(() => {
   if (!sigmaContainer.value) return;
@@ -43,7 +42,7 @@ onMounted(() => {
   let offsetX = 0;
   const size = 8;
   const defaultColor = "#ccc";
-  groupedByTypeName.forEach((entries, i) => {
+  groupedByTypeName.forEach((entries) => {
     const groupedById0 = pipe(entries, Array.groupWith(gNodeEqById0));
 
     const hSize = groupedById0[0].length;
@@ -59,8 +58,11 @@ onMounted(() => {
           x: offsetX + unitW2 * i2 + unitW2 / 2,
           y: -unitH * j + (unitH * (vSize - 1)) / 2,
           size,
+          type: undefined,
+          borderColor: defaultColor,
           label: entry.attributes.ids.map((x) => x.toString()).join("-"),
           color: defaultColor,
+          dbNodeAttributes: entry.attributes,
         });
       });
     });
@@ -90,57 +92,20 @@ onMounted(() => {
       enableEdgeEvents: true,
     });
   }
-  type RNE<T> = Array.NonEmptyReadonlyArray<T>;
 
   if (renderer.value) {
-    let islandEdgesState: string[][] = [];
     configureSigma(
       renderer.value as any,
       graph.value,
       defaultColor,
-      (subG) => {
-        const cliques = iterateClique(subG);
-        const make = (n: string): GNode => ({
-          attributes: db.getNodeAttributes(n),
-          node: n,
-        });
-
-        const orderByJustTypeName: Order.Order<RNE<GNode>> = Array.getOrder(
-          Order.mapInput((x: GNode) => x.attributes.typeName)(Order.string),
-        );
-
-        const equalByJustTypeName = flow(orderByJustTypeName, (x) => x === 0);
-        if (Array.isNonEmptyArray(cliques)) {
-          const categories = pipe(
-            cliques,
-            Array.map(Array.map(make)),
-            Array.map(Array.sort(gNodeOrder)),
-            Array.sort(orderByJustTypeName),
-            Array.groupWith(equalByJustTypeName),
-          );
-
-          islandEdgesState = pipe(
-            categories,
-            Array.map(
-              Array.flatMap((xxx) =>
-                Array.fromIterable(
-                  combination(
-                    xxx.map((x) => x.node),
-                    2,
-                  ),
-                ).map(([x, y]) => nonNull(graph.value.undirectedEdge(x, y))),
-              ),
-            ),
-          );
-
+      (vstate) => {
+        if (vstate.categories)
           queries.value = pipe(
-            categories,
+            vstate.categories.nodeCategories,
             Array.map(Array.map(Array.map((x) => x.attributes))),
             Array.map(nodeAttributesToQuery),
           );
-        } else queries.value = [];
       },
-      (e) => islandEdgesState.find((xs) => xs.includes(e)) ?? [],
     );
   }
 });
