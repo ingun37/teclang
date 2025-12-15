@@ -11,6 +11,9 @@ import TecLang from "@/components/TecLang.vue";
 import { gNodeEqById0, gNodeEqByTypeName, gNodeOrder } from "@/GNode.ts";
 import type { VGraph, VNodeAttributes } from "@/VGraph.ts";
 import { nodeAttributesToQuery } from "@/transformers.ts";
+import { transpose } from "@/functions.ts";
+import { IndexItemEq } from "@/schema/IndexItem.ts";
+import type { AllOccurrences, Occurrence } from "@/Occurrence.ts";
 
 const store = useAppStore();
 const width = 1000;
@@ -25,17 +28,36 @@ const sigmaContainer = useTemplateRef("sigma-container");
 const graph = shallowRef<VGraph>(new Graph());
 const renderer = shallowRef<Sigma<VNodeAttributes> | null>(null);
 const queries = shallowRef<readonly TecQuery[]>([]);
+const allOccurrences = shallowRef<AllOccurrences[]>([]);
 onMounted(() => {
   if (!sigmaContainer.value) return;
   graph.value.clear();
 
   const db = store.graphDB;
+
   const entries = Array.fromIterable(db.nodeEntries());
   if (!Array.isNonEmptyArray(entries)) throw new Error("no nodes in graphdb");
   const groupedByTypeName = pipe(
     entries,
     Array.sort(gNodeOrder),
     Array.groupWith(gNodeEqByTypeName),
+  );
+
+  allOccurrences.value = pipe(
+    groupedByTypeName,
+    Array.map((group): AllOccurrences => {
+      const occurrences = pipe(
+        group,
+        Array.map((x) => x.attributes.ids),
+        transpose,
+        Array.map(Array.dedupeWith(IndexItemEq)),
+        Array.map((all): Occurrence => ({ all })),
+      );
+      return {
+        typeName: group[0].attributes.typeName,
+        occurrences,
+      };
+    }),
   );
 
   const unitW = width / groupedByTypeName.length;
@@ -70,7 +92,7 @@ onMounted(() => {
     offsetX += thisW;
   });
   db.forEachUndirectedEdge((e, _, source, target) =>
-    graph.value.addUndirectedEdge(source, target),
+    graph.value.addUndirectedEdgeWithKey(e, source, target),
   );
 
   if (renderer.value) {
@@ -109,14 +131,33 @@ onMounted(() => {
     );
   }
 });
+function onOccurrencesClick(typeName: string, idIdx: number, o: Occurrence) {
+  console.log(
+    "Selecting all",
+    typeName,
+    idIdx,
+    "'th ids:",
+    o.all.map((x) => x.toString()).join(", "),
+  );
+}
 </script>
 
 <template>
   <v-sheet>
     <v-container>
       <v-row>
-        <v-col v-for="typeName in typeNames">
-          <v-checkbox :label="typeName" density="compact" />
+        <v-col v-for="occurrences in allOccurrences">
+          {{ occurrences.typeName }}
+
+          <v-sheet class="d-flex flex-row">
+            <v-btn
+              v-for="(o, i) in occurrences.occurrences"
+              :key="i"
+              density="compact"
+              v-on:click="onOccurrencesClick(occurrences.typeName, i, o)"
+              >all</v-btn
+            >
+          </v-sheet>
         </v-col>
       </v-row>
       <v-row>
