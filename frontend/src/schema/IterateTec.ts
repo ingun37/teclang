@@ -5,9 +5,9 @@ import {
   type IndexRange,
   type IndexSet,
 } from "@/schema/TecRefined.ts";
-import { Array, Effect } from "effect";
+import { Array, Effect, Equivalence, Order } from "effect";
 import type { TecQuery, TecType } from "@/schema/TecAstSchema.ts";
-import type { IndexItem } from "@/schema/IndexItem.ts";
+import { type IndexItem, IndexItemOrder } from "@/schema/IndexItem.ts";
 import type { NodeAttributes } from "@/NodeAttributes.ts";
 
 function* iterateIndexSet(p: IndexSet): Generator<IndexItem> {
@@ -48,7 +48,12 @@ type EntryTT<T extends readonly IndexItem[]> = {
 export type EntryT<T extends IndexItem> = EntryTT<readonly T[]>;
 export type Entry = EntryT<IndexItem>;
 export type TypedEntry = { entry: Entry; typeName: string };
-
+export const typedEntryOrder: Order.Order<TypedEntry> = (x, y) => {
+  if (x.typeName !== y.typeName) return Order.string(x.typeName, y.typeName);
+  return Array.getOrder(IndexItemOrder)(x.entry.indexSet, y.entry.indexSet);
+};
+export const typedEntryEq: Equivalence.Equivalence<TypedEntry> = (x, y) =>
+  typedEntryOrder(x, y) === 0;
 type IndexType<I extends IndexSet> = I extends IndexRange
   ? number
   : I extends IndexList
