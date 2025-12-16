@@ -11,10 +11,10 @@
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --fix",
     "test": "vitest"
-
   },
   "dependencies": {
     "@bjorn3/browser_wasi_shim": "^0.4.2",
+    "@effect/typeclass": "^0.38.0",
     "@fontsource/roboto": "5.2.7",
     "@mdi/font": "7.4.47",
     "@sigma/node-border": "^3.0.0",

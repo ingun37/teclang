@@ -1,7 +1,11 @@
 <script lang="ts" setup>
-import {Array, Equivalence, Option, pipe} from "effect";
-import {type TypedEntry, typedEntryEq, typedEntryOrder,} from "@/schema/IterateTec.ts";
-import type {StrictTableData} from "@/StrictTableData.ts";
+import { Array, Equivalence, Option, pipe } from "effect";
+import {
+  type TypedEntry,
+  typedEntryEq,
+  typedEntryOrder,
+} from "@/schema/IterateTec.ts";
+import type { StrictTableData } from "@/StrictTableData.ts";
 import StrictTable from "@/components/StrictTable.vue";
 
 type NE<A> = Array.NonEmptyArray<A>;
@@ -48,7 +52,7 @@ const isTable = computed((): StrictTableData | null => {
     )
   )
     return null;
-  const tails = pipe(
+  const tails_ = pipe(
     tt,
     Array.map(
       Array.map((entries) => {
@@ -59,8 +63,16 @@ const isTable = computed((): StrictTableData | null => {
     Array.map(Option.all),
     Option.all,
   );
-  if (Option.isNone(tails)) return null;
-  return { headers, tails: tails.value };
+  if (Option.isNone(tails_)) return null;
+
+  const tails___ = pipe(
+    tails_.value,
+    Array.map(Option.liftPredicate(Array.isNonEmptyArray)),
+    Option.all,
+  );
+
+  if (Option.isNone(tails___)) return null;
+  return { headers, tails: tails___.value };
 });
 </script>
 
