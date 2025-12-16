@@ -1,10 +1,8 @@
 <script lang="ts" setup>
-import { Array, Equivalence, Option, pipe } from "effect";
-import {
-  type TypedEntry,
-  typedEntryEq,
-  typedEntryOrder,
-} from "@/schema/IterateTec.ts";
+import {Array, Equivalence, Option, pipe} from "effect";
+import {type TypedEntry, typedEntryEq, typedEntryOrder,} from "@/schema/IterateTec.ts";
+import type {StrictTableData} from "@/StrictTableData.ts";
+import StrictTable from "@/components/StrictTable.vue";
 
 type NE<A> = Array.NonEmptyArray<A>;
 type RNE<A> = Array.NonEmptyReadonlyArray<A>;
@@ -37,7 +35,7 @@ const groupedByFirstEntry = computed(() => {
   return grouped;
 });
 
-const isTable = computed(() => {
+const isTable = computed((): StrictTableData | null => {
   const grouped = groupedByFirstEntry.value;
   const headers = grouped.map((x) => x.head);
   const tt = pipe(
@@ -69,18 +67,7 @@ const isTable = computed(() => {
 <template>
   <v-sheet v-if="isTable">
     <Resizable>
-      <v-table>
-        <tbody>
-          <tr v-for="(tail, index) in isTable.tails" :key="index">
-            <td>
-              <Single :t-entry="isTable.headers[index]!" />
-            </td>
-            <td v-for="(entry, index2) in tail" :key="index2">
-              <Single :t-entry="entry"></Single>
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
+      <StrictTable :strict-table="isTable" />
     </Resizable>
   </v-sheet>
   <v-sheet v-else :class="`d-flex flex-${axis}`">

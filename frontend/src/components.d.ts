@@ -32,6 +32,7 @@ declare module 'vue' {
     SelectTecType: typeof import('./components/SelectTecType.vue')['default']
     Single: typeof import('./components/Single.vue')['default']
     Stack: typeof import('./components/Stack.vue')['default']
+    StrictTable: typeof import('./components/StrictTable.vue')['default']
     TecAST: typeof import('./components/TecAST.vue')['default']
     TecBinding: typeof import('./components/TecBinding.vue')['default']
     TecLang: typeof import('./components/TecLang.vue')['default']

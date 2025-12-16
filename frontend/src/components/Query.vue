@@ -30,7 +30,7 @@ function rotate(q: TecQuery): TecQuery {
 }
 </script>
 <template>
-  <v-btn @click="emit('updated', rotate(query))">rotate</v-btn>
+  <v-btn @click="emit('updated', rotate(query))">transpose</v-btn>
   <v-sheet v-if="Array.isNonEmptyArray(items)">
     <EntryMatrix :entries="items" axis="column"></EntryMatrix>
   </v-sheet>
