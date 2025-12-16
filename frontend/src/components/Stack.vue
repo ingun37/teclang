@@ -1,11 +1,6 @@
 <script lang="ts" setup>
 import TecAST from "@/components/TecAST.vue";
-import {
-  type TecAST as TecASTType,
-  TecBinding,
-  TecStr,
-  TecType,
-} from "@/schema/TecAstSchema.ts";
+import { type TecAST as TecASTType, TecBinding, TecStr, TecType } from "@/schema/TecAstSchema.ts";
 import SelectTecType from "@/components/SelectTecType.vue";
 
 interface Props {
@@ -121,7 +116,14 @@ function handleAddItem(topS: Selection) {
       <v-card>
         <v-card-title>Select Type</v-card-title>
         <v-card-text>
-          <SelectTecType />
+          <SelectTecType
+            @returned="
+              (ast) => {
+                emit('added', ast);
+                showTypeDialog = false;
+              }
+            "
+          />
         </v-card-text>
         <v-card-actions>
           <v-spacer />

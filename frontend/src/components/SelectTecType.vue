@@ -7,6 +7,10 @@ import { createNodeBorderProgram } from "@sigma/node-border";
 import { Array, pipe } from "effect";
 import { configureSigma, type NodeController } from "@/sigmaHelper.ts";
 import type { TecQuery } from "@/schema/TecAstSchema.ts";
+import {
+  TecAST as TecASTType,
+  TecType as TecTypeType,
+} from "@/schema/TecAstSchema.ts";
 import TecLang from "@/components/TecLang.vue";
 import { gNodeEqById0, gNodeEqByTypeName, gNodeOrder } from "@/GNode.ts";
 import type { VGraph, VNodeAttributes } from "@/VGraph.ts";
@@ -31,7 +35,7 @@ const renderer = shallowRef<Sigma<VNodeAttributes> | null>(null);
 const queries = shallowRef<readonly TecQuery[]>([]);
 const allOccurrences = shallowRef<AllOccurrences[]>([]);
 const nodeController = shallowRef<NodeController | null>(null);
-
+const emits = defineEmits<{ returned: [TecASTType] }>();
 onMounted(() => {
   if (!sigmaContainer.value) return;
   graph.value.clear();
@@ -161,6 +165,18 @@ function updateQueryAt(newQuery: TecQuery, idx: number) {
   l.splice(idx, 1, newQuery);
   queries.value = l;
 }
+function onChoose(ast: TecASTType) {
+  emits("returned", ast);
+}
+function onZip() {
+  emits(
+    "returned",
+    TecTypeType.make({
+      typeName: "Zip",
+      parameters: [...queries.value],
+    }),
+  );
+}
 </script>
 
 <template>
@@ -220,10 +236,12 @@ function updateQueryAt(newQuery: TecQuery, idx: number) {
         <v-col v-for="(ast, qi) in queries" cols="12">
           <TecLang :tec-ast="ast" />
           <Query :query="ast" @updated="(q) => updateQueryAt(q, qi)" />
+          <v-btn @click="onChoose(ast)">choose</v-btn>
         </v-col>
       </v-row>
     </v-container>
   </v-sheet>
+  <v-btn @click="onZip">zip</v-btn>
 </template>
 
 <style lang="sass" scoped>
