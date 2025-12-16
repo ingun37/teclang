@@ -1,10 +1,6 @@
 <script lang="ts" setup>
 import { Array, Equivalence, Option, pipe } from "effect";
-import {
-  type TypedEntry,
-  typedEntryEq,
-  typedEntryOrder,
-} from "@/schema/IterateTec.ts";
+import { type TypedEntry, typedEntryEq, typedEntryOrder } from "@/schema/IterateTec.ts";
 
 type NE<A> = Array.NonEmptyArray<A>;
 type RNE<A> = Array.NonEmptyReadonlyArray<A>;
@@ -68,18 +64,20 @@ const isTable = computed(() => {
 
 <template>
   <v-sheet v-if="isTable">
-    <v-table>
-      <tbody>
-        <tr v-for="(tail, index) in isTable.tails" :key="index">
-          <td>
-            <Single :t-entry="isTable.headers[index]!" />
-          </td>
-          <td v-for="(entry, index2) in tail" :key="index2">
-            <Single :t-entry="entry"></Single>
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
+    <Resizable>
+      <v-table>
+        <tbody>
+          <tr v-for="(tail, index) in isTable.tails" :key="index">
+            <td>
+              <Single :t-entry="isTable.headers[index]!" />
+            </td>
+            <td v-for="(entry, index2) in tail" :key="index2">
+              <Single :t-entry="entry"></Single>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
+    </Resizable>
   </v-sheet>
   <v-sheet v-else :class="`d-flex flex-${axis}`">
     <v-sheet v-for="entries2D in groupedByFirstEntry">
