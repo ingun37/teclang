@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useAppStore } from "@/stores/app.ts";
-import type { TecQuery } from "@/schema/TecAstSchema.ts";
+import { TecQuery } from "@/schema/TecAstSchema.ts";
 import { iterateQuery } from "@/schema/IterateTec.ts";
 import { Array } from "effect";
 
@@ -12,8 +12,25 @@ const items = computed(() => {
 
   return [...iterateQuery(db, props.query)];
 });
+
+const emit = defineEmits<{
+  updated: [TecQuery];
+}>();
+function rotate(q: TecQuery): TecQuery {
+  if (q.left.tag === "TecQuery") {
+    const rotatedL = rotate(q.left);
+    return TecQuery.make({
+      op: q.op,
+      left: TecQuery.make({ op: q.op, left: rotatedL.left, right: q.right }),
+      right: rotatedL.right,
+    });
+  } else {
+    return TecQuery.make({ op: q.op, left: q.right, right: q.left });
+  }
+}
 </script>
 <template>
+  <v-btn @click="emit('updated', rotate(query))">rotate</v-btn>
   <v-sheet v-if="Array.isNonEmptyArray(items)">
     <EntryMatrix :entries="items" axis="column"></EntryMatrix>
   </v-sheet>

@@ -156,6 +156,11 @@ function onOccurrencesClick(
   if (checked) nodeController.value?.selectNodes(nodes);
   else nodeController.value?.deselectNodes(nodes);
 }
+function updateQueryAt(newQuery: TecQuery, idx: number) {
+  const l = [...queries.value];
+  l.splice(idx, 1, newQuery);
+  queries.value = l;
+}
 </script>
 
 <template>
@@ -212,9 +217,9 @@ function onOccurrencesClick(
         </v-col>
       </v-row>
       <v-row>
-        <v-col v-for="ast in queries" cols="12">
+        <v-col v-for="(ast, qi) in queries" cols="12">
           <TecLang :tec-ast="ast" />
-          <Query :query="ast" />
+          <Query :query="ast" @updated="(q) => updateQueryAt(q, qi)" />
         </v-col>
       </v-row>
     </v-container>
