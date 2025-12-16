@@ -4,6 +4,7 @@ import { decodeUnknownSync } from "effect/Schema";
 import { RefinedTecType } from "@/schema/TecRefined.ts";
 import Zip from "@/components/Zip.vue";
 import Image from "@/components/Image.vue";
+import { nonNull } from "@/nonnull.ts";
 
 const props = defineProps<{ inputTecType: TecType }>();
 const emit = defineEmits<{
@@ -60,6 +61,18 @@ function handleItemAdd(newItem: TecAST) {
     }),
   );
 }
+function handleItemReordered(x: number, y: number) {
+  let newParams = [...props.inputTecType.parameters];
+  newParams[x] = nonNull(props.inputTecType.parameters[y]);
+  newParams[y] = nonNull(props.inputTecType.parameters[x]);
+  emit(
+    "updated",
+    TecType.make({
+      typeName: props.inputTecType.typeName,
+      parameters: newParams,
+    }),
+  );
+}
 </script>
 
 <template>
@@ -105,6 +118,7 @@ function handleItemAdd(newItem: TecAST) {
         :items="inputTecType.parameters"
         @added="(newItem) => handleItemAdd(newItem)"
         @onItemRemove="(item, index) => handleItemRemove(item, index)"
+        @reordered="(x, y) => handleItemReordered(x, y)"
         @updated="(newItem, index) => handleItemUpdate(newItem, index)"
       />
     </v-sheet>
@@ -113,6 +127,7 @@ function handleItemAdd(newItem: TecAST) {
         :items="inputTecType.parameters"
         @added="(newItem) => handleItemAdd(newItem)"
         @onItemRemove="(item, index) => handleItemRemove(item, index)"
+        @reordered="(x, y) => handleItemReordered(x, y)"
         @updated="(newItem, index) => handleItemUpdate(newItem, index)"
       />
     </v-sheet>

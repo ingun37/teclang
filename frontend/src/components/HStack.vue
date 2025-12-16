@@ -9,6 +9,7 @@ const emit = defineEmits<{
   onItemRemove: [TecASTType, number];
   updated: [TecASTType, number];
   added: [TecASTType];
+  reordered: [number, number];
 }>();
 const props = defineProps<Props>();
 
@@ -26,6 +27,7 @@ function updateItem(newItem: TecASTType, index: number) {
     axis="X"
     @added="(x) => emit('added', x)"
     @removed="(x, y) => deleteItem(x, y)"
+    @reordered="(x, y) => $emit('reordered', x, y)"
     @updated="(x, y) => updateItem(x, y)"
   />
 </template>
