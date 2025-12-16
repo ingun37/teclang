@@ -52,7 +52,7 @@ const handleContextMenu = (event: MouseEvent) => {
       />
     </v-sheet>
     <v-sheet v-if="ast.tag === 'TecQuery'">
-      <Query :query="ast" />
+      <Query :query="ast" @updated="(x) => emit('updated', x)" />
     </v-sheet>
     <v-sheet v-if="ast.tag === 'TecBinding'">
       <TecBinding :binding="ast" @updated="(x) => emit('updated', x)" />

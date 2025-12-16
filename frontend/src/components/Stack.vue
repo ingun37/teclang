@@ -1,6 +1,11 @@
 <script lang="ts" setup>
 import TecAST from "@/components/TecAST.vue";
-import { type TecAST as TecASTType, TecBinding, TecStr, TecType } from "@/schema/TecAstSchema.ts";
+import {
+  type TecAST as TecASTType,
+  TecBinding,
+  TecStr,
+  TecType,
+} from "@/schema/TecAstSchema.ts";
 import SelectTecType from "@/components/SelectTecType.vue";
 
 interface Props {
