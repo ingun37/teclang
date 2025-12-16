@@ -10,6 +10,22 @@ const isDragging = ref(false);
 const containerLeft = ref<number | null>(null);
 const containerTop = ref<number | null>(null);
 
+const hasChanges = computed(() => {
+  return (
+    containerWidth.value !== null ||
+    containerHeight.value !== null ||
+    containerLeft.value !== null ||
+    containerTop.value !== null
+  );
+});
+
+const undoChanges = () => {
+  containerWidth.value = null;
+  containerHeight.value = null;
+  containerLeft.value = null;
+  containerTop.value = null;
+};
+
 const startResize = (
   direction: "horizontal" | "vertical",
   event: MouseEvent,
@@ -95,6 +111,16 @@ const startDrag = (event: MouseEvent) => {
     <!-- Drag handle at the top -->
     <div class="drag-handle" @mousedown="startDrag($event)"></div>
 
+    <!-- Undo button -->
+    <button
+      v-if="hasChanges"
+      class="undo-button"
+      title="Reset position and size"
+      @click="undoChanges"
+    >
+      ↶
+    </button>
+
     <slot />
 
     <!-- Resize handles -->
@@ -129,6 +155,32 @@ const startDrag = (event: MouseEvent) => {
 
   &:hover
     background-color: rgba(33, 150, 243, 0.8)
+
+.undo-button
+  position: absolute
+  top: 8px
+  right: 8px
+  width: 28px
+  height: 28px
+  border-radius: 50%
+  background-color: rgba(33, 150, 243, 0.8)
+  color: white
+  border: none
+  cursor: pointer
+  font-size: 18px
+  display: flex
+  align-items: center
+  justify-content: center
+  z-index: 12
+  transition: all 0.2s
+  padding: 0
+
+  &:hover
+    background-color: rgba(33, 150, 243, 1)
+    transform: scale(1.1)
+
+  &:active
+    transform: scale(0.95)
 
 .resize-handle
   position: absolute
