@@ -27,6 +27,7 @@ declare module 'vue' {
     Pom: typeof import('./components/Pom.vue')['default']
     Query: typeof import('./components/Query.vue')['default']
     Render: typeof import('./components/Render.vue')['default']
+    Reorder: typeof import('./components/Reorder.vue')['default']
     Resizable: typeof import('./components/Resizable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

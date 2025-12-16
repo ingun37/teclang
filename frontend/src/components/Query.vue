@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { useAppStore } from "@/stores/app.ts";
-import { TecQuery } from "@/schema/TecAstSchema.ts";
+import { TecQuery, TecType } from "@/schema/TecAstSchema.ts";
 import { iterateQuery } from "@/schema/IterateTec.ts";
-import { Array } from "effect";
+import { Array, pipe } from "effect";
+import Reorder from "@/components/Reorder.vue";
+import { nonNull } from "@/nonnull.ts";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
@@ -16,6 +18,15 @@ const items = computed(() => {
 const emit = defineEmits<{
   updated: [TecQuery];
 }>();
+function collectOperands(q: TecQuery): Array.NonEmptyArray<TecType> {
+  if (q.left.tag === "TecQuery") {
+    return Array.append(collectOperands(q.left), q.right);
+  } else {
+    return Array.make(q.left, q.right);
+  }
+}
+const operands = computed(() => collectOperands(props.query));
+
 function rotate(q: TecQuery): TecQuery {
   if (q.left.tag === "TecQuery") {
     const rotatedL = rotate(q.left);
@@ -28,9 +39,28 @@ function rotate(q: TecQuery): TecQuery {
     return TecQuery.make({ op: q.op, left: q.right, right: q.left });
   }
 }
+function swap(i: number, j: number) {
+  let newOrder = [...operands.value];
+  newOrder[i] = nonNull(operands.value[j]);
+  newOrder[j] = nonNull(operands.value[i]);
+  const left = newOrder[0]!;
+  const right = newOrder[1]!;
+  const init = TecQuery.make({ op: ":-", left, right });
+  const newQ = pipe(
+    newOrder.slice(2),
+    Array.reduce(init, (q, t) =>
+      TecQuery.make({ op: ":-", left: q, right: t }),
+    ),
+  );
+  emit("updated", newQ);
+}
 </script>
 <template>
-  <v-btn @click="emit('updated', rotate(query))">rotate query operands</v-btn>
+  <Reorder
+    :labels="operands.map((x) => x.typeName)"
+    @reorder="(x, y) => swap(x, y)"
+  ></Reorder>
+
   <v-sheet v-if="Array.isNonEmptyArray(items)">
     <EntryMatrix :entries="items" axis="column"></EntryMatrix>
   </v-sheet>

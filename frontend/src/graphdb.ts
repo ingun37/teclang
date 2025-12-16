@@ -114,12 +114,21 @@ export function createGraphDB(): TheGraph {
   const addPattern = (id: string) => addNode("Pattern", [id]);
   const patternNodes = patterns.map(addPattern);
 
-  addEdge(lineNodes[0]!, patternNodes[1]!);
-  addEdge(lineNodes[2]!, patternNodes[1]!);
-  addEdge(lineNodes[4]!, patternNodes[1]!);
+  {
+    const f = (l: number, p: number) =>
+      sizes.forEach((_, i) => addEdge(pomNodes[i]![l]!, patternNodes[p]!));
+    addEdge(lineNodes[0]!, patternNodes[1]!);
+    f(0, 1);
+    addEdge(lineNodes[2]!, patternNodes[1]!);
+    f(2, 1);
+    addEdge(lineNodes[4]!, patternNodes[1]!);
+    f(4, 1);
 
-  addEdge(lineNodes[1]!, patternNodes[3]!);
-  addEdge(lineNodes[3]!, patternNodes[3]!);
+    addEdge(lineNodes[1]!, patternNodes[3]!);
+    f(1, 3);
+    addEdge(lineNodes[3]!, patternNodes[3]!);
+    f(3, 3);
+  }
   return graph;
 }
 function nonNull<A>(a: A | null | undefined): A {
