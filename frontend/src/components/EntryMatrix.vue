@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import { Array, Equivalence, Option, pipe } from "effect";
-import { type TypedEntry, typedEntryEq, typedEntryOrder } from "@/schema/IterateTec.ts";
+import {
+  type TypedEntry,
+  typedEntryEq,
+  typedEntryOrder,
+} from "@/schema/IterateTec.ts";
 
 type NE<A> = Array.NonEmptyArray<A>;
 type RNE<A> = Array.NonEmptyReadonlyArray<A>;

@@ -6,6 +6,9 @@ const isResizing = ref(false);
 const resizeDirection = ref<"horizontal" | "vertical" | null>(null);
 const containerWidth = ref<number | null>(null);
 const containerHeight = ref<number | null>(null);
+const isDragging = ref(false);
+const containerLeft = ref<number | null>(null);
+const containerTop = ref<number | null>(null);
 
 const startResize = (
   direction: "horizontal" | "vertical",
@@ -43,6 +46,37 @@ const startResize = (
   document.addEventListener("mousemove", handleMouseMove);
   document.addEventListener("mouseup", handleMouseUp);
 };
+
+const startDrag = (event: MouseEvent) => {
+  event.preventDefault();
+  event.stopPropagation();
+  isDragging.value = true;
+
+  const startX = event.clientX;
+  const startY = event.clientY;
+  const rect = containerRef.value?.getBoundingClientRect();
+  const initialLeft = rect?.left ?? 0;
+  const initialTop = rect?.top ?? 0;
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging.value) return;
+
+    const deltaX = e.clientX - startX;
+    const deltaY = e.clientY - startY;
+
+    containerLeft.value = initialLeft + deltaX;
+    containerTop.value = initialTop + deltaY;
+  };
+
+  const handleMouseUp = () => {
+    isDragging.value = false;
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+  };
+
+  document.addEventListener("mousemove", handleMouseMove);
+  document.addEventListener("mouseup", handleMouseUp);
+};
 </script>
 
 <template>
@@ -51,10 +85,16 @@ const startResize = (
     :style="{
       width: containerWidth ? `${containerWidth}px` : 'auto',
       height: containerHeight ? `${containerHeight}px` : 'auto',
-      position: 'relative',
+      position:
+        containerLeft !== null || containerTop !== null ? 'fixed' : 'relative',
+      left: containerLeft !== null ? `${containerLeft}px` : undefined,
+      top: containerTop !== null ? `${containerTop}px` : undefined,
     }"
     class="resizable-container"
   >
+    <!-- Drag handle at the top -->
+    <div class="drag-handle" @mousedown="startDrag($event)"></div>
+
     <slot />
 
     <!-- Resize handles -->
@@ -72,6 +112,23 @@ const startResize = (
 <style lang="sass" scoped>
 .resizable-container
   min-width: 100px
+
+.drag-handle
+  position: absolute
+  top: 0
+  left: 50%
+  transform: translateX(-50%)
+  width: 80%
+  max-width: 200px
+  height: 6px
+  background-color: rgba(243, 150, 33, 0.3)
+  cursor: move
+  transition: background-color 0.2s
+  z-index: 11
+  border-radius: 3px
+
+  &:hover
+    background-color: rgba(33, 150, 243, 0.8)
 
 .resize-handle
   position: absolute
