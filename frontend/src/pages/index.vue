@@ -5,7 +5,9 @@
       <v-btn v-if="tecAST === null" v-on:click="onCreateSomething"
         >create something</v-btn
       >
+      <v-btn :disabled="history.length === 0" v-on:click="onUndo">Undo</v-btn>
     </v-row>
+
     <v-row>
       <v-col cols="12">
         <v-textarea
@@ -74,20 +76,16 @@ import { useAppStore } from "@/stores/app";
 import { refDebounced, useDebounceFn } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
-import {
-  decodeTecAST,
-  encodeTecAST,
-  type TecAST as TecASTType,
-  TecBinding,
-  TecStr,
-} from "@/schema/TecAstSchema.ts";
+import { decodeTecAST, encodeTecAST, type TecAST as TecASTType, TecBinding, TecStr } from "@/schema/TecAstSchema.ts";
+import { nonNull } from "@/nonnull.ts";
 
 const appStore = useAppStore();
 
-const debounceTime = 2000;
+const debounceTime = 1000;
 const jsonString = ref<string>("");
 const isLoading = ref(false);
 const tecAST = ref<TecASTType | null>(null);
+const history = ref<string[]>([]);
 function handleRemove() {
   console.log("removing root ast ...");
   tecAST.value = null;
@@ -97,9 +95,10 @@ function handleUpdate(newItem: TecASTType) {
   console.log("updating root ast ...");
   tecAST.value = newItem;
 }
+
 async function formatCode() {
   const code = appStore.textValue;
-  const formatted: string = await appStore.wasmInstance.formatHaskell(code);
+  const formatted: string = await appStore.wasmInstance!.formatHaskell(code);
 
   appStore.textValue = formatted
     .split("\n")
@@ -132,8 +131,9 @@ const debouncedCallback = useDebounceFn(async (value: string) => {
   try {
     isLoading.value = true;
     const jsonStringTask: Promise<string> =
-      appStore.wasmInstance.parseHaskell(value);
+      appStore.wasmInstance!.parseHaskell(value);
     jsonString.value = await jsonStringTask;
+    history.value.push(value);
   } catch (error) {
     console.error("Error parsing:", error);
     jsonString.value = `Error: ${error}`;
@@ -156,6 +156,14 @@ function onCreateSomething() {
     });
   }
 }
+function onUndo() {
+  if (history.value.length > 0) {
+    const lastValue = history.value[history.value.length - 1];
+    history.value.pop();
+    appStore.textValue = nonNull(lastValue);
+  }
+}
+
 watch(tecAST, async (newValue) => {
   if (!newValue) return;
   const jsonStr = encodeTecAST(newValue).trim();

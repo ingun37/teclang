@@ -4,6 +4,8 @@ import { createGraphDB } from "@/graphdb.ts";
 
 export interface HaskellWasm {
   makeHaskell(jsonStr: string): Promise<string>;
+  parseHaskell(jsonStr: string): Promise<string>;
+  formatHaskell(jsonStr: string): Promise<string>;
 }
 export const useAppStore = defineStore("app", {
   state: () => ({
