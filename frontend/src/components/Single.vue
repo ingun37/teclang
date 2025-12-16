@@ -12,12 +12,14 @@ const props = defineProps<{ tEntry: TypedEntry }>();
     <Render :item="tEntry" />
   </v-sheet>
   <v-sheet v-else-if="tEntry.typeName === 'Schematic'">
-    <v-img
-      :src="`/schematic/${tEntry.entry.indexSet[0]}.png`"
-      alt="Render image"
-      max-width="500px"
-      min-width="100px"
-    />
+    <Resizable>
+      <v-img
+        :src="`/schematic/${tEntry.entry.indexSet[0]}.png`"
+        alt="Render image"
+        max-width="500px"
+        min-width="100px"
+      />
+    </Resizable>
   </v-sheet>
   <v-sheet v-else-if="tEntry.typeName === 'Fabric'">
     <v-card
