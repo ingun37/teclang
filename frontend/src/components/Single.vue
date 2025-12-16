@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { TypedEntry } from "@/schema/IterateTec.ts";
+import Pattern from "@/components/Pattern.vue";
 
 const props = defineProps<{ tEntry: TypedEntry }>();
 </script>
@@ -10,6 +11,10 @@ const props = defineProps<{ tEntry: TypedEntry }>();
   </v-sheet>
   <v-sheet v-else-if="tEntry.typeName === 'Render'">
     <Render :item="tEntry" />
+  </v-sheet>
+
+  <v-sheet v-else-if="tEntry.typeName === 'Pattern'">
+    <Pattern :item="tEntry" />
   </v-sheet>
   <v-sheet v-else-if="tEntry.typeName === 'Schematic'">
     <Resizable>

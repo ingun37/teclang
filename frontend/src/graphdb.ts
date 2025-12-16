@@ -110,6 +110,16 @@ export function createGraphDB(): TheGraph {
     }),
   );
 
+  const patterns = ["A", "B", "C", "D", "E"];
+  const addPattern = (id: string) => addNode("Pattern", [id]);
+  const patternNodes = patterns.map(addPattern);
+
+  addEdge(lineNodes[0]!, patternNodes[1]!);
+  addEdge(lineNodes[2]!, patternNodes[1]!);
+  addEdge(lineNodes[4]!, patternNodes[1]!);
+
+  addEdge(lineNodes[1]!, patternNodes[3]!);
+  addEdge(lineNodes[3]!, patternNodes[3]!);
   return graph;
 }
 function nonNull<A>(a: A | null | undefined): A {

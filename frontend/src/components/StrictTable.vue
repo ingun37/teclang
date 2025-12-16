@@ -40,7 +40,7 @@ const transposedTails = computed(() => transpose(props.strictTable.tails));
       <tbody>
         <tr v-for="(tail, i) in transposedTails" :key="i">
           <td v-for="(entry, j) in tail" :key="j">
-            <Single :t-entry="entry"></Single>/>
+            <Single :t-entry="entry"></Single>
           </td>
         </tr>
       </tbody>
