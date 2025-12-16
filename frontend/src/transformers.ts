@@ -2,7 +2,7 @@ import { Array as A, Array, pipe } from "effect";
 import { transpose } from "@/functions.ts";
 import * as Raw from "@/schema/TecAstSchema.ts";
 import { TecQuery, TecType } from "@/schema/TecAstSchema.ts";
-import type { IndexItem } from "@/schema/IndexItem.ts";
+import { type IndexItem, IndexItemEq } from "@/schema/IndexItem.ts";
 import type { NodeAttributes } from "@/NodeAttributes.ts";
 
 type RNE<T> = Array.NonEmptyReadonlyArray<T>;
@@ -11,7 +11,7 @@ export function indexItemsToTec(ids: RNE<IndexItem>) {
     throw new Error("IndexItem type mismatch");
   return pipe(
     ids,
-    A.dedupeAdjacent,
+    A.dedupeWith(IndexItemEq),
     A.map((id) => {
       if (typeof id === "number") return Raw.TecInt.make({ int: id });
       else return Raw.TecStr.make({ str: id });
