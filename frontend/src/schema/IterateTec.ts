@@ -1,10 +1,5 @@
 import type { TheGraph } from "@/graphdb.ts";
-import {
-  decodeGenericIndexSets,
-  type IndexList,
-  type IndexRange,
-  type IndexSet,
-} from "@/schema/TecRefined.ts";
+import { decodeGenericIndexSets, type IndexList, type IndexRange, type IndexSet } from "@/schema/TecRefined.ts";
 import { Array, Effect, Equivalence, Order } from "effect";
 import type { TecQuery, TecType } from "@/schema/TecAstSchema.ts";
 import { type IndexItem, IndexItemOrder } from "@/schema/IndexItem.ts";
@@ -44,6 +39,7 @@ export function* itertateIndexSets(
 type EntryTT<T extends readonly IndexItem[]> = {
   node: string;
   indexSet: T;
+  attributes: NodeAttributes;
 };
 export type EntryT<T extends IndexItem> = EntryTT<readonly T[]>;
 export type Entry = EntryT<IndexItem>;
@@ -76,10 +72,10 @@ export function* iterateIndexSetsDB(
 ): Generator<Entry> {
   const total = Array.fromIterable(itertateIndexSets(parameters));
 
-  const nodes = db.filterNodes((node, att: NodeAttributes) => {
-    if (att.typeName !== typeName) return false;
+  const nodes = Array.fromIterable(db.nodeEntries()).filter((entry) => {
+    if (entry.attributes.typeName !== typeName) return false;
     return total.some((expIds) =>
-      Array.zip(expIds, att.ids).every(([a, b]) => {
+      Array.zip(expIds, entry.attributes.ids).every(([a, b]) => {
         if (a === b) return true;
         if (typeof a === "string" && typeof b === "string")
           return new RegExp(a).test(b.toString());
@@ -88,9 +84,14 @@ export function* iterateIndexSetsDB(
     );
   });
 
-  const validIds = nodes.flatMap((node): Entry[] => {
-    const na: NodeAttributes = db.getNodeAttributes(node);
-    return [{ node, indexSet: na.ids }];
+  const validIds = nodes.flatMap((entry): Entry[] => {
+    return [
+      {
+        node: entry.node,
+        indexSet: entry.attributes.ids,
+        attributes: entry.attributes,
+      },
+    ];
   });
   // .flatMap((x) => (x._tag === "TypeNode" ? [x] : []))
   // .map((x): Entry => ({ indexSet: x.ids }));
