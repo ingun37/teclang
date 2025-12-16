@@ -2,6 +2,7 @@
 import { useAppStore } from "@/stores/app.ts";
 import type { TecQuery } from "@/schema/TecAstSchema.ts";
 import { iterateQuery } from "@/schema/IterateTec.ts";
+import { Array } from "effect";
 
 const props = defineProps<{ query: TecQuery }>();
 const store = useAppStore();
@@ -13,16 +14,8 @@ const items = computed(() => {
 });
 </script>
 <template>
-  <v-sheet v-if="items">
-    <v-sheet class="d-flex flex-row">
-      <v-sheet v-for="(queryEntries, index) in items" :key="index">
-        <v-sheet class="d-flex flex-column">
-          <v-sheet v-for="(queryEntry, index) in queryEntries" :key="index">
-            <Single :t-entry="queryEntry" class="pa-1" />
-          </v-sheet>
-        </v-sheet>
-      </v-sheet>
-    </v-sheet>
+  <v-sheet v-if="Array.isNonEmptyArray(items)">
+    <EntryMatrix :entries="items" axis="column"></EntryMatrix>
   </v-sheet>
   <div v-else class="no-results">No results</div>
 </template>

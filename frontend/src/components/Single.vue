@@ -27,6 +27,9 @@ const props = defineProps<{ tEntry: TypedEntry }>();
     >
     </v-card>
   </v-sheet>
+  <v-sheet v-else>
+    {{ tEntry.typeName }} {{ tEntry.entry.indexSet.join(",") }}
+  </v-sheet>
 </template>
 
 <style lang="sass" scoped></style>
