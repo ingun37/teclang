@@ -11,8 +11,9 @@ const transposedTails = computed(() => transpose(props.strictTable.tails));
   <div>
     <v-switch
       v-model="isTransposed"
-      class="mb-4"
+      class="ml-4"
       color="primary"
+      density="compact"
       hide-details
       label="Transpose Table"
     ></v-switch>
