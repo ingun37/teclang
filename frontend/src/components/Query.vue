@@ -54,15 +54,29 @@ function swap(i: number, j: number) {
   );
   emit("updated", newQ);
 }
+const initialOrientation = ref(false);
+const orientation = computed(() =>
+  initialOrientation.value ? "row" : "column",
+);
 </script>
 <template>
-  <Reorder
-    :labels="operands.map((x) => x.typeName)"
-    @reorder="(x, y) => swap(x, y)"
-  ></Reorder>
+  <v-sheet class="d-flex flex-row">
+    <Reorder
+      :labels="operands.map((x) => x.typeName)"
+      @reorder="(x, y) => swap(x, y)"
+    ></Reorder>
+    <v-switch
+      v-model="initialOrientation"
+      class="ml-4"
+      color="primary"
+      density="compact"
+      hide-details
+      label="orientation"
+    ></v-switch>
+  </v-sheet>
 
   <v-sheet v-if="Array.isNonEmptyArray(items)">
-    <EntryMatrix :entries="items" axis="column"></EntryMatrix>
+    <EntryMatrix :axis="orientation" :entries="items"></EntryMatrix>
   </v-sheet>
   <div v-else class="no-results">No results</div>
 </template>
