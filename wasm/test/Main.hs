@@ -49,9 +49,9 @@ testE logHandle code = do
       liftEither $ Left $ ErrStr "code and reconstructed code doesnt' match"
   return ast
 
-testIO :: (TecAST a) => [String] -> IO [a]
-testIO codes = do
-  logHandle <- IO.openFile "out.log" IO.WriteMode
+testIO :: (TecAST a) => [String] -> FilePath -> IO [a]
+testIO codes logFilePath = do
+  logHandle <- IO.openFile logFilePath IO.WriteMode
   let a = traverse (testE logHandle) codes
   b <- runExceptT a
   IO.hClose logHandle
@@ -92,5 +92,5 @@ testData =
 
 main :: IO ()
 main = do
-  _ <- testIO testData :: IO [TecDataAST]
+  _ <- testIO testData "out-data.log" :: IO [TecDataAST]
   return ()
