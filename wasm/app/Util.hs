@@ -13,9 +13,12 @@ mapLeft :: (a -> c) -> Either a b -> Either c b
 mapLeft f (Left a) = Left (f a)
 mapLeft _ (Right a) = Right a
 
+eD :: String -> Either MyLib.TecError (MyLib.Parsed MyLib.TecDataAST)
+eD = MyLib.encodeCodeToTec
+
 _encodeHaskellData :: String -> ExceptT AppErr IO String
 _encodeHaskellData code = do
-  ast <- liftEither $ fmap MyLib.ast $ mapLeft TecErr $ MyLib.encodeHaskellData code
+  ast <- liftEither $ fmap MyLib.ast $ mapLeft TecErr $ eD code
   let bytes = BS.toStrict $ J.encode ast
   let text = TE.decodeUtf8 bytes
   return $ T.unpack text
@@ -24,12 +27,15 @@ encodeHaskellData :: String -> IO String
 encodeHaskellData x = do
   e <- runExceptT $ _encodeHaskellData x
   either (fail . show) return e
-  
+
+dD :: MyLib.TecDataAST -> Either MyLib.TecError String
+dD = MyLib.decodeTecToCode
+
 _decodeHaskellData :: String -> ExceptT AppErr IO String
 _decodeHaskellData jsonStr = do
   let tecAst = J.decodeStrictText (T.pack jsonStr) :: Maybe MyLib.TecDataAST
   tecAst' <- liftEither $ maybe (Left $ ErrMsg "json decoding failed") Right tecAst
-  liftEither $ mapLeft TecErr (MyLib.decodeHaskellData tecAst')
+  liftEither $ mapLeft TecErr (dD tecAst')
 
 decodeHaskellData :: String -> IO String
 decodeHaskellData x = do
