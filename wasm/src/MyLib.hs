@@ -45,7 +45,7 @@ parseHaskellStr code =
         E.ParseOk a ->
           let e = extractDocExp a
            in do
-                ast <- mapWholeExpShow e $ En.encode e
+                ast <- mapWholeExpShow e $ En.encodeTecData e
                 Right $ Parsed {ast = ast, rawAstShow = show e}
         E.ParseFailed _ str ->
           tecError $ "Initial parsing failed:\n" ++ str
