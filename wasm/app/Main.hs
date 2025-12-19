@@ -58,14 +58,14 @@ jsTest jsval = do
   putStrLn $ fromJSString jsval
   return $ toJSString "hello js i'm haskell"
 
-foreign export javascript "parseHaskellData" parseHaskellData :: JSString -> IO JSString
-parseHaskellData :: JSString -> IO JSString
-parseHaskellData code = toJSString <$> Util.parseHaskellData (fromJSString code)
+foreign export javascript "encodeHaskellData" encodeHaskellData :: JSString -> IO JSString
+encodeHaskellData :: JSString -> IO JSString
+encodeHaskellData code = toJSString <$> Util.encodeHaskellData (fromJSString code)
 
 foreign export javascript "formatHaskell" formatHaskell :: JSString -> IO JSString
 formatHaskell :: JSString -> IO JSString
 formatHaskell = return . toJSString . TL.unpack . Simple.pStringNoColor . fromJSString
 
-foreign export javascript "makeHaskellData" makeHaskellData :: JSString -> IO JSString
-makeHaskellData :: JSString -> IO JSString
-makeHaskellData code = toJSString <$> Util.makeHaskellData (fromJSString code)
+foreign export javascript "decodeHaskellData" decodeHaskellData :: JSString -> IO JSString
+decodeHaskellData :: JSString -> IO JSString
+decodeHaskellData code = toJSString <$> Util.decodeHaskellData (fromJSString code)
