@@ -22,28 +22,28 @@ decodeDecl :: (String, E.Exp ()) -> Either TecError (E.Decl ())
 decodeDecl (varName, varExp) =
   return $ E.PatBind () (E.PVar () (E.Ident () varName)) (E.UnGuardedRhs () varExp) Nothing
 
-decode :: TecDataAST -> Either TecError (E.Exp ())
-decode (TecVar varName) = return (E.Var () (E.UnQual () (E.Ident () varName)))
-decode (TecBinding varMap exp) = do
-  varMap' <- traverse decode varMap
+decodeTecData :: TecDataAST -> Either TecError (E.Exp ())
+decodeTecData (TecVar varName) = return (E.Var () (E.UnQual () (E.Ident () varName)))
+decodeTecData (TecBinding varMap exp) = do
+  varMap' <- traverse decodeTecData varMap
   decls <- traverse decodeDecl (Map.toList varMap')
-  exp' <- decode exp
+  exp' <- decodeTecData exp
   return (E.Let () (E.BDecls () decls) exp')
-decode (TecTypeCon typeName params) = do
+decodeTecData (TecTypeCon typeName params) = do
   let seed = E.Con () (E.UnQual () (E.Ident () typeName))
-  foldM (\e p -> decode p <&> E.App () e) seed params
-decode (TecList list) = traverse decode list <&> E.List ()
-decode (TecQuery op left right) = do
-  l <- decode left
-  r <- decode right
+  foldM (\e p -> decodeTecData p <&> E.App () e) seed params
+decodeTecData (TecList list) = traverse decodeTecData list <&> E.List ()
+decodeTecData (TecQuery op left right) = do
+  l <- decodeTecData left
+  r <- decodeTecData right
   return $ E.InfixApp () l (E.QConOp () (E.UnQual () (E.Symbol () op))) r
-decode (TecInt i) = return $ intE i
-decode (TecStr s) = return $ E.Lit () (E.String () s s)
-decode (TecRngInt from to) = case to of
+decodeTecData (TecInt i) = return $ intE i
+decodeTecData (TecStr s) = return $ E.Lit () (E.String () s s)
+decodeTecData (TecRngInt from to) = case to of
   Nothing -> return $ E.EnumFrom () (intE from)
   Just to' -> return $ E.EnumFromTo () (intE from) (intE to')
-decode (TecRngEnum from to) = do
-  f <- decode (TecTypeCon from [])
+decodeTecData (TecRngEnum from to) = do
+  f <- decodeTecData (TecTypeCon from [])
   case to of
     Nothing -> return $ E.EnumFrom () f
-    Just to' -> decode (TecTypeCon to' []) <&> E.EnumFromTo () f
+    Just to' -> decodeTecData (TecTypeCon to' []) <&> E.EnumFromTo () f

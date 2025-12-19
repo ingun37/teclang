@@ -51,4 +51,4 @@ parseHaskellStr code =
           tecError $ "Initial parsing failed:\n" ++ str
 
 makeHaskellCode :: TecDataAST -> Either TecError String
-makeHaskellCode ast = fmap E.prettyPrint (De.decode ast)
+makeHaskellCode ast = fmap E.prettyPrint (De.decodeTecData ast)
