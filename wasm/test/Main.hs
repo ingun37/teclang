@@ -20,14 +20,14 @@ mapLeft :: (a -> c) -> Either a b -> Either c b
 mapLeft f (Left a) = Left (f a)
 mapLeft _ (Right a) = Right a
 
-testE :: IO.Handle -> String -> ErrM ()
+testE :: forall a. (TecAST a) => IO.Handle -> String -> ErrM a
 testE logHandle code = do
   lift $ putStrLn "============== TESTING =============="
   lift $ putStrLn "---- Original Code ----"
   lift $ putStrLn code
   lift $ hPutStrLn logHandle (T.pack "---- Original Code ----")
   lift $ hPutStrLn logHandle (T.pack code)
-  Parsed { ast, rawAstShow } <- liftEither $ mapLeft ErrTec $ encodeHaskellData code
+  Parsed { ast, rawAstShow } <- liftEither $ mapLeft ErrTec $ encodeCodeToTec code
   lift $ hPutStrLn logHandle (T.pack "---- Raw AST ----")
   Simple.pHPrintString logHandle rawAstShow
   lift $ putStrLn "---- Final AST ----"
@@ -40,18 +40,19 @@ testE logHandle code = do
   let decodedEither = maybe (Left $ ErrStr "decode fail") Right decodedMaybe
   tecAST <- liftEither decodedEither
   lift $ putStrLn "---- Reconstructed Code ----"
-  reconstructedCode <- liftEither $ mapLeft ErrTec $ decodeHaskellData tecAST
+  reconstructedCode <- liftEither $ mapLeft ErrTec $ decodeTecToCode tecAST
   lift $ putStrLn reconstructedCode
   if reconstructedCode == code
     then
       lift $ putStrLn "Success!!"
     else
       liftEither $ Left $ ErrStr "code and reconstructed code doesnt' match"
+  return ast
 
-main :: IO ()
-main = do
+testIO :: (TecAST a) => [String] -> IO [a]
+testIO codes = do
   logHandle <- IO.openFile "out.log" IO.WriteMode
-  let a = traverse (testE logHandle) testData
+  let a = traverse (testE logHandle) codes
   b <- runExceptT a
   IO.hClose logHandle
   case b of
@@ -62,7 +63,12 @@ main = do
         _ -> Simple.pPrint initialErr
       putStrLn "\n\n---- Entire AST show ----\n\n"
       Simple.pPrintString rawWholeAstShow
-    e -> print e
+      fail "test failed"
+    (Left e) -> do
+      Simple.pPrint e
+      fail "test failed"
+    (Right e) -> return e
+
 
 testData :: [String]
 testData =
@@ -82,5 +88,9 @@ testData =
     "Render [Front .. Right]",
     "let a = 0 in a",
     "let in 0"
-    -- "Render 0 Front"
   ]
+
+main :: IO ()
+main = do
+  _ <- testIO testData :: IO [TecDataAST]
+  return ()
