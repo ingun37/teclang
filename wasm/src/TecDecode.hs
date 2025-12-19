@@ -28,7 +28,7 @@ decodeDecl :: (String, E.Exp ()) -> Either TecError (E.Decl ())
 decodeDecl (varName, varExp) =
   return $ E.PatBind () (E.PVar () (E.Ident () varName)) (E.UnGuardedRhs () varExp) Nothing
 
-decode :: TecAST -> Either TecError (E.Exp ())
+decode :: TecDataAST -> Either TecError (E.Exp ())
 decode (TecVar varName) = return (E.Var () (E.UnQual () (E.Ident () varName)))
 decode (TecBinding varMap exp) = do
   varMap' <- traverse decode varMap

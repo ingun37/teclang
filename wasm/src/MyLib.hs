@@ -2,7 +2,7 @@
 
 module MyLib
   ( parseHaskellStr,
-    TecAST,
+    TecDataAST,
     Parsed (Parsed),
     makeHaskellCode,
     ast,
@@ -36,7 +36,7 @@ extractDocExp _ = undefined
 -- tecCode = $(Embed.embedFile "src/TecSyntax.hs")
 
 data Parsed = Parsed
-  { ast :: TecAST,
+  { ast :: TecDataAST,
     rawAstShow :: String
   }
 
@@ -53,5 +53,5 @@ parseHaskellStr code =
         E.ParseFailed _ str ->
           tecError $ "Initial parsing failed:\n" ++ str
 
-makeHaskellCode :: TecAST -> Either TecError String
+makeHaskellCode :: TecDataAST -> Either TecError String
 makeHaskellCode ast = fmap E.prettyPrint (De.decode ast)

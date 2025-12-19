@@ -15,19 +15,19 @@ data TecError
   | TecErrorWithWholeExpShow {err :: TecError, wholeExpShow :: String}
   deriving (Show)
 
-data TecAST
-  = TecType {typeName :: String, parameters :: [TecAST]}
-  | TecList {list :: [TecAST]}
-  | TecQuery {op :: String, left :: TecAST, right :: TecAST}
+data TecDataAST
+  = TecType {typeName :: String, parameters :: [TecDataAST]}
+  | TecList {list :: [TecDataAST]}
+  | TecQuery {op :: String, left :: TecDataAST, right :: TecDataAST}
   | TecInt {int :: Int}
   | TecStr {str :: String}
   | TecRngInt {fromI :: Int, toI :: Maybe Int}
   | TecRngEnum {fromE :: String, toE :: Maybe String}
   | TecVar {varName :: String}
-  | TecBinding {varMap :: Map String TecAST, expression :: TecAST}
+  | TecBinding {varMap :: Map String TecDataAST, expression :: TecDataAST}
   deriving (Show, Generic)
 
-instance ToJSON TecAST where
+instance ToJSON TecDataAST where
   toEncoding = genericToEncoding defaultOptions
 
-instance FromJSON TecAST
+instance FromJSON TecDataAST

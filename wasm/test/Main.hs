@@ -36,7 +36,7 @@ testE logHandle code = do
   let jsonBytes = B.toStrict $ JP.encodePretty ast
   lift $ putStrLn "---- Json encoded ----"
   lift $ putStrLn $ T.unpack $ E.decodeUtf8 jsonBytes
-  let decodedMaybe = Json.decodeStrict jsonBytes :: Maybe TecAST
+  let decodedMaybe = Json.decodeStrict jsonBytes :: Maybe TecDataAST
   let decodedEither = maybe (Left $ ErrStr "decode fail") Right decodedMaybe
   tecAST <- liftEither decodedEither
   lift $ putStrLn "---- Reconstructed Code ----"
