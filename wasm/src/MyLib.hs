@@ -17,9 +17,10 @@ where
 -- import Data.Text.Encoding qualified as TE
 
 import Language.Haskell.Exts qualified as E
-import TecTypes
-import TecEncode qualified as En
 import TecDecode qualified as De
+import TecEncode qualified as En
+import TecTypes
+
 mapWholeExpShow :: (Show l) => E.Exp l -> Either TecError a -> Either TecError a
 mapWholeExpShow x e = case e of
   (Left err) -> Left (TecErrorWithWholeExpShow err (show x))
@@ -28,20 +29,13 @@ mapWholeExpShow x e = case e of
 tecError :: String -> Either TecError b
 tecError str = Left $ TecError str
 
-extractDocExp :: E.Module l -> E.Exp l
-extractDocExp (E.Module _ _ _ _ decls) = head [exp | x@(E.PatBind _ _ ((E.UnGuardedRhs _ exp)) _) <- decls]
-extractDocExp _ = undefined
-
 encodeHaskellData :: String -> Either TecError (Parsed TecDataAST)
 encodeHaskellData code =
-  let indented = unlines $ map ("  " ++) $ lines code
-      result = E.parseFileContents ("\ndoc = " ++ indented)
+  let result = E.parseExp code
    in case result of
-        E.ParseOk a ->
-          let e = extractDocExp a
-           in do
-                ast <- mapWholeExpShow e $ En.encodeTecData e
-                Right $ Parsed {ast = ast, rawAstShow = show e}
+        E.ParseOk e -> do
+          ast <- mapWholeExpShow e $ En.encodeTecData e
+          Right $ Parsed {ast = ast, rawAstShow = show e}
         E.ParseFailed _ str ->
           tecError $ "Initial parsing failed:\n" ++ str
 
