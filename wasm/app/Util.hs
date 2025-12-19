@@ -27,7 +27,7 @@ parseHaskell x = do
   
 _makeHaskell :: String -> ExceptT AppErr IO String
 _makeHaskell jsonStr = do
-  let tecAst = J.decodeStrictText (T.pack jsonStr) :: Maybe MyLib.TecAST
+  let tecAst = J.decodeStrictText (T.pack jsonStr) :: Maybe MyLib.TecDataAST
   tecAst' <- liftEither $ maybe (Left $ ErrMsg "json decoding failed") Right tecAst
   liftEither $ mapLeft TecErr (MyLib.makeHaskellCode tecAst')
 

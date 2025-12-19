@@ -16,7 +16,7 @@ data TecError
   deriving (Show)
 
 data TecDataAST
-  = TecType {typeName :: String, parameters :: [TecDataAST]}
+  = TecTypeCon {typeName :: String, parameters :: [TecDataAST]}
   | TecList {list :: [TecDataAST]}
   | TecQuery {op :: String, left :: TecDataAST, right :: TecDataAST}
   | TecInt {int :: Int}

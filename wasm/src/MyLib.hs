@@ -32,9 +32,6 @@ extractDocExp :: E.Module l -> E.Exp l
 extractDocExp (E.Module _ _ _ _ decls) = head [exp | x@(E.PatBind _ _ ((E.UnGuardedRhs _ exp)) _) <- decls]
 extractDocExp _ = undefined
 
--- tecCode :: BS.ByteString
--- tecCode = $(Embed.embedFile "src/TecSyntax.hs")
-
 data Parsed = Parsed
   { ast :: TecDataAST,
     rawAstShow :: String
