@@ -13,25 +13,25 @@ mapLeft :: (a -> c) -> Either a b -> Either c b
 mapLeft f (Left a) = Left (f a)
 mapLeft _ (Right a) = Right a
 
-_parseHaskell :: String -> ExceptT AppErr IO String
-_parseHaskell code = do
-  ast <- liftEither $ fmap MyLib.ast $ mapLeft TecErr $ MyLib.parseHaskellStr code
+_parseHaskellData :: String -> ExceptT AppErr IO String
+_parseHaskellData code = do
+  ast <- liftEither $ fmap MyLib.ast $ mapLeft TecErr $ MyLib.parseHaskellData code
   let bytes = BS.toStrict $ J.encode ast
   let text = TE.decodeUtf8 bytes
   return $ T.unpack text
 
-parseHaskell :: String -> IO String
-parseHaskell x = do
-  e <- runExceptT $ _parseHaskell x
+parseHaskellData :: String -> IO String
+parseHaskellData x = do
+  e <- runExceptT $ _parseHaskellData x
   either (fail . show) return e
   
-_makeHaskell :: String -> ExceptT AppErr IO String
-_makeHaskell jsonStr = do
+_makeHaskellData :: String -> ExceptT AppErr IO String
+_makeHaskellData jsonStr = do
   let tecAst = J.decodeStrictText (T.pack jsonStr) :: Maybe MyLib.TecDataAST
   tecAst' <- liftEither $ maybe (Left $ ErrMsg "json decoding failed") Right tecAst
-  liftEither $ mapLeft TecErr (MyLib.makeHaskellCode tecAst')
+  liftEither $ mapLeft TecErr (MyLib.makeHaskellData tecAst')
 
-makeHaskell :: String -> IO String
-makeHaskell x = do
-  e <- runExceptT $ _makeHaskell x
+makeHaskellData :: String -> IO String
+makeHaskellData x = do
+  e <- runExceptT $ _makeHaskellData x
   either (fail . show) return e

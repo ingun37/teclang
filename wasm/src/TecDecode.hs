@@ -47,3 +47,6 @@ decodeTecData (TecRngEnum from to) = do
   case to of
     Nothing -> return $ E.EnumFrom () f
     Just to' -> decodeTecData (TecTypeCon to' []) <&> E.EnumFromTo () f
+
+decodeTecType :: TecTypeAST -> Either TecError (E.Exp ())
+decodeTecType = undefined

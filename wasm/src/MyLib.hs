@@ -1,10 +1,10 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module MyLib
-  ( parseHaskellStr,
+  ( parseHaskellData,
     TecDataAST,
     Parsed (Parsed),
-    makeHaskellCode,
+    makeHaskellData,
     ast,
     rawAstShow,
     TecError (TecError, TecErrorUnknownExp, TecErrorWithWholeExpShow),
@@ -37,8 +37,8 @@ data Parsed = Parsed
     rawAstShow :: String
   }
 
-parseHaskellStr :: String -> Either TecError Parsed
-parseHaskellStr code =
+parseHaskellData :: String -> Either TecError Parsed
+parseHaskellData code =
   let indented = unlines $ map ("  " ++) $ lines code
       result = E.parseFileContents ("\ndoc = " ++ indented)
    in case result of
@@ -50,5 +50,5 @@ parseHaskellStr code =
         E.ParseFailed _ str ->
           tecError $ "Initial parsing failed:\n" ++ str
 
-makeHaskellCode :: TecDataAST -> Either TecError String
-makeHaskellCode ast = fmap E.prettyPrint (De.decodeTecData ast)
+makeHaskellData :: TecDataAST -> Either TecError String
+makeHaskellData ast = fmap E.prettyPrint (De.decodeTecData ast)

@@ -27,7 +27,7 @@ testE logHandle code = do
   lift $ putStrLn code
   lift $ hPutStrLn logHandle (T.pack "---- Original Code ----")
   lift $ hPutStrLn logHandle (T.pack code)
-  Parsed { ast, rawAstShow } <- liftEither $ mapLeft ErrTec $ parseHaskellStr code
+  Parsed { ast, rawAstShow } <- liftEither $ mapLeft ErrTec $ parseHaskellData code
   lift $ hPutStrLn logHandle (T.pack "---- Raw AST ----")
   Simple.pHPrintString logHandle rawAstShow
   lift $ putStrLn "---- Final AST ----"
@@ -40,7 +40,7 @@ testE logHandle code = do
   let decodedEither = maybe (Left $ ErrStr "decode fail") Right decodedMaybe
   tecAST <- liftEither decodedEither
   lift $ putStrLn "---- Reconstructed Code ----"
-  reconstructedCode <- liftEither $ mapLeft ErrTec $ makeHaskellCode tecAST
+  reconstructedCode <- liftEither $ mapLeft ErrTec $ makeHaskellData tecAST
   lift $ putStrLn reconstructedCode
   if reconstructedCode == code
     then

@@ -31,3 +31,10 @@ instance ToJSON TecDataAST where
   toEncoding = genericToEncoding defaultOptions
 
 instance FromJSON TecDataAST
+
+data TecTypeAST = TecTypeAST deriving (Show, Generic)
+
+instance ToJSON TecTypeAST where
+  toEncoding = genericToEncoding defaultOptions
+
+instance FromJSON TecTypeAST
