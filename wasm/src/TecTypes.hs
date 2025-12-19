@@ -38,3 +38,8 @@ instance ToJSON TecTypeAST where
   toEncoding = genericToEncoding defaultOptions
 
 instance FromJSON TecTypeAST
+
+data Parsed a = Parsed
+  { ast :: a,
+    rawAstShow :: String
+  }

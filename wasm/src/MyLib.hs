@@ -32,12 +32,7 @@ extractDocExp :: E.Module l -> E.Exp l
 extractDocExp (E.Module _ _ _ _ decls) = head [exp | x@(E.PatBind _ _ ((E.UnGuardedRhs _ exp)) _) <- decls]
 extractDocExp _ = undefined
 
-data Parsed = Parsed
-  { ast :: TecDataAST,
-    rawAstShow :: String
-  }
-
-encodeHaskellData :: String -> Either TecError Parsed
+encodeHaskellData :: String -> Either TecError (Parsed TecDataAST)
 encodeHaskellData code =
   let indented = unlines $ map ("  " ++) $ lines code
       result = E.parseFileContents ("\ndoc = " ++ indented)

@@ -5,18 +5,12 @@ import Control.Monad (foldM)
 import Data.Functor ((<&>))
 import Data.Map qualified as Map
 
-import GHC.Generics (Generic)
 import Language.Haskell.Exts qualified as E
 
 import TecTypes
 
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))
-
-data TecEnum = TecEnum
-  {label :: String, typeName :: String, value :: Int}
-  deriving (Show, Generic)
-
 
 decodeDecl :: (String, E.Exp ()) -> Either TecError (E.Decl ())
 decodeDecl (varName, varExp) =
