@@ -98,8 +98,11 @@ testData =
 
 testType :: [String]
 testType =
-  [ "A | B"
-  ]
+  map
+    ("data TecType = " ++)
+    [ "A | B",
+      "A String"
+    ]
 
 testFormatUnit :: IO.Handle -> String -> IO ()
 testFormatUnit h s = do

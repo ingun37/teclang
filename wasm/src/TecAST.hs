@@ -43,10 +43,13 @@ instance TecAST TecDataAST where
 instance TecAST TecTypeAST where
   decodeTecToCode ast = fmap E.prettyPrint (decodeTecType ast)
   encodeCodeToTec code =
-    let result = E.parseDecl ("data D = " ++ code)
+    let result = E.parseModule code
      in case result of
-          E.ParseOk e -> do
-            ast <- mapWholeExpShow e $ encodeTecType e
-            Right $ Parsed {ast = ast, rawAstShow = show e}
+          E.ParseOk (E.Module _ Nothing [] [] [E.DataDecl _ (E.DataType _) Nothing (E.DHead _ _) decls []]) -> do
+            let f e = mapWholeExpShow e $ encodeTecType e
+            asts <- traverse f decls
+            Right $ Parsed {ast = TecSum asts, rawAstShow = show decls}
+          E.ParseOk x -> do
+            Left $ TecErrorUnknownExp (show x)
           E.ParseFailed _ str ->
             tecError $ "Initial parsing failed:\n" ++ str

@@ -1,2 +1,2 @@
 ---- Original Code ----
-A | B
+data TecType = A | B
