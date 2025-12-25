@@ -26,7 +26,10 @@ instance ToJSON TecDataAST where
 
 instance FromJSON TecDataAST
 
-data TecTypeAST = TecSum [TecTypeAST] | TecCon String deriving (Show, Generic)
+data TecTypeAST
+  = TecSum {types :: [TecTypeAST]}
+  | TecCon {constructor :: String}
+  deriving (Show, Generic)
 
 instance ToJSON TecTypeAST where
   toEncoding = genericToEncoding defaultOptions

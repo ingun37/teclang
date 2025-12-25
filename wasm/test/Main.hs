@@ -1,3 +1,5 @@
+{-# LANGUAGE MultilineStrings #-}
+
 module Main (main) where
 
 import Control.Monad.Except
@@ -37,8 +39,8 @@ testE logHandle code = do
   let jsonBytes = B.toStrict $ JP.encodePretty ast
   lift $ putStrLn "---- Json encoded ----"
   lift $ putStrLn $ T.unpack $ E.decodeUtf8 jsonBytes
-  let decodedMaybe = Json.decodeStrict jsonBytes :: Maybe TecDataAST
-  let decodedEither = maybe (Left $ ErrStr "decode fail") Right decodedMaybe
+  let decodedMaybe = Json.decodeStrict jsonBytes :: Maybe a
+  let decodedEither = maybe (Left $ ErrStr "json decode fail") Right decodedMaybe
   tecAST <- liftEither decodedEither
   lift $ putStrLn "---- Reconstructed Code ----"
   reconstructedCode <- liftEither $ mapLeft ErrTec $ decodeTecToCode tecAST
@@ -97,12 +99,14 @@ testData =
     ]
 
 testType :: [String]
-testType =
-  map
-    ("data TecType = " ++)
-    [ "A | B",
-      "A String"
-    ]
+testType = 
+  [
+    """
+    data TecType = A
+                 | B
+    """,
+    "data TecType = A"
+  ]
 
 testFormatUnit :: IO.Handle -> String -> IO ()
 testFormatUnit h s = do

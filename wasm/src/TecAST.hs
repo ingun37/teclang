@@ -41,7 +41,10 @@ instance TecAST TecDataAST where
             tecError $ "Initial parsing failed:\n" ++ str
 
 instance TecAST TecTypeAST where
-  decodeTecToCode ast = fmap E.prettyPrint (decodeTecType ast)
+  decodeTecToCode ast = do
+    decls <- decodeTecType ast
+    let m = E.Module () Nothing [] [] [E.DataDecl () (E.DataType ()) Nothing (E.DHead () (E.Ident () "TecType")) decls []]
+    return $ E.prettyPrint m
   encodeCodeToTec code =
     let result = E.parseModule code
      in case result of
