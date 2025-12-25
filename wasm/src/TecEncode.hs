@@ -1,10 +1,11 @@
 module TecEncode where
 
 import Data.Functor ((<&>))
-import Language.Haskell.Exts qualified as E
-import TecTypes
-import TecError
 import Data.Map qualified as Map
+import Language.Haskell.Exts qualified as E
+import TecError
+import TecTypes
+
 encodeDecl :: (Show l) => E.Decl l -> Either TecError (String, E.Exp l)
 encodeDecl (E.PatBind _ (E.PVar _ (E.Ident _ name)) (E.UnGuardedRhs _ expr) _) = Right $ (name, expr)
 encodeDecl x = Left $ TecErrorUnknownExp (show x)
@@ -49,5 +50,7 @@ encodeTecData e = Left $ TecErrorUnknownExp (show e)
 
 _encodeTecType :: (Show l) => E.Decl l -> Either TecError TecTypeAST
 _encodeTecType d = Left $ TecErrorUnknownExp (show d)
+
 encodeTecType :: (Show l) => E.QualConDecl l -> Either TecError TecTypeAST
-encodeTecType d = Left $ TecErrorUnknownExp (show d)
+encodeTecType (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name) [])) = Right $ TecCon name
+encodeTecType x = Left $ TecErrorUnknownExp (show x)

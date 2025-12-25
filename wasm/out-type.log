@@ -1,2 +1,44 @@
 ---- Original Code ----
 data TecType = A | B
+---- Raw AST ----
+[ QualConDecl
+    ( SrcSpanInfo
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 17
+        , srcInfoPoints = []
+        }
+    ) Nothing Nothing
+    ( ConDecl
+        ( SrcSpanInfo
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 17
+            , srcInfoPoints = []
+            }
+        )
+        ( Ident
+            ( SrcSpanInfo
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 17
+                , srcInfoPoints = []
+                }
+            ) "A"
+        ) []
+    )
+, QualConDecl
+    ( SrcSpanInfo
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 21
+        , srcInfoPoints = []
+        }
+    ) Nothing Nothing
+    ( ConDecl
+        ( SrcSpanInfo
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 21
+            , srcInfoPoints = []
+            }
+        )
+        ( Ident
+            ( SrcSpanInfo
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 21
+                , srcInfoPoints = []
+                }
+            ) "B"
+        ) []
+    )
+]
