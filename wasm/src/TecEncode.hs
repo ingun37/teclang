@@ -46,5 +46,5 @@ encodeTecData (E.EnumFromTo l from to) = do
 encodeTecData (E.List _ exps) = traverse encodeTecData exps <&> TecList
 encodeTecData e = Left $ TecErrorUnknownExp (show e)
 
-encodeTecType :: (Show l) => E.Exp l -> Either TecError TecTypeAST
-encodeTecType = undefined
+encodeTecType :: (Show l) => E.Decl l -> Either TecError TecTypeAST
+encodeTecType d = Left $ TecErrorUnknownExp (show d)

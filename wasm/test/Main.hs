@@ -90,7 +90,13 @@ testData =
     "let in 0"
   ]
 
+testType :: [String]
+testType =
+  [ "A | B"
+  ]
+
 main :: IO ()
 main = do
   _ <- testIO testData "out-data.log" :: IO [TecDataAST]
+  _ <- testIO testType "out-type.log" :: IO [TecTypeAST]
   return ()

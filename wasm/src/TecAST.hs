@@ -14,7 +14,7 @@ class (Show a, Generic a, ToJSON a, FromJSON a) => TecAST a where
   decodeTecToCode :: a -> Either TecError String
   encodeCodeToTec :: String -> Either TecError (Parsed a)
 
-mapWholeExpShow :: (Show l) => E.Exp l -> Either TecError a -> Either TecError a
+mapWholeExpShow :: (Show l) => l -> Either TecError a -> Either TecError a
 mapWholeExpShow x e = case e of
   (Left err) -> Left (TecErrorWithWholeExpShow err (show x))
   a -> a
@@ -36,7 +36,7 @@ instance TecAST TecDataAST where
 instance TecAST TecTypeAST where
   decodeTecToCode ast = fmap E.prettyPrint (decodeTecType ast)
   encodeCodeToTec code =
-    let result = E.parseExp code
+    let result = E.parseDecl ("data D = " ++ code)
      in case result of
           E.ParseOk e -> do
             ast <- mapWholeExpShow e $ encodeTecType e
