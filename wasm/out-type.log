@@ -67,3 +67,48 @@ data TecType = A
         ) []
     )
 ]
+---- Original Code ----
+data TecType = A String
+---- Raw AST ----
+[ QualConDecl
+    ( SrcSpanInfo
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 24
+        , srcInfoPoints = []
+        }
+    ) Nothing Nothing
+    ( ConDecl
+        ( SrcSpanInfo
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 24
+            , srcInfoPoints = []
+            }
+        )
+        ( Ident
+            ( SrcSpanInfo
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 17
+                , srcInfoPoints = []
+                }
+            ) "A"
+        )
+        [ TyCon
+            ( SrcSpanInfo
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 24
+                , srcInfoPoints = []
+                }
+            )
+            ( UnQual
+                ( SrcSpanInfo
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 24
+                    , srcInfoPoints = []
+                    }
+                )
+                ( Ident
+                    ( SrcSpanInfo
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 24
+                        , srcInfoPoints = []
+                        }
+                    ) "String"
+                )
+            )
+        ]
+    )
+]

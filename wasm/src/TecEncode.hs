@@ -51,6 +51,12 @@ encodeTecData e = Left $ TecErrorUnknownExp (show e)
 _encodeTecType :: (Show l) => E.Decl l -> Either TecError TecTypeAST
 _encodeTecType d = Left $ TecErrorUnknownExp (show d)
 
+encodeType :: (Show l) => E.Type l -> Either TecError String
+encodeType (E.TyCon _ (E.UnQual _ (E.Ident _ name))) = return name
+encodeType x = Left $ TecErrorUnknownExp (show x)
+
 encodeTecType :: (Show l) => E.QualConDecl l -> Either TecError TecTypeAST
-encodeTecType (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name) [])) = Right $ TecCon name
+encodeTecType (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name) types)) = do
+  paramTypes <- traverse encodeType types
+  return $ TecCon name paramTypes
 encodeTecType x = Left $ TecErrorUnknownExp (show x)

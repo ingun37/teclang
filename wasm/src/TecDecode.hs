@@ -43,8 +43,13 @@ decodeTecData (TecRngEnum from to) = do
     Nothing -> return $ E.EnumFrom () f
     Just to' -> decodeTecData (TecTypeCon to' []) <&> E.EnumFromTo () f
 
+decodeType :: String -> Either TecError (E.Type ())
+decodeType name = return $ E.TyCon () (E.UnQual () (E.Ident () name))
+
 decodeTecType :: TecTypeAST -> Either TecError [E.QualConDecl ()]
-decodeTecType (TecCon name) = Right [E.QualConDecl () Nothing Nothing (E.ConDecl () (E.Ident () name) [])]
+decodeTecType (TecCon name params) = do
+  xs <- traverse decodeType params
+  return [E.QualConDecl () Nothing Nothing (E.ConDecl () (E.Ident () name) xs)]
 decodeTecType (TecSum asts) = do
   decls <- traverse decodeTecType asts
   return $ concat decls

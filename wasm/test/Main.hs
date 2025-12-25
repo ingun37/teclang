@@ -105,7 +105,8 @@ testType =
     data TecType = A
                  | B
     """,
-    "data TecType = A"
+    "data TecType = A",
+    "data TecType = A String"
   ]
 
 testFormatUnit :: IO.Handle -> String -> IO ()
