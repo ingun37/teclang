@@ -1,50 +1,50 @@
 ---- Original Code ----
-Logo
+tecData = Logo
 ---- Raw AST ----
 Con
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 5
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
         , srcInfoPoints = []
         }
     )
     ( UnQual
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 5
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
             , srcInfoPoints = []
             }
         )
         ( Ident
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 5
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
                 , srcInfoPoints = []
                 }
             ) "Logo"
         )
     )
 ---- Original Code ----
-HStack [Logo]
+tecData = HStack [Logo]
 ---- Raw AST ----
 App
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 14
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 24
         , srcInfoPoints = []
         }
     )
     ( Con
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
                 , srcInfoPoints = []
                 }
             )
             ( Ident
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
                     , srcInfoPoints = []
                     }
                 ) "HStack"
@@ -53,28 +53,28 @@ App
     )
     ( List
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 8 1 14
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 24
             , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 8 1 9
-                , SrcSpan "<unknown>.hs" 1 13 1 14
+                [ SrcSpan "<unknown>.hs" 1 18 1 19
+                , SrcSpan "<unknown>.hs" 1 23 1 24
                 ]
             }
         )
         [ Con
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 13
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
                 , srcInfoPoints = []
                 }
             )
             ( UnQual
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 13
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
                     , srcInfoPoints = []
                     }
                 )
                 ( Ident
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 13
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
                         , srcInfoPoints = []
                         }
                     ) "Logo"
@@ -83,29 +83,29 @@ App
         ]
     )
 ---- Original Code ----
-Colorway 0
+tecData = Colorway 0
 ---- Raw AST ----
 App
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 11
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 21
         , srcInfoPoints = []
         }
     )
     ( Con
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 9
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 19
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 9
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 19
                 , srcInfoPoints = []
                 }
             )
             ( Ident
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 9
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 19
                     , srcInfoPoints = []
                     }
                 ) "Colorway"
@@ -114,42 +114,42 @@ App
     )
     ( Lit
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 10 1 11
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 21
             , srcInfoPoints = []
             }
         )
         ( Int
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 10 1 11
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 21
                 , srcInfoPoints = []
                 }
             ) 0 "0"
         )
     )
 ---- Original Code ----
-Pantone "red"
+tecData = Pantone "red"
 ---- Raw AST ----
 App
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 14
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 24
         , srcInfoPoints = []
         }
     )
     ( Con
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 8
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 18
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 8
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 18
                 , srcInfoPoints = []
                 }
             )
             ( Ident
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 8
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 18
                     , srcInfoPoints = []
                     }
                 ) "Pantone"
@@ -158,42 +158,42 @@ App
     )
     ( Lit
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 14
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 24
             , srcInfoPoints = []
             }
         )
         ( String
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 14
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 24
                 , srcInfoPoints = []
                 }
             ) "red" "red"
         )
     )
 ---- Original Code ----
-VStack [HStack [Logo], Colorway 42]
+tecData = VStack [HStack [Logo], Colorway 42]
 ---- Raw AST ----
 App
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 36
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 46
         , srcInfoPoints = []
         }
     )
     ( Con
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
                 , srcInfoPoints = []
                 }
             )
             ( Ident
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
                     , srcInfoPoints = []
                     }
                 ) "VStack"
@@ -202,35 +202,35 @@ App
     )
     ( List
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 8 1 36
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 46
             , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 8 1 9
-                , SrcSpan "<unknown>.hs" 1 22 1 23
-                , SrcSpan "<unknown>.hs" 1 35 1 36
+                [ SrcSpan "<unknown>.hs" 1 18 1 19
+                , SrcSpan "<unknown>.hs" 1 32 1 33
+                , SrcSpan "<unknown>.hs" 1 45 1 46
                 ]
             }
         )
         [ App
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 22
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 32
                 , srcInfoPoints = []
                 }
             )
             ( Con
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 15
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 25
                     , srcInfoPoints = []
                     }
                 )
                 ( UnQual
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 15
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 25
                         , srcInfoPoints = []
                         }
                     )
                     ( Ident
                         ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 15
+                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 25
                             , srcInfoPoints = []
                             }
                         ) "HStack"
@@ -239,28 +239,28 @@ App
             )
             ( List
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 22
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 26 1 32
                     , srcInfoPoints =
-                        [ SrcSpan "<unknown>.hs" 1 16 1 17
-                        , SrcSpan "<unknown>.hs" 1 21 1 22
+                        [ SrcSpan "<unknown>.hs" 1 26 1 27
+                        , SrcSpan "<unknown>.hs" 1 31 1 32
                         ]
                     }
                 )
                 [ Con
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 17 1 21
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 31
                         , srcInfoPoints = []
                         }
                     )
                     ( UnQual
                         ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 17 1 21
+                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 31
                             , srcInfoPoints = []
                             }
                         )
                         ( Ident
                             ( SrcSpanInfo
-                                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 17 1 21
+                                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 31
                                 , srcInfoPoints = []
                                 }
                             ) "Logo"
@@ -270,25 +270,25 @@ App
             )
         , App
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 35
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 34 1 45
                 , srcInfoPoints = []
                 }
             )
             ( Con
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 32
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 34 1 42
                     , srcInfoPoints = []
                     }
                 )
                 ( UnQual
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 32
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 34 1 42
                         , srcInfoPoints = []
                         }
                     )
                     ( Ident
                         ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 32
+                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 34 1 42
                             , srcInfoPoints = []
                             }
                         ) "Colorway"
@@ -297,13 +297,13 @@ App
             )
             ( Lit
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 33 1 35
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 43 1 45
                     , srcInfoPoints = []
                     }
                 )
                 ( Int
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 33 1 35
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 43 1 45
                         , srcInfoPoints = []
                         }
                     ) 42 "42"
@@ -312,29 +312,29 @@ App
         ]
     )
 ---- Original Code ----
-Logo :- Logo
+tecData = Logo :- Logo
 ---- Raw AST ----
 InfixApp
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 13
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 23
         , srcInfoPoints = []
         }
     )
     ( Con
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 5
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 5
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
                 , srcInfoPoints = []
                 }
             )
             ( Ident
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 5
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
                     , srcInfoPoints = []
                     }
                 ) "Logo"
@@ -343,19 +343,19 @@ InfixApp
     )
     ( QConOp
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 6 1 8
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 18
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 6 1 8
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 18
                 , srcInfoPoints = []
                 }
             )
             ( Symbol
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 6 1 8
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 18
                     , srcInfoPoints = []
                     }
                 ) ":-"
@@ -364,19 +364,19 @@ InfixApp
     )
     ( Con
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 13
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 13
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
                 , srcInfoPoints = []
                 }
             )
             ( Ident
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 13
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
                     , srcInfoPoints = []
                     }
                 ) "Logo"
@@ -384,35 +384,35 @@ InfixApp
         )
     )
 ---- Original Code ----
-Logo :- Logo :- Pantone "green"
+tecData = Logo :- Logo :- Pantone "green"
 ---- Raw AST ----
 InfixApp
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 32
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 42
         , srcInfoPoints = []
         }
     )
     ( InfixApp
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 13
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 23
             , srcInfoPoints = []
             }
         )
         ( Con
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 5
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
                 , srcInfoPoints = []
                 }
             )
             ( UnQual
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 5
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
                     , srcInfoPoints = []
                     }
                 )
                 ( Ident
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 5
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
                         , srcInfoPoints = []
                         }
                     ) "Logo"
@@ -421,19 +421,19 @@ InfixApp
         )
         ( QConOp
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 6 1 8
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 18
                 , srcInfoPoints = []
                 }
             )
             ( UnQual
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 6 1 8
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 18
                     , srcInfoPoints = []
                     }
                 )
                 ( Symbol
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 6 1 8
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 18
                         , srcInfoPoints = []
                         }
                     ) ":-"
@@ -442,19 +442,19 @@ InfixApp
         )
         ( Con
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 13
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
                 , srcInfoPoints = []
                 }
             )
             ( UnQual
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 13
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
                     , srcInfoPoints = []
                     }
                 )
                 ( Ident
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 13
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
                         , srcInfoPoints = []
                         }
                     ) "Logo"
@@ -464,19 +464,19 @@ InfixApp
     )
     ( QConOp
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 14 1 16
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 26
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 14 1 16
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 26
                 , srcInfoPoints = []
                 }
             )
             ( Symbol
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 14 1 16
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 26
                     , srcInfoPoints = []
                     }
                 ) ":-"
@@ -485,25 +485,25 @@ InfixApp
     )
     ( App
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 17 1 32
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 42
             , srcInfoPoints = []
             }
         )
         ( Con
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 17 1 24
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 34
                 , srcInfoPoints = []
                 }
             )
             ( UnQual
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 17 1 24
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 34
                     , srcInfoPoints = []
                     }
                 )
                 ( Ident
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 17 1 24
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 34
                         , srcInfoPoints = []
                         }
                     ) "Pantone"
@@ -512,13 +512,13 @@ InfixApp
         )
         ( Lit
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 25 1 32
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 35 1 42
                 , srcInfoPoints = []
                 }
             )
             ( String
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 25 1 32
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 35 1 42
                     , srcInfoPoints = []
                     }
                 ) "green" "green"
@@ -526,29 +526,29 @@ InfixApp
         )
     )
 ---- Original Code ----
-Colorways [1 ..]
+tecData = Colorways [1 ..]
 ---- Raw AST ----
 App
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 17
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 27
         , srcInfoPoints = []
         }
     )
     ( Con
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
                 , srcInfoPoints = []
                 }
             )
             ( Ident
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
                     , srcInfoPoints = []
                     }
                 ) "Colorways"
@@ -557,23 +557,23 @@ App
     )
     ( EnumFrom
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 27
             , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 11 1 12
-                , SrcSpan "<unknown>.hs" 1 14 1 16
-                , SrcSpan "<unknown>.hs" 1 16 1 17
+                [ SrcSpan "<unknown>.hs" 1 21 1 22
+                , SrcSpan "<unknown>.hs" 1 24 1 26
+                , SrcSpan "<unknown>.hs" 1 26 1 27
                 ]
             }
         )
         ( Lit
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 12 1 13
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
                 , srcInfoPoints = []
                 }
             )
             ( Int
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 12 1 13
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
                     , srcInfoPoints = []
                     }
                 ) 1 "1"
@@ -581,29 +581,29 @@ App
         )
     )
 ---- Original Code ----
-Colorways [1 .. 3]
+tecData = Colorways [1 .. 3]
 ---- Raw AST ----
 App
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 19
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 29
         , srcInfoPoints = []
         }
     )
     ( Con
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
                 , srcInfoPoints = []
                 }
             )
             ( Ident
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
                     , srcInfoPoints = []
                     }
                 ) "Colorways"
@@ -612,23 +612,23 @@ App
     )
     ( EnumFromTo
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 19
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 29
             , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 11 1 12
-                , SrcSpan "<unknown>.hs" 1 14 1 16
-                , SrcSpan "<unknown>.hs" 1 18 1 19
+                [ SrcSpan "<unknown>.hs" 1 21 1 22
+                , SrcSpan "<unknown>.hs" 1 24 1 26
+                , SrcSpan "<unknown>.hs" 1 28 1 29
                 ]
             }
         )
         ( Lit
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 12 1 13
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
                 , srcInfoPoints = []
                 }
             )
             ( Int
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 12 1 13
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
                     , srcInfoPoints = []
                     }
                 ) 1 "1"
@@ -636,13 +636,13 @@ App
         )
         ( Lit
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 17 1 18
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 28
                 , srcInfoPoints = []
                 }
             )
             ( Int
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 17 1 18
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 28
                     , srcInfoPoints = []
                     }
                 ) 3 "3"
@@ -650,35 +650,35 @@ App
         )
     )
 ---- Original Code ----
-Render 0 Front
+tecData = Render 0 Front
 ---- Raw AST ----
 App
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 15
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 25
         , srcInfoPoints = []
         }
     )
     ( App
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 9
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 19
             , srcInfoPoints = []
             }
         )
         ( Con
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
                 , srcInfoPoints = []
                 }
             )
             ( UnQual
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
                     , srcInfoPoints = []
                     }
                 )
                 ( Ident
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
                         , srcInfoPoints = []
                         }
                     ) "Render"
@@ -687,13 +687,13 @@ App
         )
         ( Lit
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 8 1 9
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 19
                 , srcInfoPoints = []
                 }
             )
             ( Int
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 8 1 9
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 19
                     , srcInfoPoints = []
                     }
                 ) 0 "0"
@@ -702,19 +702,19 @@ App
     )
     ( Con
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 10 1 15
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 25
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 10 1 15
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 25
                 , srcInfoPoints = []
                 }
             )
             ( Ident
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 10 1 15
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 25
                     , srcInfoPoints = []
                     }
                 ) "Front"
@@ -722,35 +722,35 @@ App
         )
     )
 ---- Original Code ----
-Colorways [0 ..] :> Fabric "*"
+tecData = Colorways [0 ..] :> Fabric "*"
 ---- Raw AST ----
 InfixApp
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 31
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 41
         , srcInfoPoints = []
         }
     )
     ( App
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 17
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 27
             , srcInfoPoints = []
             }
         )
         ( Con
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
                 , srcInfoPoints = []
                 }
             )
             ( UnQual
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
                     , srcInfoPoints = []
                     }
                 )
                 ( Ident
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
                         , srcInfoPoints = []
                         }
                     ) "Colorways"
@@ -759,23 +759,23 @@ InfixApp
         )
         ( EnumFrom
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 27
                 , srcInfoPoints =
-                    [ SrcSpan "<unknown>.hs" 1 11 1 12
-                    , SrcSpan "<unknown>.hs" 1 14 1 16
-                    , SrcSpan "<unknown>.hs" 1 16 1 17
+                    [ SrcSpan "<unknown>.hs" 1 21 1 22
+                    , SrcSpan "<unknown>.hs" 1 24 1 26
+                    , SrcSpan "<unknown>.hs" 1 26 1 27
                     ]
                 }
             )
             ( Lit
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 12 1 13
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
                     , srcInfoPoints = []
                     }
                 )
                 ( Int
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 12 1 13
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
                         , srcInfoPoints = []
                         }
                     ) 0 "0"
@@ -785,19 +785,19 @@ InfixApp
     )
     ( QConOp
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 20
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 30
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 20
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 30
                 , srcInfoPoints = []
                 }
             )
             ( Symbol
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 20
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 30
                     , srcInfoPoints = []
                     }
                 ) ":>"
@@ -806,25 +806,25 @@ InfixApp
     )
     ( App
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 31
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 31 1 41
             , srcInfoPoints = []
             }
         )
         ( Con
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 27
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 31 1 37
                 , srcInfoPoints = []
                 }
             )
             ( UnQual
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 27
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 31 1 37
                     , srcInfoPoints = []
                     }
                 )
                 ( Ident
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 27
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 31 1 37
                         , srcInfoPoints = []
                         }
                     ) "Fabric"
@@ -833,13 +833,13 @@ InfixApp
         )
         ( Lit
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 31
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 38 1 41
                 , srcInfoPoints = []
                 }
             )
             ( String
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 31
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 38 1 41
                     , srcInfoPoints = []
                     }
                 ) "*" "*"
@@ -847,29 +847,29 @@ InfixApp
         )
     )
 ---- Original Code ----
-Colorways [0]
+tecData = Colorways [0]
 ---- Raw AST ----
 App
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 14
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 24
         , srcInfoPoints = []
         }
     )
     ( Con
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
                 , srcInfoPoints = []
                 }
             )
             ( Ident
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 10
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
                     , srcInfoPoints = []
                     }
                 ) "Colorways"
@@ -878,22 +878,22 @@ App
     )
     ( List
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 14
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 24
             , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 11 1 12
-                , SrcSpan "<unknown>.hs" 1 13 1 14
+                [ SrcSpan "<unknown>.hs" 1 21 1 22
+                , SrcSpan "<unknown>.hs" 1 23 1 24
                 ]
             }
         )
         [ Lit
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 12 1 13
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
                 , srcInfoPoints = []
                 }
             )
             ( Int
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 12 1 13
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
                     , srcInfoPoints = []
                     }
                 ) 0 "0"
@@ -901,35 +901,35 @@ App
         ]
     )
 ---- Original Code ----
-HStack Logo (Render 0 Front)
+tecData = HStack Logo (Render 0 Front)
 ---- Raw AST ----
 App
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 29
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 39
         , srcInfoPoints = []
         }
     )
     ( App
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 12
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 22
             , srcInfoPoints = []
             }
         )
         ( Con
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
                 , srcInfoPoints = []
                 }
             )
             ( UnQual
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
                     , srcInfoPoints = []
                     }
                 )
                 ( Ident
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
                         , srcInfoPoints = []
                         }
                     ) "HStack"
@@ -938,19 +938,19 @@ App
         )
         ( Con
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 8 1 12
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 22
                 , srcInfoPoints = []
                 }
             )
             ( UnQual
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 8 1 12
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 22
                     , srcInfoPoints = []
                     }
                 )
                 ( Ident
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 8 1 12
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 22
                         , srcInfoPoints = []
                         }
                     ) "Logo"
@@ -960,40 +960,40 @@ App
     )
     ( Paren
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 13 1 29
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 23 1 39
             , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 13 1 14
-                , SrcSpan "<unknown>.hs" 1 28 1 29
+                [ SrcSpan "<unknown>.hs" 1 23 1 24
+                , SrcSpan "<unknown>.hs" 1 38 1 39
                 ]
             }
         )
         ( App
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 14 1 28
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 38
                 , srcInfoPoints = []
                 }
             )
             ( App
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 14 1 22
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 32
                     , srcInfoPoints = []
                     }
                 )
                 ( Con
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 14 1 20
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 30
                         , srcInfoPoints = []
                         }
                     )
                     ( UnQual
                         ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 14 1 20
+                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 30
                             , srcInfoPoints = []
                             }
                         )
                         ( Ident
                             ( SrcSpanInfo
-                                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 14 1 20
+                                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 30
                                 , srcInfoPoints = []
                                 }
                             ) "Render"
@@ -1002,13 +1002,13 @@ App
                 )
                 ( Lit
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 22
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 31 1 32
                         , srcInfoPoints = []
                         }
                     )
                     ( Int
                         ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 22
+                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 31 1 32
                             , srcInfoPoints = []
                             }
                         ) 0 "0"
@@ -1017,19 +1017,19 @@ App
             )
             ( Con
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 23 1 28
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 33 1 38
                     , srcInfoPoints = []
                     }
                 )
                 ( UnQual
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 23 1 28
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 33 1 38
                         , srcInfoPoints = []
                         }
                     )
                     ( Ident
                         ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 23 1 28
+                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 33 1 38
                             , srcInfoPoints = []
                             }
                         ) "Front"
@@ -1039,29 +1039,29 @@ App
         )
     )
 ---- Original Code ----
-Render [Front .. Right]
+tecData = Render [Front .. Right]
 ---- Raw AST ----
 App
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 24
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 34
         , srcInfoPoints = []
         }
     )
     ( Con
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
                 , srcInfoPoints = []
                 }
             )
             ( Ident
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 7
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
                     , srcInfoPoints = []
                     }
                 ) "Render"
@@ -1070,29 +1070,29 @@ App
     )
     ( EnumFromTo
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 8 1 24
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 34
             , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 8 1 9
-                , SrcSpan "<unknown>.hs" 1 15 1 17
-                , SrcSpan "<unknown>.hs" 1 23 1 24
+                [ SrcSpan "<unknown>.hs" 1 18 1 19
+                , SrcSpan "<unknown>.hs" 1 25 1 27
+                , SrcSpan "<unknown>.hs" 1 33 1 34
                 ]
             }
         )
         ( Con
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 14
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 24
                 , srcInfoPoints = []
                 }
             )
             ( UnQual
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 14
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 24
                     , srcInfoPoints = []
                     }
                 )
                 ( Ident
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 14
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 24
                         , srcInfoPoints = []
                         }
                     ) "Front"
@@ -1101,19 +1101,19 @@ App
         )
         ( Con
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 23
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 33
                 , srcInfoPoints = []
                 }
             )
             ( UnQual
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 23
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 33
                     , srcInfoPoints = []
                     }
                 )
                 ( Ident
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 23
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 33
                         , srcInfoPoints = []
                         }
                     ) "Right"
@@ -1122,41 +1122,41 @@ App
         )
     )
 ---- Original Code ----
-let a = 0 in a
+tecData = let a = 0 in a
 ---- Raw AST ----
 Let
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 15
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 25
         , srcInfoPoints =
-            [ SrcSpan "<unknown>.hs" 1 1 1 4
-            , SrcSpan "<unknown>.hs" 1 11 1 13
+            [ SrcSpan "<unknown>.hs" 1 11 1 14
+            , SrcSpan "<unknown>.hs" 1 21 1 23
             ]
         }
     )
     ( BDecls
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 5 1 10
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 15 1 20
             , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 5 1 5
-                , SrcSpan "<unknown>.hs" 1 11 1 11
+                [ SrcSpan "<unknown>.hs" 1 15 1 15
+                , SrcSpan "<unknown>.hs" 1 21 1 21
                 ]
             }
         )
         [ PatBind
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 5 1 10
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 15 1 20
                 , srcInfoPoints = []
                 }
             )
             ( PVar
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 5 1 6
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 15 1 16
                     , srcInfoPoints = []
                     }
                 )
                 ( Ident
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 5 1 6
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 15 1 16
                         , srcInfoPoints = []
                         }
                     ) "a"
@@ -1164,20 +1164,20 @@ Let
             )
             ( UnGuardedRhs
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 7 1 10
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 17 1 20
                     , srcInfoPoints =
-                        [ SrcSpan "<unknown>.hs" 1 7 1 8 ]
+                        [ SrcSpan "<unknown>.hs" 1 17 1 18 ]
                     }
                 )
                 ( Lit
                     ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 10
+                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 20
                         , srcInfoPoints = []
                         }
                     )
                     ( Int
                         ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 9 1 10
+                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 20
                             , srcInfoPoints = []
                             }
                         ) 0 "0"
@@ -1188,19 +1188,19 @@ Let
     )
     ( Var
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 14 1 15
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 25
             , srcInfoPoints = []
             }
         )
         ( UnQual
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 14 1 15
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 25
                 , srcInfoPoints = []
                 }
             )
             ( Ident
                 ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 14 1 15
+                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 25
                     , srcInfoPoints = []
                     }
                 ) "a"
@@ -1208,36 +1208,36 @@ Let
         )
     )
 ---- Original Code ----
-let in 0
+tecData = let in 0
 ---- Raw AST ----
 Let
     ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 1 1 9
+        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 19
         , srcInfoPoints =
-            [ SrcSpan "<unknown>.hs" 1 1 1 4
-            , SrcSpan "<unknown>.hs" 1 5 1 7
+            [ SrcSpan "<unknown>.hs" 1 11 1 14
+            , SrcSpan "<unknown>.hs" 1 15 1 17
             ]
         }
     )
     ( BDecls
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 5 1 5
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 15 1 15
             , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 5 1 5
-                , SrcSpan "<unknown>.hs" 1 5 1 5
+                [ SrcSpan "<unknown>.hs" 1 15 1 15
+                , SrcSpan "<unknown>.hs" 1 15 1 15
                 ]
             }
         ) []
     )
     ( Lit
         ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 8 1 9
+            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 19
             , srcInfoPoints = []
             }
         )
         ( Int
             ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 8 1 9
+                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 19
                 , srcInfoPoints = []
                 }
             ) 0 "0"

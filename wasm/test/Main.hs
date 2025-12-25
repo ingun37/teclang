@@ -76,23 +76,25 @@ testIO codes logFilePath = do
 
 testData :: [String]
 testData =
-  [ "Logo",
-    "HStack [Logo]",
-    "Colorway 0",
-    "Pantone \"red\"",
-    "VStack [HStack [Logo], Colorway 42]",
-    "Logo :- Logo",
-    "Logo :- Logo :- Pantone \"green\"",
-    "Colorways [1 ..]",
-    "Colorways [1 .. 3]",
-    "Render 0 Front",
-    "Colorways [0 ..] :> Fabric \"*\"",
-    "Colorways [0]",
-    "HStack Logo (Render 0 Front)",
-    "Render [Front .. Right]",
-    "let a = 0 in a",
-    "let in 0"
-  ]
+  map
+    ("tecData = " ++)
+    [ "Logo",
+      "HStack [Logo]",
+      "Colorway 0",
+      "Pantone \"red\"",
+      "VStack [HStack [Logo], Colorway 42]",
+      "Logo :- Logo",
+      "Logo :- Logo :- Pantone \"green\"",
+      "Colorways [1 ..]",
+      "Colorways [1 .. 3]",
+      "Render 0 Front",
+      "Colorways [0 ..] :> Fabric \"*\"",
+      "Colorways [0]",
+      "HStack Logo (Render 0 Front)",
+      "Render [Front .. Right]",
+      "let a = 0 in a",
+      "let in 0"
+    ]
 
 testType :: [String]
 testType =

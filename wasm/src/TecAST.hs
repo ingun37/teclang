@@ -8,8 +8,9 @@ import GHC.Generics (Generic)
 import Language.Haskell.Exts qualified as E
 import TecDecode
 import TecEncode
-import TecTypes
 import TecError
+import TecTypes
+
 class (Show a, Generic a, ToJSON a, FromJSON a) => TecAST a where
   decodeTecToCode :: a -> Either TecError String
   encodeCodeToTec :: String -> Either TecError (Parsed a)
@@ -23,13 +24,19 @@ tecError :: String -> Either TecError b
 tecError str = Left $ TecError str
 
 instance TecAST TecDataAST where
-  decodeTecToCode ast = fmap E.prettyPrint (decodeTecData ast)
+  decodeTecToCode ast = do
+    e <- decodeTecData ast
+    let m = E.Module () Nothing [] [] [E.PatBind () (E.PVar () (E.Ident () "tecData")) (E.UnGuardedRhs () e) Nothing]
+    return $ E.prettyPrint m
   encodeCodeToTec code =
-    let result = E.parseExp code
+    let result = E.parseModule code
      in case result of
-          E.ParseOk e -> do
+          E.ParseOk (E.Module _ _ _ _ [E.PatBind _ _ (E.UnGuardedRhs _ e) _]) -> do
+            -- tecError (show rhs)
             ast <- mapWholeExpShow e $ encodeTecData e
             Right $ Parsed {ast = ast, rawAstShow = show e}
+          E.ParseOk x -> do
+            Left $ TecErrorUnknownExp (show x)
           E.ParseFailed _ str ->
             tecError $ "Initial parsing failed:\n" ++ str
 
