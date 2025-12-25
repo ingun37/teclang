@@ -9,7 +9,7 @@ import Language.Haskell.Exts qualified as E
 import TecDecode
 import TecEncode
 import TecTypes
-
+import TecError
 class (Show a, Generic a, ToJSON a, FromJSON a) => TecAST a where
   decodeTecToCode :: a -> Either TecError String
   encodeCodeToTec :: String -> Either TecError (Parsed a)

@@ -61,7 +61,7 @@ library
     exposed-modules:  MyLib
 
     -- Modules included in this library but not exported.
-    other-modules: TecTypes, TecEncode, TecDecode, TecAST
+    other-modules: TecTypes, TecEncode, TecDecode, TecAST, TecFormat, TecError
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -76,7 +76,10 @@ library
         text,
         filepath,
         aeson,
-        containers
+        containers,
+        ormolu,
+        mtl,
+        transformers
         
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -108,8 +111,8 @@ executable teclang-wasm
         ghc-experimental,
         mtl,
         transformers,
-        pretty-simple,
-
+        pretty-simple
+        
     -- Directories containing source files.
     hs-source-dirs:   app
 

@@ -9,12 +9,6 @@ import Data.Aeson
 import Data.Map (Map)
 import GHC.Generics (Generic)
 
-data TecError
-  = TecError String
-  | TecErrorUnknownExp {expShow :: String}
-  | TecErrorWithWholeExpShow {err :: TecError, wholeExpShow :: String}
-  deriving (Show)
-
 data TecDataAST
   = TecTypeCon {typeName :: String, parameters :: [TecDataAST]}
   | TecList {list :: [TecDataAST]}

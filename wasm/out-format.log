@@ -1,0 +1,8 @@
+---- Formated ----
+data Letters = A | B
+
+---- Formated ----
+data Letters
+  = A
+  | B
+

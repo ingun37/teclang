@@ -5,12 +5,13 @@ import Control.Monad.Trans
 import Data.Aeson qualified as Json
 import Data.Aeson.Encode.Pretty qualified as JP
 import Data.ByteString qualified as B
+import Data.Foldable
 import Data.Text qualified as T
 import Data.Text.Encoding qualified as E
-import MyLib
-import Text.Pretty.Simple qualified as Simple
-import System.IO qualified as IO
 import Data.Text.IO (hPutStrLn)
+import MyLib
+import System.IO qualified as IO
+import Text.Pretty.Simple qualified as Simple
 
 data TestErr = ErrStr String | ErrTec TecError deriving (Show)
 
@@ -27,7 +28,7 @@ testE logHandle code = do
   lift $ putStrLn code
   lift $ hPutStrLn logHandle (T.pack "---- Original Code ----")
   lift $ hPutStrLn logHandle (T.pack code)
-  Parsed { ast, rawAstShow } <- liftEither $ mapLeft ErrTec $ encodeCodeToTec code
+  Parsed {ast, rawAstShow} <- liftEither $ mapLeft ErrTec $ encodeCodeToTec code
   lift $ hPutStrLn logHandle (T.pack "---- Raw AST ----")
   Simple.pHPrintString logHandle rawAstShow
   lift $ putStrLn "---- Final AST ----"
@@ -49,12 +50,8 @@ testE logHandle code = do
       liftEither $ Left $ ErrStr "code and reconstructed code doesnt' match"
   return ast
 
-testIO :: (TecAST a) => [String] -> FilePath -> IO [a]
-testIO codes logFilePath = do
-  logHandle <- IO.openFile logFilePath IO.WriteMode
-  let a = traverse (testE logHandle) codes
-  b <- runExceptT a
-  IO.hClose logHandle
+failIfLeft :: Either TestErr a -> IO a
+failIfLeft b =
   case b of
     (Left (ErrTec (TecErrorWithWholeExpShow initialErr rawWholeAstShow))) -> do
       putStrLn "\n\n---- Initial error ----\n\n"
@@ -69,6 +66,13 @@ testIO codes logFilePath = do
       fail "test failed"
     (Right e) -> return e
 
+testIO :: (TecAST a) => [String] -> FilePath -> IO [a]
+testIO codes logFilePath = do
+  logHandle <- IO.openFile logFilePath IO.WriteMode
+  let a = traverse (testE logHandle) codes
+  b <- runExceptT a
+  IO.hClose logHandle
+  failIfLeft b
 
 testData :: [String]
 testData =
@@ -95,8 +99,27 @@ testType =
   [ "A | B"
   ]
 
+testFormatUnit :: IO.Handle -> String -> IO ()
+testFormatUnit h s = do
+  e <- runExceptT $ formatHaskell s
+  formatted <- failIfLeft (mapLeft ErrTec e)
+  hPutStrLn h (T.pack "---- Formated ----")
+  hPutStrLn h (T.pack formatted)
+
+formatTestData :: [String]
+formatTestData =
+  [ "data Letters =   A | B",
+    "data Letters = \n    A    | B"
+  ]
+
+formatTest :: FilePath -> IO ()
+formatTest logFilePath = do
+  logHandle <- IO.openFile logFilePath IO.WriteMode
+  traverse_ (testFormatUnit logHandle) formatTestData
+
 main :: IO ()
 main = do
+  formatTest "out-format.log"
   _ <- testIO testData "out-data.log" :: IO [TecDataAST]
   _ <- testIO testType "out-type.log" :: IO [TecTypeAST]
   return ()

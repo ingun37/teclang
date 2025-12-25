@@ -1,19 +1,26 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module MyLib
-  ( 
-    TecDataAST,
+  ( TecDataAST,
     Parsed (Parsed),
     ast,
     rawAstShow,
-    TecError (TecError, TecErrorUnknownExp, TecErrorWithWholeExpShow),
+    TecError
+      ( TecError,
+        TecErrorUnknownExp,
+        TecErrorWithWholeExpShow,
+        TecErrorFormatFail
+      ),
     tecError,
     TecAST,
     encodeCodeToTec,
     decodeTecToCode,
-    TecTypeAST
+    TecTypeAST,
+    formatHaskell,
   )
 where
 
-import TecTypes
 import TecAST
+import TecError
+import TecFormat
+import TecTypes

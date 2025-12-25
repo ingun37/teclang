@@ -8,6 +8,7 @@ import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
 
 import TecTypes
+import TecError
 
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))
