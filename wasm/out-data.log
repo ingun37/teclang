@@ -21,6 +21,12 @@ Con
             ) "Logo"
         )
     )
+---- Json encoded ----
+{
+    "parameters": [],
+    "tag": "TecTypeCon",
+    "typeName": "Logo"
+}
 ---- Original Code ----
 tecData = HStack [Logo]
 ---- Raw AST ----
@@ -82,6 +88,23 @@ App
             )
         ]
     )
+---- Json encoded ----
+{
+    "parameters": [
+        {
+            "list": [
+                {
+                    "parameters": [],
+                    "tag": "TecTypeCon",
+                    "typeName": "Logo"
+                }
+            ],
+            "tag": "TecList"
+        }
+    ],
+    "tag": "TecTypeCon",
+    "typeName": "HStack"
+}
 ---- Original Code ----
 tecData = Colorway 0
 ---- Raw AST ----
@@ -126,6 +149,17 @@ App
             ) 0 "0"
         )
     )
+---- Json encoded ----
+{
+    "parameters": [
+        {
+            "int": 0,
+            "tag": "TecInt"
+        }
+    ],
+    "tag": "TecTypeCon",
+    "typeName": "Colorway"
+}
 ---- Original Code ----
 tecData = Pantone "red"
 ---- Raw AST ----
@@ -170,6 +204,17 @@ App
             ) "red" "red"
         )
     )
+---- Json encoded ----
+{
+    "parameters": [
+        {
+            "str": "red",
+            "tag": "TecStr"
+        }
+    ],
+    "tag": "TecTypeCon",
+    "typeName": "Pantone"
+}
 ---- Original Code ----
 tecData = VStack [HStack [Logo], Colorway 42]
 ---- Raw AST ----
@@ -311,6 +356,44 @@ App
             )
         ]
     )
+---- Json encoded ----
+{
+    "parameters": [
+        {
+            "list": [
+                {
+                    "parameters": [
+                        {
+                            "list": [
+                                {
+                                    "parameters": [],
+                                    "tag": "TecTypeCon",
+                                    "typeName": "Logo"
+                                }
+                            ],
+                            "tag": "TecList"
+                        }
+                    ],
+                    "tag": "TecTypeCon",
+                    "typeName": "HStack"
+                },
+                {
+                    "parameters": [
+                        {
+                            "int": 42,
+                            "tag": "TecInt"
+                        }
+                    ],
+                    "tag": "TecTypeCon",
+                    "typeName": "Colorway"
+                }
+            ],
+            "tag": "TecList"
+        }
+    ],
+    "tag": "TecTypeCon",
+    "typeName": "VStack"
+}
 ---- Original Code ----
 tecData = Logo :- Logo
 ---- Raw AST ----
@@ -383,6 +466,21 @@ InfixApp
             )
         )
     )
+---- Json encoded ----
+{
+    "left": {
+        "parameters": [],
+        "tag": "TecTypeCon",
+        "typeName": "Logo"
+    },
+    "op": ":-",
+    "right": {
+        "parameters": [],
+        "tag": "TecTypeCon",
+        "typeName": "Logo"
+    },
+    "tag": "TecQuery"
+}
 ---- Original Code ----
 tecData = Logo :- Logo :- Pantone "green"
 ---- Raw AST ----
@@ -525,6 +623,35 @@ InfixApp
             )
         )
     )
+---- Json encoded ----
+{
+    "left": {
+        "left": {
+            "parameters": [],
+            "tag": "TecTypeCon",
+            "typeName": "Logo"
+        },
+        "op": ":-",
+        "right": {
+            "parameters": [],
+            "tag": "TecTypeCon",
+            "typeName": "Logo"
+        },
+        "tag": "TecQuery"
+    },
+    "op": ":-",
+    "right": {
+        "parameters": [
+            {
+                "str": "green",
+                "tag": "TecStr"
+            }
+        ],
+        "tag": "TecTypeCon",
+        "typeName": "Pantone"
+    },
+    "tag": "TecQuery"
+}
 ---- Original Code ----
 tecData = Colorways [1 ..]
 ---- Raw AST ----
@@ -580,6 +707,18 @@ App
             )
         )
     )
+---- Json encoded ----
+{
+    "parameters": [
+        {
+            "fromI": 1,
+            "tag": "TecRngInt",
+            "toI": null
+        }
+    ],
+    "tag": "TecTypeCon",
+    "typeName": "Colorways"
+}
 ---- Original Code ----
 tecData = Colorways [1 .. 3]
 ---- Raw AST ----
@@ -649,6 +788,18 @@ App
             )
         )
     )
+---- Json encoded ----
+{
+    "parameters": [
+        {
+            "fromI": 1,
+            "tag": "TecRngInt",
+            "toI": 3
+        }
+    ],
+    "tag": "TecTypeCon",
+    "typeName": "Colorways"
+}
 ---- Original Code ----
 tecData = Render 0 Front
 ---- Raw AST ----
@@ -721,6 +872,22 @@ App
             )
         )
     )
+---- Json encoded ----
+{
+    "parameters": [
+        {
+            "int": 0,
+            "tag": "TecInt"
+        },
+        {
+            "parameters": [],
+            "tag": "TecTypeCon",
+            "typeName": "Front"
+        }
+    ],
+    "tag": "TecTypeCon",
+    "typeName": "Render"
+}
 ---- Original Code ----
 tecData = Colorways [0 ..] :> Fabric "*"
 ---- Raw AST ----
@@ -846,6 +1013,32 @@ InfixApp
             )
         )
     )
+---- Json encoded ----
+{
+    "left": {
+        "parameters": [
+            {
+                "fromI": 0,
+                "tag": "TecRngInt",
+                "toI": null
+            }
+        ],
+        "tag": "TecTypeCon",
+        "typeName": "Colorways"
+    },
+    "op": ":>",
+    "right": {
+        "parameters": [
+            {
+                "str": "*",
+                "tag": "TecStr"
+            }
+        ],
+        "tag": "TecTypeCon",
+        "typeName": "Fabric"
+    },
+    "tag": "TecQuery"
+}
 ---- Original Code ----
 tecData = Colorways [0]
 ---- Raw AST ----
@@ -900,6 +1093,22 @@ App
             )
         ]
     )
+---- Json encoded ----
+{
+    "parameters": [
+        {
+            "list": [
+                {
+                    "int": 0,
+                    "tag": "TecInt"
+                }
+            ],
+            "tag": "TecList"
+        }
+    ],
+    "tag": "TecTypeCon",
+    "typeName": "Colorways"
+}
 ---- Original Code ----
 tecData = HStack Logo (Render 0 Front)
 ---- Raw AST ----
@@ -1038,6 +1247,33 @@ App
             )
         )
     )
+---- Json encoded ----
+{
+    "parameters": [
+        {
+            "parameters": [],
+            "tag": "TecTypeCon",
+            "typeName": "Logo"
+        },
+        {
+            "parameters": [
+                {
+                    "int": 0,
+                    "tag": "TecInt"
+                },
+                {
+                    "parameters": [],
+                    "tag": "TecTypeCon",
+                    "typeName": "Front"
+                }
+            ],
+            "tag": "TecTypeCon",
+            "typeName": "Render"
+        }
+    ],
+    "tag": "TecTypeCon",
+    "typeName": "HStack"
+}
 ---- Original Code ----
 tecData = Render [Front .. Right]
 ---- Raw AST ----
@@ -1121,6 +1357,18 @@ App
             )
         )
     )
+---- Json encoded ----
+{
+    "parameters": [
+        {
+            "fromE": "Front",
+            "tag": "TecRngEnum",
+            "toE": "Right"
+        }
+    ],
+    "tag": "TecTypeCon",
+    "typeName": "Render"
+}
 ---- Original Code ----
 tecData = let a = 0 in a
 ---- Raw AST ----
@@ -1207,6 +1455,20 @@ Let
             )
         )
     )
+---- Json encoded ----
+{
+    "expression": {
+        "tag": "TecVar",
+        "varName": "a"
+    },
+    "tag": "TecBinding",
+    "varMap": {
+        "a": {
+            "int": 0,
+            "tag": "TecInt"
+        }
+    }
+}
 ---- Original Code ----
 tecData = let in 0
 ---- Raw AST ----
@@ -1243,3 +1505,12 @@ Let
             ) 0 "0"
         )
     )
+---- Json encoded ----
+{
+    "expression": {
+        "int": 0,
+        "tag": "TecInt"
+    },
+    "tag": "TecBinding",
+    "varMap": {}
+}

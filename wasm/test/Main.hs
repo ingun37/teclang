@@ -25,20 +25,21 @@ mapLeft _ (Right a) = Right a
 
 testE :: forall a. (TecAST a) => IO.Handle -> String -> ErrM a
 testE logHandle code = do
+  let logF = lift . hPutStrLn logHandle . T.pack :: String -> ErrM ()
   lift $ putStrLn "============== TESTING =============="
   lift $ putStrLn "---- Original Code ----"
   lift $ putStrLn code
-  lift $ hPutStrLn logHandle (T.pack "---- Original Code ----")
-  lift $ hPutStrLn logHandle (T.pack code)
+  logF "---- Original Code ----"
+  logF code
   Parsed {ast, rawAstShow} <- liftEither $ mapLeft ErrTec $ encodeCodeToTec code
-  lift $ hPutStrLn logHandle (T.pack "---- Raw AST ----")
+  logF "---- Raw AST ----"
   Simple.pHPrintString logHandle rawAstShow
   lift $ putStrLn "---- Final AST ----"
   lift $ Simple.pPrint ast
   lift $ putStrLn "---- Json AST ----"
   let jsonBytes = B.toStrict $ JP.encodePretty ast
-  lift $ putStrLn "---- Json encoded ----"
-  lift $ putStrLn $ T.unpack $ E.decodeUtf8 jsonBytes
+  logF "---- Json encoded ----"
+  lift $ hPutStrLn logHandle $ E.decodeUtf8 jsonBytes
   let decodedMaybe = Json.decodeStrict jsonBytes :: Maybe a
   let decodedEither = maybe (Left $ ErrStr "json decode fail") Right decodedMaybe
   tecAST <- liftEither decodedEither
