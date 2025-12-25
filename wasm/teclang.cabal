@@ -61,7 +61,7 @@ library
     exposed-modules:  MyLib
 
     -- Modules included in this library but not exported.
-    other-modules: TecTypes, TecEncode, TecDecode, TecAST, TecFormat, TecError
+    other-modules: TecTypes, TecEncode, TecDecode, TecAST, TecFormat, TecError, TecData
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:

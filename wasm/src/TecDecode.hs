@@ -6,7 +6,7 @@ import Data.Functor ((<&>))
 import Data.Map qualified as Map
 
 import Language.Haskell.Exts qualified as E
-
+import TecData
 import TecTypes
 import TecError
 

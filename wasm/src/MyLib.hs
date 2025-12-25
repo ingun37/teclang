@@ -24,3 +24,4 @@ import TecAST
 import TecError
 import TecFormat
 import TecTypes
+import TecData

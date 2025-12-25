@@ -4,6 +4,7 @@ import Data.Functor ((<&>))
 import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
 import TecError
+import TecData
 import TecTypes
 
 encodeDecl :: (Show l) => E.Decl l -> Either TecError (String, E.Exp l)
