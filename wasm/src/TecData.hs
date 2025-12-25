@@ -10,7 +10,7 @@ import GHC.Generics (Generic)
 import Data.Map (Map)
 
 data TecDataAST
-  = TecTypeCon {typeName :: String, parameters :: [TecDataAST]}
+  = TecCon {className :: String, parameters :: [TecDataAST]}
   | TecList {list :: [TecDataAST]}
   | TecQuery {op :: String, left :: TecDataAST, right :: TecDataAST}
   | TecInt {int :: Int}

@@ -24,7 +24,7 @@ decodeTecData (TecBinding varMap exp) = do
   decls <- traverse decodeDecl (Map.toList varMap')
   exp' <- decodeTecData exp
   return (E.Let () (E.BDecls () decls) exp')
-decodeTecData (TecTypeCon typeName params) = do
+decodeTecData (TecCon typeName params) = do
   let seed = E.Con () (E.UnQual () (E.Ident () typeName))
   foldM (\e p -> decodeTecData p <&> E.App () e) seed params
 decodeTecData (TecList list) = traverse decodeTecData list <&> E.List ()
@@ -38,10 +38,10 @@ decodeTecData (TecRngInt from to) = case to of
   Nothing -> return $ E.EnumFrom () (intE from)
   Just to' -> return $ E.EnumFromTo () (intE from) (intE to')
 decodeTecData (TecRngEnum from to) = do
-  f <- decodeTecData (TecTypeCon from [])
+  f <- decodeTecData (TecCon from [])
   case to of
     Nothing -> return $ E.EnumFrom () f
-    Just to' -> decodeTecData (TecTypeCon to' []) <&> E.EnumFromTo () f
+    Just to' -> decodeTecData (TecCon to' []) <&> E.EnumFromTo () f
 
 decodeType :: String -> Either TecError (E.Type ())
 decodeType name = return $ E.TyCon () (E.UnQual () (E.Ident () name))

@@ -23,10 +23,10 @@ encodeTecData (E.App _ lhs rhs) = do
   l <- encodeTecData lhs
   r <- encodeTecData rhs
   case l of
-    (TecTypeCon typeName params) -> return $ TecTypeCon typeName (params ++ [r])
+    (TecCon typeName params) -> return $ TecCon typeName (params ++ [r])
     _ -> Left $ TecError "Unexpected left side"
 encodeTecData (E.Paren _ x) = encodeTecData x
-encodeTecData (E.Con _ (E.UnQual _ (E.Ident _ typeName))) = Right $ TecTypeCon typeName []
+encodeTecData (E.Con _ (E.UnQual _ (E.Ident _ typeName))) = Right $ TecCon typeName []
 encodeTecData (E.InfixApp _ left (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) right) = do
   l <- encodeTecData left
   r <- encodeTecData right
@@ -37,14 +37,14 @@ encodeTecData (E.EnumFrom _ e) = do
   f <- encodeTecData e
   case f of
     (TecInt i) -> Right $ TecRngInt i Nothing
-    (TecTypeCon label []) -> Right $ TecRngEnum label Nothing
+    (TecCon label []) -> Right $ TecRngEnum label Nothing
     _ -> Left $ TecErrorUnknownExp (show e)
 encodeTecData (E.EnumFromTo l from to) = do
   f <- encodeTecData from
   t <- encodeTecData to
   case (f, t) of
     (TecInt a, TecInt b) -> Right $ TecRngInt a (Just b)
-    (TecTypeCon a [], TecTypeCon b []) -> Right $ TecRngEnum a (Just b)
+    (TecCon a [], TecCon b []) -> Right $ TecRngEnum a (Just b)
     _ -> Left $ TecErrorUnknownExp (show (E.EnumFromTo l from to))
 encodeTecData (E.List _ exps) = traverse encodeTecData exps <&> TecList
 encodeTecData e = Left $ TecErrorUnknownExp (show e)
