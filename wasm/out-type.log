@@ -48,14 +48,14 @@ data TecType = A
     "tag": "TecSum",
     "types": [
         {
-            "constructor": "A",
+            "className": "A",
             "parameterTypes": [],
-            "tag": "TecCon"
+            "tag": "TecClass"
         },
         {
-            "constructor": "B",
+            "className": "B",
             "parameterTypes": [],
-            "tag": "TecCon"
+            "tag": "TecClass"
         }
     ]
 }
@@ -88,9 +88,9 @@ data TecType = A
     "tag": "TecSum",
     "types": [
         {
-            "constructor": "A",
+            "className": "A",
             "parameterTypes": [],
-            "tag": "TecCon"
+            "tag": "TecClass"
         }
     ]
 }
@@ -144,11 +144,11 @@ data TecType = A String
     "tag": "TecSum",
     "types": [
         {
-            "constructor": "A",
+            "className": "A",
             "parameterTypes": [
                 "String"
             ],
-            "tag": "TecCon"
+            "tag": "TecClass"
         }
     ]
 }

@@ -28,7 +28,7 @@ instance FromJSON TecDataAST
 
 data TecTypeAST
   = TecSum {types :: [TecTypeAST]}
-  | TecCon {constructor :: String, parameterTypes :: [String]}
+  | TecClass {className :: String, parameterTypes :: [String]}
   deriving (Show, Generic)
 
 instance ToJSON TecTypeAST where

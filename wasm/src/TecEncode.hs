@@ -58,5 +58,5 @@ encodeType x = Left $ TecErrorUnknownExp (show x)
 encodeTecType :: (Show l) => E.QualConDecl l -> Either TecError TecTypeAST
 encodeTecType (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name) types)) = do
   paramTypes <- traverse encodeType types
-  return $ TecCon name paramTypes
+  return $ TecClass name paramTypes
 encodeTecType x = Left $ TecErrorUnknownExp (show x)
