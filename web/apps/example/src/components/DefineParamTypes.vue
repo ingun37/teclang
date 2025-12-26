@@ -4,7 +4,7 @@ import DefineParamType from "@/components/DefineParamType.vue";
 const model = defineModel<readonly string[]>({ required: true });
 
 function addParamType() {
-  model.value = model.value.concat(["NewType"]);
+  model.value = model.value.concat(["String"]);
 }
 </script>
 

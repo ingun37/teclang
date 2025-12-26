@@ -1,31 +1,18 @@
 <script setup lang="ts">
 const model = defineModel<string>({ required: true });
-const intermediateName = ref(model.value);
-
-function updateParamType(newName: string) {
-  model.value = newName;
-}
+const options = ["String", "Number"];
 </script>
 
 <template>
-  <v-text-field
-    v-model="intermediateName"
-    compact
-    hide-details
-    density="compact"
+  <v-select
+    v-model="model"
+    :items="options"
     label="Parameter Type"
+    density="compact"
+    hide-details
+    variant="outlined"
     class="mb-2"
-    @keyup.enter="updateParamType(intermediateName)"
-  >
-    <template #append-inner>
-      <v-btn
-        icon="mdi-check"
-        variant="text"
-        density="compact"
-        @click="updateParamType(intermediateName)"
-      />
-    </template>
-  </v-text-field>
+  />
 </template>
 
 <style scoped lang="sass"></style>
