@@ -28,7 +28,7 @@
     "eslint-config-vuetify": "^4.2.0",
     "npm-run-all2": "^8.0.4",
     "sass-embedded": "^1.92.1",
-    "typescript": "~5.9.2",
+    "typescript": "~5.9.3",
     "unplugin-auto-import": "^20.1.0",
     "unplugin-fonts": "^1.4.0",
     "unplugin-vue-components": "^29.0.0",
@@ -36,6 +36,8 @@
     "vite": "^7.1.5",
     "vite-plugin-vue-layouts-next": "^1.0.0",
     "vite-plugin-vuetify": "^2.1.2",
-    "vue-tsc": "^3.0.7"
+    "vue-tsc": "^3.0.7",
+    "effect": "~3.19.13",
+    "vitest": "~4.0.16"
   }
 }

@@ -10,7 +10,7 @@ import GHC.Generics (Generic)
 
 
 data TecTypeAST
-  = TecSum {types :: [TecTypeAST]}
+  = TecSum {tecTypes :: [TecTypeAST]}
   | TecClass {className :: String, parameterTypes :: [String]}
   deriving (Show, Generic)
 

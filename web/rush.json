@@ -22,6 +22,10 @@
     {
       "packageName": "example",
       "projectFolder": "apps/example"
+    },
+    {
+      "packageName": "codec",
+      "projectFolder": "libs/codec"
     }
   ]
 }

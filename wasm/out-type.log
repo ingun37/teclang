@@ -46,7 +46,7 @@ data TecType = A
 ---- Json encoded ----
 {
     "tag": "TecSum",
-    "types": [
+    "tecTypes": [
         {
             "className": "A",
             "parameterTypes": [],
@@ -86,7 +86,7 @@ data TecType = A
 ---- Json encoded ----
 {
     "tag": "TecSum",
-    "types": [
+    "tecTypes": [
         {
             "className": "A",
             "parameterTypes": [],
@@ -142,7 +142,7 @@ data TecType = A String
 ---- Json encoded ----
 {
     "tag": "TecSum",
-    "types": [
+    "tecTypes": [
         {
             "className": "A",
             "parameterTypes": [
