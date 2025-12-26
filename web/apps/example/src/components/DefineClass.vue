@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import * as C from "codec";
+import DefineParamTypes from "@/components/DefineParamTypes.vue";
 const model = defineModel<C.TecType.TecClass>({ required: true });
 const intermediateName = ref(model.value.className);
 
@@ -27,6 +28,7 @@ function updateClassName(newName: string) {
       />
     </template>
   </v-text-field>
+  <DefineParamTypes v-model="model.parameterTypes" />
 </template>
 
 <style scoped lang="sass"></style>
