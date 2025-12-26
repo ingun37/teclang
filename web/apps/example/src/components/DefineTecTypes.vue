@@ -1,34 +1,20 @@
 <script setup lang="ts">
 import * as C from "codec";
-
-const model = defineModel<C.TecType.TecType>({ required: true });
-const intermediateName = ref(model.value.tecTypeName);
-function updateTecTypeName(newName: string) {
-  model.value = C.TecType.TecType.make({
-    tecTypeName: newName,
-    classes: model.value.classes,
-  });
+const model = defineModel<C.TecType.TecType[]>({ required: true });
+function makeDefaultValue(): C.TecType.TecType {
+  return C.TecType.TecType.make({ tecTypeName: "Default", classes: [] });
+}
+function addTecType() {
+  model.value.push(makeDefaultValue());
 }
 </script>
 
 <template>
-  <v-text-field
-    v-model="intermediateName"
-    compact
-    hide-details
-    density="compact"
-    label="Tec Type Name"
-    @keyup.enter="updateTecTypeName(intermediateName)"
-  >
-    <template #append-inner>
-      <v-btn
-        icon="mdi-check"
-        variant="text"
-        density="compact"
-        @click="updateTecTypeName(intermediateName)"
-      />
-    </template>
-  </v-text-field>
+  <DefineTecType v-for="(_, i) in model" v-model="model[i]!" />
+
+  <v-btn prepend-icon="mdi-plus" variant="tonal" @click="addTecType">
+    Add
+  </v-btn>
 </template>
 
 <style scoped lang="sass"></style>

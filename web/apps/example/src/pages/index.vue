@@ -1,5 +1,5 @@
 <template>
-  <TecTypeDefinition v-model="tecTypes" />
+  <DefineTecTypes v-model="tecTypes" />
 </template>
 
 <script lang="ts" setup>
