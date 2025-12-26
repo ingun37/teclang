@@ -56,8 +56,14 @@ encodeType :: (Show l) => E.Type l -> Either TecError String
 encodeType (E.TyCon _ (E.UnQual _ (E.Ident _ name))) = return name
 encodeType x = Left $ TecErrorUnknownExp (show x)
 
-encodeTecType :: (Show l) => E.QualConDecl l -> Either TecError TecTypeAST
-encodeTecType (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name) types)) = do
-  paramTypes <- traverse encodeType types
-  return $ TecClass name paramTypes
+encodeQualConDecl :: (Show l) => E.QualConDecl l -> Either TecError TecClass
+encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name) params)) = do
+  types <- traverse encodeType params
+  return $ TecClass name types
+encodeQualConDecl x = Left $ TecErrorUnknownExp (show x)
+
+encodeTecType :: (Show l) => E.Decl l -> Either TecError TecTypeAST
+encodeTecType (E.DataDecl _ (E.DataType _) Nothing (E.DHead _ (E.Ident _ name)) decls []) = do
+  paramTypes <- traverse encodeQualConDecl decls
+  return $ TecSum name paramTypes
 encodeTecType x = Left $ TecErrorUnknownExp (show x)

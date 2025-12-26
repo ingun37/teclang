@@ -46,11 +46,12 @@ decodeTecData (TecRngEnum from to) = do
 decodeType :: String -> Either TecError (E.Type ())
 decodeType name = return $ E.TyCon () (E.UnQual () (E.Ident () name))
 
-decodeTecType :: TecTypeAST -> Either TecError [E.QualConDecl ()]
-decodeTecType (TecClass name params) = do
-  xs <- traverse decodeType params
-  return [E.QualConDecl () Nothing Nothing (E.ConDecl () (E.Ident () name) xs)]
-decodeTecType (TecSum asts) = do
-  decls <- traverse decodeTecType asts
-  return $ concat decls
-decodeTecType _ = Left $ TecError "decode fail"
+decodeQualConDecl :: TecClass -> Either TecError (E.QualConDecl ())
+decodeQualConDecl (TecClass name params) = do
+  types <- traverse decodeType params
+  return $ E.QualConDecl () Nothing Nothing (E.ConDecl () (E.Ident () name) types)
+
+decodeTecType :: TecTypeAST -> Either TecError [E.Decl ()]
+decodeTecType (TecSum name classes) = do
+  xs <- traverse decodeQualConDecl classes
+  return [E.DataDecl () (E.DataType ()) Nothing (E.DHead () (E.Ident () name)) xs []]

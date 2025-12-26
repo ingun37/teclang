@@ -6,11 +6,11 @@ import Data.Aeson
   )
 import GHC.Generics (Generic)
 import Language.Haskell.Exts qualified as E
+import TecData
 import TecDecode
 import TecEncode
 import TecError
 import TecTypes
-import TecData
 
 class (Show a, Generic a, ToJSON a, FromJSON a) => TecAST a where
   decodeTecToCode :: a -> Either TecError String
@@ -44,15 +44,19 @@ instance TecAST TecDataAST where
 instance TecAST TecTypeAST where
   decodeTecToCode ast = do
     decls <- decodeTecType ast
-    let m = E.Module () Nothing [] [] [E.DataDecl () (E.DataType ()) Nothing (E.DHead () (E.Ident () "TecType")) decls []]
+    let m = E.Module () Nothing [] [] decls
     return $ E.prettyPrint m
   encodeCodeToTec code =
     let result = E.parseModule code
      in case result of
-          E.ParseOk (E.Module _ Nothing [] [] [E.DataDecl _ (E.DataType _) Nothing (E.DHead _ _) decls []]) -> do
-            let f e = mapWholeExpShow e $ encodeTecType e
-            asts <- traverse f decls
-            Right $ Parsed {ast = TecSum asts, rawAstShow = show decls}
+          E.ParseOk (E.Module _ Nothing [] [] decls) -> do
+            case decls of
+              [decl] -> do
+                let f e = mapWholeExpShow e $ encodeTecType e
+                ast <- f decl
+                Right $ Parsed {ast = ast, rawAstShow = show ast}
+              [] -> Left $ TecError "decls is empty"
+              _ -> Left $ TecErrorUnknownExpWithMessage (show decls) "More than one decl is given"
           E.ParseOk x -> do
             Left $ TecErrorUnknownExp (show x)
           E.ParseFailed _ str ->

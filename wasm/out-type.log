@@ -2,153 +2,76 @@
 data TecType = A
              | B
 ---- Raw AST ----
-[ QualConDecl
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 17
-        , srcInfoPoints = []
-        }
-    ) Nothing Nothing
-    ( ConDecl
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 17
-            , srcInfoPoints = []
+TecSum
+    { tecTypeName = "TecType"
+    , classes =
+        [ TecClass
+            { className = "A"
+            , parameterTypes = []
             }
-        )
-        ( Ident
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 17
-                , srcInfoPoints = []
-                }
-            ) "A"
-        ) []
-    )
-, QualConDecl
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 2 16 2 17
-        , srcInfoPoints = []
-        }
-    ) Nothing Nothing
-    ( ConDecl
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 2 16 2 17
-            , srcInfoPoints = []
+        , TecClass
+            { className = "B"
+            , parameterTypes = []
             }
-        )
-        ( Ident
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 2 16 2 17
-                , srcInfoPoints = []
-                }
-            ) "B"
-        ) []
-    )
-]
+        ]
+    }
 ---- Json encoded ----
 {
-    "tag": "TecSum",
-    "tecTypes": [
+    "classes": [
         {
             "className": "A",
-            "parameterTypes": [],
-            "tag": "TecClass"
+            "parameterTypes": []
         },
         {
             "className": "B",
-            "parameterTypes": [],
-            "tag": "TecClass"
+            "parameterTypes": []
         }
-    ]
+    ],
+    "tecTypeName": "TecType"
 }
 ---- Original Code ----
 data TecType = A
 ---- Raw AST ----
-[ QualConDecl
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 17
-        , srcInfoPoints = []
-        }
-    ) Nothing Nothing
-    ( ConDecl
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 17
-            , srcInfoPoints = []
+TecSum
+    { tecTypeName = "TecType"
+    , classes =
+        [ TecClass
+            { className = "A"
+            , parameterTypes = []
             }
-        )
-        ( Ident
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 17
-                , srcInfoPoints = []
-                }
-            ) "A"
-        ) []
-    )
-]
+        ]
+    }
 ---- Json encoded ----
 {
-    "tag": "TecSum",
-    "tecTypes": [
+    "classes": [
         {
             "className": "A",
-            "parameterTypes": [],
-            "tag": "TecClass"
+            "parameterTypes": []
         }
-    ]
+    ],
+    "tecTypeName": "TecType"
 }
 ---- Original Code ----
 data TecType = A String
 ---- Raw AST ----
-[ QualConDecl
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 24
-        , srcInfoPoints = []
-        }
-    ) Nothing Nothing
-    ( ConDecl
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 24
-            , srcInfoPoints = []
+TecSum
+    { tecTypeName = "TecType"
+    , classes =
+        [ TecClass
+            { className = "A"
+            , parameterTypes = [ "String" ]
             }
-        )
-        ( Ident
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 17
-                , srcInfoPoints = []
-                }
-            ) "A"
-        )
-        [ TyCon
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 24
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 24
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 24
-                        , srcInfoPoints = []
-                        }
-                    ) "String"
-                )
-            )
         ]
-    )
-]
+    }
 ---- Json encoded ----
 {
-    "tag": "TecSum",
-    "tecTypes": [
+    "classes": [
         {
             "className": "A",
             "parameterTypes": [
                 "String"
-            ],
-            "tag": "TecClass"
+            ]
         }
-    ]
+    ],
+    "tecTypeName": "TecType"
 }
