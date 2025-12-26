@@ -12,6 +12,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
+    DefineClass: typeof import('./components/DefineClass.vue')['default']
+    DefineClasses: typeof import('./components/DefineClasses.vue')['default']
     DefineTecType: typeof import('./components/DefineTecType.vue')['default']
     DefineTecTypes: typeof import('./components/DefineTecTypes.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
