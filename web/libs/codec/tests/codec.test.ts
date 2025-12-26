@@ -17,11 +17,10 @@ test("parse TecType haskell test log", () => {
       nextHeaderIndex === -1
         ? section.trim()
         : section.substring(0, nextHeaderIndex).trim();
-    if (jsonStr) {
-      const jsonObject = JSON.parse(jsonStr);
-      const decoded = S.decodeUnknownSync(lib.TecType.TecType)(jsonObject);
-      const encoded = S.encodeUnknownSync(lib.TecType.TecType)(decoded);
-      expect(encoded).toStrictEqual(jsonObject);
-    }
+    expect(jsonStr).not.toBeNull();
+    const jsonObject = JSON.parse(jsonStr);
+    const decoded = S.decodeUnknownSync(lib.TecType.TecType)(jsonObject);
+    const encoded = S.encodeUnknownSync(lib.TecType.TecType)(decoded);
+    expect(encoded).toStrictEqual(jsonObject);
   }
 });
