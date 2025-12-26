@@ -12,6 +12,9 @@ importers:
 
   ../../apps/example:
     dependencies:
+      '@bjorn3/browser_wasi_shim':
+        specifier: ~0.4.2
+        version: 0.4.2
       '@fontsource/roboto':
         specifier: 5.2.7
         version: 5.2.7
@@ -128,6 +131,9 @@ packages:
   '@babel/types@7.28.5':
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
+
+  '@bjorn3/browser_wasi_shim@0.4.2':
+    resolution: {integrity: sha512-/iHkCVUG3VbcbmEHn5iIUpIrh7a7WPiwZ3sHy4HZKZzBdSadwdddYDZAII2zBvQYV0Lfi8naZngPCN7WPHI/hA==}
 
   '@bufbuild/protobuf@2.10.2':
     resolution: {integrity: sha512-uFsRXwIGyu+r6AMdz+XijIIZJYpoWeYzILt5yZ2d3mCjQrWUTVpVD9WL/jZAbvp+Ed04rOhrsk7FiTcEDseB5A==}
@@ -2135,6 +2141,8 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
+
+  '@bjorn3/browser_wasi_shim@0.4.2': {}
 
   '@bufbuild/protobuf@2.10.2': {}
 
