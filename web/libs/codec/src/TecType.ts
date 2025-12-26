@@ -11,7 +11,11 @@ const TecSum = S.Struct({
   tecTypes: S.Array(TecTypeSus),
 });
 
-const TecClass = S.Struct({ tag: S.tag("TecClass") });
+const TecClass = S.Struct({
+  tag: S.tag("TecClass"),
+  className: S.String,
+  parameterTypes: S.Array(S.String),
+});
 type TecClass = typeof TecClass.Type;
 
 export type TecType = TecSum | TecClass;

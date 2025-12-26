@@ -3,7 +3,7 @@ import * as fs from "node:fs";
 import { Schema as S } from "effect";
 import * as E from "effect";
 import * as lib from "../src/index.js";
-test("parse scratch.txt", () => {
+test("parse TecType haskell test log", () => {
   const content = fs.readFileSync(
     "/Users/ingun/projects/teclang/wasm/out-type.log",
     "utf-8",
