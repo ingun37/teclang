@@ -10,3 +10,4 @@ export const TecType = S.Struct({
   tecTypeName: S.String,
   classes: S.Array(TecClass),
 });
+export type TecType = typeof TecType.Type;
