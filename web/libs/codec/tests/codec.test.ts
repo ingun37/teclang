@@ -1,7 +1,6 @@
 import { expect, test } from "vitest";
 import * as fs from "node:fs";
 import { Schema as S } from "effect";
-import * as E from "effect";
 import * as lib from "../src/index.js";
 test("parse TecType haskell test log", () => {
   const content = fs.readFileSync(
@@ -9,7 +8,6 @@ test("parse TecType haskell test log", () => {
     "utf-8",
   );
   const sections = content.split("---- Json encoded ----");
-  const jsonObjects = [];
 
   for (let i = 1; i < sections.length; i++) {
     const section = sections[i];
@@ -20,16 +18,10 @@ test("parse TecType haskell test log", () => {
         ? section.trim()
         : section.substring(0, nextHeaderIndex).trim();
     if (jsonStr) {
-      jsonObjects.push(JSON.parse(jsonStr));
+      const jsonObject = JSON.parse(jsonStr);
+      const decoded = S.decodeUnknownSync(lib.TecType.TecType)(jsonObject);
+      const encoded = S.encodeUnknownSync(lib.TecType.TecType)(decoded);
+      expect(encoded).toStrictEqual(jsonObject);
     }
   }
-
-  const result = E.pipe(
-    jsonObjects,
-    E.Array.map((x) => S.decodeUnknownEither(lib.TecType.TecType)(x)),
-    E.Either.all,
-    E.Either.mapLeft((x) => x.toString()),
-  );
-
-  expect(result._tag).toEqual("Right");
 });
