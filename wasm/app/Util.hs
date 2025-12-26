@@ -41,3 +41,8 @@ decodeHaskellData :: String -> IO String
 decodeHaskellData x = do
   e <- runExceptT $ _decodeHaskellData x
   either (fail . show) return e
+
+formatHaskell :: String -> IO String
+formatHaskell code = do
+  code' <- runExceptT $ MyLib.formatHaskell code
+  either (fail . show) return code'

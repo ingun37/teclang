@@ -13,7 +13,6 @@ import Foreign.Ptr
 import GHC.Internal.Foreign.Marshal.Alloc qualified as Alloc
 import GHC.Wasm.Prim
 import MyLib qualified ()
-import Text.Pretty.Simple qualified as Simple
 import Util qualified
 
 main :: IO ()
@@ -64,7 +63,7 @@ encodeHaskellData code = toJSString <$> Util.encodeHaskellData (fromJSString cod
 
 foreign export javascript "formatHaskell" formatHaskell :: JSString -> IO JSString
 formatHaskell :: JSString -> IO JSString
-formatHaskell = return . toJSString . TL.unpack . Simple.pStringNoColor . fromJSString
+formatHaskell code = toJSString <$> Util.formatHaskell (fromJSString code)
 
 foreign export javascript "decodeHaskellData" decodeHaskellData :: JSString -> IO JSString
 decodeHaskellData :: JSString -> IO JSString
