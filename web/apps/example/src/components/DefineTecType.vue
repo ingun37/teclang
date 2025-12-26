@@ -13,24 +13,31 @@ function updateTecTypeName(newName: string) {
 </script>
 
 <template>
-  <v-text-field
-    v-model="intermediateName"
-    compact
-    hide-details
-    density="compact"
-    label="Tec Type Name"
-    @keyup.enter="updateTecTypeName(intermediateName)"
-  >
-    <template #append-inner>
-      <v-btn
-        icon="mdi-check"
-        variant="text"
+  <v-card variant="outlined" class="mb-4">
+    <v-card-item>
+      <v-text-field
+        v-model="intermediateName"
+        compact
+        hide-details
         density="compact"
-        @click="updateTecTypeName(intermediateName)"
-      />
-    </template>
-  </v-text-field>
-  <DefineClasses v-model="model.classes" />
+        label="Tec Type Name"
+        @keyup.enter="updateTecTypeName(intermediateName)"
+      >
+        <template #append-inner>
+          <v-btn
+            icon="mdi-check"
+            variant="text"
+            density="compact"
+            @click="updateTecTypeName(intermediateName)"
+          />
+        </template>
+      </v-text-field>
+    </v-card-item>
+
+    <v-card-text>
+      <DefineClasses v-model="model.classes" />
+    </v-card-text>
+  </v-card>
 </template>
 
 <style scoped lang="sass"></style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import * as C from "codec";
-const model = defineModel<C.TecType.TecClass[]>({ required: true });
+const model = defineModel<readonly C.TecType.TecClass[]>({ required: true });
 
 function addClass() {
   model.value = model.value.concat([
