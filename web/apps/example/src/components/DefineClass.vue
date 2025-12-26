@@ -1,9 +1,10 @@
 <script setup lang="ts">
-const model = defineModel<string>({ required: true });
-const intermediateName = ref(model.value);
+import * as C from "codec";
+const model = defineModel<C.TecType.TecClass>({ required: true });
+const intermediateName = ref(model.value.className);
 
 function updateClassName(newName: string) {
-  model.value = newName;
+  model.value = C.TecType.TecClass.make({ ...model.value, className: newName });
 }
 </script>
 

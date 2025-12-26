@@ -1,10 +1,10 @@
 import { Schema as S } from "effect";
 
-const TecClass = S.Struct({
+export const TecClass = S.Struct({
   className: S.String,
   parameterTypes: S.Array(S.String),
 });
-type TecClass = typeof TecClass.Type;
+export type TecClass = typeof TecClass.Type;
 
 export const TecType = S.Struct({
   tecTypeName: S.String,

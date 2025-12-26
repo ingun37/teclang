@@ -10,15 +10,6 @@ function updateTecTypeName(newName: string) {
     classes: model.value.classes,
   });
 }
-const classNames = computed({
-  get: () => model.value.classes.map((c) => c.className),
-  set: (names) => {
-    model.value = C.TecType.TecType.make({
-      tecTypeName: model.value.tecTypeName,
-      classes: names.map((name) => ({ className: name, parameterTypes: [] })),
-    });
-  },
-});
 </script>
 
 <template>
@@ -39,7 +30,7 @@ const classNames = computed({
       />
     </template>
   </v-text-field>
-  <DefineClasses v-model="classNames" />
+  <DefineClasses v-model="model.classes" />
 </template>
 
 <style scoped lang="sass"></style>

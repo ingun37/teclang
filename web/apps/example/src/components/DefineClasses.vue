@@ -1,8 +1,11 @@
 <script setup lang="ts">
-const model = defineModel<string[]>({ required: true });
+import * as C from "codec";
+const model = defineModel<C.TecType.TecClass[]>({ required: true });
 
 function addClass() {
-  model.value = model.value.concat(["NewClass"]);
+  model.value = model.value.concat([
+    C.TecType.TecClass.make({ className: "NewClass", parameterTypes: [] }),
+  ]);
 }
 </script>
 
