@@ -6,11 +6,11 @@ export const TecClass = S.Struct({
 });
 export type TecClass = typeof TecClass.Type;
 
-export const TecType = S.Struct({
+export const TecSum = S.Struct({
   tecTypeName: S.String,
   classes: S.Array(TecClass),
 });
-export type TecType = typeof TecType.Type;
+export type TecSum = typeof TecSum.Type;
 
 const TecEnum = S.Struct({
   tecTypeName: S.String,
@@ -19,7 +19,7 @@ const TecEnum = S.Struct({
 
 export type TecEnum = typeof TecEnum.Type;
 
-export const TecEnumFromType = TecType.pipe(
+export const TecEnumFromSum = TecSum.pipe(
   S.transformOrFail(TecEnum, {
     strict: true,
     decode(input, options, ast) {
@@ -43,7 +43,7 @@ export const TecEnumFromType = TecType.pipe(
     },
     encode(input) {
       return E.ParseResult.succeed(
-        TecType.make({
+        TecSum.make({
           tecTypeName: input.tecTypeName,
           classes: input.values.map((v) =>
             TecClass.make({ className: v, parameterTypes: [] }),
@@ -53,3 +53,9 @@ export const TecEnumFromType = TecType.pipe(
     },
   }),
 );
+
+export const TecType = S.Struct({
+  sumTypes: S.Array(TecSum),
+});
+
+export type TecType = typeof TecType.Type;
