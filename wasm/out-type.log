@@ -99,3 +99,77 @@ TecTypeAST
         }
     ]
 }
+---- Original Code ----
+data Enum0 = A
+           | B
+           | C
+
+data TecType = AType Enum0 String
+---- Raw AST ----
+TecTypeAST
+    { sumTypes =
+        [ TecSum
+            { tecTypeName = "Enum0"
+            , classes =
+                [ TecClass
+                    { className = "A"
+                    , parameterTypes = []
+                    }
+                , TecClass
+                    { className = "B"
+                    , parameterTypes = []
+                    }
+                , TecClass
+                    { className = "C"
+                    , parameterTypes = []
+                    }
+                ]
+            }
+        , TecSum
+            { tecTypeName = "TecType"
+            , classes =
+                [ TecClass
+                    { className = "AType"
+                    , parameterTypes =
+                        [ "Enum0"
+                        , "String"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "sumTypes": [
+        {
+            "classes": [
+                {
+                    "className": "A",
+                    "parameterTypes": []
+                },
+                {
+                    "className": "B",
+                    "parameterTypes": []
+                },
+                {
+                    "className": "C",
+                    "parameterTypes": []
+                }
+            ],
+            "tecTypeName": "Enum0"
+        },
+        {
+            "classes": [
+                {
+                    "className": "AType",
+                    "parameterTypes": [
+                        "Enum0",
+                        "String"
+                    ]
+                }
+            ],
+            "tecTypeName": "TecType"
+        }
+    ]
+}
