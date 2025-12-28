@@ -23,7 +23,7 @@ instance ToJSON TecSum where
 
 instance FromJSON TecSum
 
-data TecTypeAST = TecTypeAST [TecSum] deriving (Show, Generic)
+data TecTypeAST = TecTypeAST {sumTypes :: [TecSum]} deriving (Show, Generic)
 
 instance ToJSON TecTypeAST where
   toEncoding = genericToEncoding defaultOptions
