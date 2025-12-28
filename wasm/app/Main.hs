@@ -68,3 +68,7 @@ formatHaskell code = toJSString <$> Util.formatHaskell (fromJSString code)
 foreign export javascript "decodeHaskellData" decodeHaskellData :: JSString -> IO JSString
 decodeHaskellData :: JSString -> IO JSString
 decodeHaskellData code = toJSString <$> Util.decodeHaskellData (fromJSString code)
+
+foreign export javascript "decodeHaskellType" decodeHaskellType :: JSString -> IO JSString
+decodeHaskellType :: JSString -> IO JSString
+decodeHaskellType code = toJSString <$> Util.decodeHaskellType (fromJSString code)
