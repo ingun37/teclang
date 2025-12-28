@@ -24,3 +24,64 @@ test("parse TecType haskell test log", () => {
     expect(encoded).toStrictEqual(jsonObject);
   }
 });
+
+test("enum from sum", () => {
+  const e = S.decodeUnknownSync(lib.TecType.TecEnumFromSum)({
+    tecTypeName: "Foo",
+    classes: [
+      { className: "A", parameterTypes: [] },
+      { className: "B", parameterTypes: [] },
+    ],
+  });
+
+  expect(e).toStrictEqual({ tecTypeName: "Foo", values: ["A", "B"] });
+});
+
+test("unique tec type from tec type", () => {
+  const u = S.decodeUnknownSync(lib.TecType.UniqueTecTypeFromTecType)({
+    sumTypes: [
+      {
+        tecTypeName: "Side",
+        classes: [
+          { className: "Front", parameterTypes: [] },
+          { className: "Back", parameterTypes: [] },
+        ],
+      },
+      {
+        tecTypeName: "TecType",
+        classes: [{ className: "Render", parameterTypes: ["Side", "String"] }],
+      },
+    ],
+  });
+
+  expect(u).toStrictEqual({
+    enums: [{ tecTypeName: "Side", values: ["Front", "Back"] }],
+    tecType: {
+      tecTypeName: "TecType",
+      classes: [{ className: "Render", parameterTypes: ["Side", "String"] }],
+    },
+  });
+});
+
+test("unique tec type from tec type fail", () => {
+  const f = () =>
+    S.decodeUnknownSync(lib.TecType.UniqueTecTypeFromTecType)({
+      sumTypes: [
+        {
+          tecTypeName: "Side",
+          classes: [
+            { className: "Front", parameterTypes: ["Ha!"] },
+            { className: "Back", parameterTypes: [] },
+          ],
+        },
+        {
+          tecTypeName: "TecType",
+          classes: [
+            { className: "Render", parameterTypes: ["Side", "String"] },
+          ],
+        },
+      ],
+    });
+
+  expect(f).toThrowError("Class cannot have parameter types in an enum");
+});

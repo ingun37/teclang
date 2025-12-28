@@ -59,3 +59,48 @@ export const TecType = S.Struct({
 });
 
 export type TecType = typeof TecType.Type;
+const UniqueTecType = S.Struct({
+  enums: S.Array(TecEnum),
+  tecType: TecSum,
+});
+export type UniqueTecType = typeof UniqueTecType.Type;
+
+const decodeEnums = (enums: TecSum[]) =>
+  E.pipe(
+    enums,
+    E.Array.map((x) => S.decodeEither(TecEnumFromSum)(x)),
+    E.Either.all,
+  );
+export const UniqueTecTypeFromTecType = TecType.pipe(
+  S.transformOrFail(UniqueTecType, {
+    strict: true,
+    decode(input, options, ast) {
+      return E.pipe(
+        input.sumTypes,
+        S.decodeUnknownEither(S.NonEmptyArray(TecSum)),
+        E.Either.andThen((sums) => {
+          const [enums, sum] = E.Array.unappend(sums);
+          return E.pipe(
+            enums,
+            decodeEnums,
+            E.Either.map((enums) =>
+              UniqueTecType.make({ enums, tecType: sum }),
+            ),
+          );
+        }),
+        E.Either.mapLeft((x) => x.issue),
+      );
+    },
+    encode(uniqueTT: UniqueTecType) {
+      return E.pipe(
+        uniqueTT.enums,
+        E.Array.map((x) => S.encodeEither(TecEnumFromSum)(x)),
+        E.Either.all,
+        E.Either.map((sums) =>
+          TecType.make({ sumTypes: E.Array.append(sums, uniqueTT.tecType) }),
+        ),
+        E.Either.mapLeft((x) => x.issue),
+      );
+    },
+  }),
+);
