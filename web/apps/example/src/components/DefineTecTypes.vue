@@ -14,12 +14,14 @@ function addTecType() {
 </script>
 
 <template>
-  <v-container fluid>
+  <v-container fluid class="pa-0">
     <v-row>
       <v-col v-for="(_, i) in model.enums" :key="i" cols="12">
         <DefineTecEnum v-model="model.enums[i]!" />
       </v-col>
-      <DefineTecType v-model="model.tecType" />
+      <v-col cols="12">
+        <DefineTecType v-model="model.tecType" />
+      </v-col>
 
       <v-col cols="12">
         <div class="d-flex flex-row ga-2">

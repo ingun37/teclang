@@ -1,15 +1,28 @@
 <template>
-  <div class="d-flex flex-row ga-2">
-    <v-btn @click="fillSampleCode">fill sample code</v-btn>
-    <v-btn @click="updateUI">update ui</v-btn>
-  </div>
-  <v-textarea
-    v-model="haskellCode"
-    auto-grow
-    class="font-mono"
-    label="Haskell Code"
-  />
-  <DefineTecTypes v-if="tecType" v-model="tecType" />
+  <v-container fluid>
+    <v-row>
+      <v-col cols="12">
+        <div class="d-flex flex-row ga-2 mb-4">
+          <v-btn @click="fillSampleCode">fill sample code</v-btn>
+          <v-btn color="primary" @click="updateUI">update ui</v-btn>
+        </div>
+      </v-col>
+
+      <v-col cols="12">
+        <v-textarea
+          v-model="haskellCode"
+          auto-grow
+          class="font-mono"
+          label="Haskell Code"
+          variant="outlined"
+        />
+      </v-col>
+
+      <v-col cols="12">
+        <DefineTecTypes v-if="tecType" v-model="tecType" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts" setup>

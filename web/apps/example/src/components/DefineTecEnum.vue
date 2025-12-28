@@ -11,14 +11,13 @@ function addValue() {
 </script>
 
 <template>
-  <v-container fluid class="pa-0">
+  <v-card variant="outlined" class="pa-4">
     <v-row>
       <v-col cols="12">
         <v-text-field
           v-model="model.tecTypeName"
           label="Enum Name"
           variant="outlined"
-          density="compact"
         />
       </v-col>
     </v-row>
@@ -41,7 +40,7 @@ function addValue() {
         @click="addValue"
       />
     </div>
-  </v-container>
+  </v-card>
 </template>
 
 <style scoped lang="sass"></style>
