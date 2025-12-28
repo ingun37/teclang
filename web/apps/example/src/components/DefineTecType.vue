@@ -3,41 +3,10 @@ import * as C from "codec";
 import DefineClasses from "@/components/DefineClasses.vue";
 
 const model = defineModel<C.TecType.TecSum>({ required: true });
-const intermediateName = ref(model.value.tecTypeName);
-function updateTecTypeName(newName: string) {
-  model.value = C.TecType.TecSum.make({
-    tecTypeName: newName,
-    classes: model.value.classes,
-  });
-}
 </script>
 
 <template>
-  <v-card variant="outlined" class="mb-4">
-    <v-card-item>
-      <v-text-field
-        v-model="intermediateName"
-        compact
-        hide-details
-        density="compact"
-        label="Tec Type Name"
-        @keyup.enter="updateTecTypeName(intermediateName)"
-      >
-        <template #append-inner>
-          <v-btn
-            icon="mdi-check"
-            variant="text"
-            density="compact"
-            @click="updateTecTypeName(intermediateName)"
-          />
-        </template>
-      </v-text-field>
-    </v-card-item>
-
-    <v-card-text>
-      <DefineClasses v-model="model.classes" />
-    </v-card-text>
-  </v-card>
+  <DefineClasses v-model="model.classes" />
 </template>
 
 <style scoped lang="sass"></style>

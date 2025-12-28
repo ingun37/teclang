@@ -10,25 +10,28 @@ function addClass() {
 </script>
 
 <template>
-  <div class="ml-4 mb-4">
-    <div class="text-caption mb-2">Classes</div>
-    <v-row dense>
-      <v-col v-for="(_, i) in model" :key="i" cols="auto">
-        <DefineClass v-model="model[i]!" />
-      </v-col>
-
-      <v-col cols="auto" class="d-flex align-center">
-        <v-btn
-          prepend-icon="mdi-plus"
-          variant="plain"
-          size="small"
-          @click="addClass"
-        >
-          Add Class
-        </v-btn>
-      </v-col>
-    </v-row>
-  </div>
+  <v-card>
+    <v-card-subtitle>Classes</v-card-subtitle>
+    <v-card-text>
+      <v-container>
+        <v-row dense>
+          <v-col cols="auto" v-for="(_, i) in model" :key="i">
+            <DefineClass v-model="model[i]!" />
+          </v-col>
+          <v-col cols="auto" class="d-flex align-center">
+            <v-btn
+              prepend-icon="mdi-plus"
+              variant="plain"
+              size="small"
+              @click="addClass"
+            >
+              Add Class
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
+  </v-card>
 </template>
 
 <style scoped lang="sass"></style>
