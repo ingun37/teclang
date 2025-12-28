@@ -3,10 +3,10 @@ import { Schema as S } from "effect";
 
 export * as TecType from "./TecType.js";
 
-export function tecTypeToJson(decoded: TecType.TecType): any {
-  return S.encodeUnknownSync(TecType.TecType)(decoded);
+export function uniqueTecTypeToJson(decoded: TecType.UniqueTecType): any {
+  return S.encodeUnknownSync(TecType.UniqueTecTypeFromTecType)(decoded);
 }
 
-export function jsonToTecType(json: any): TecType.TecType {
-  return S.decodeUnknownSync(TecType.TecType)(json);
+export function jsonToUniqueTecType(json: any): TecType.UniqueTecType {
+  return S.decodeUnknownSync(TecType.UniqueTecTypeFromTecType)(json);
 }

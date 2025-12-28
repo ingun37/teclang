@@ -12,7 +12,7 @@ export const TecSum = S.Struct({
 });
 export type TecSum = typeof TecSum.Type;
 
-const TecEnum = S.Struct({
+export const TecEnum = S.Struct({
   tecTypeName: S.String,
   values: S.Array(S.String),
 });
@@ -59,7 +59,7 @@ export const TecType = S.Struct({
 });
 
 export type TecType = typeof TecType.Type;
-const UniqueTecType = S.Struct({
+export const UniqueTecType = S.Struct({
   enums: S.Array(TecEnum),
   tecType: TecSum,
 });
@@ -74,7 +74,7 @@ const decodeEnums = (enums: TecSum[]) =>
 export const UniqueTecTypeFromTecType = TecType.pipe(
   S.transformOrFail(UniqueTecType, {
     strict: true,
-    decode(input, options, ast) {
+    decode(input) {
       return E.pipe(
         input.sumTypes,
         S.decodeUnknownEither(S.NonEmptyArray(TecSum)),

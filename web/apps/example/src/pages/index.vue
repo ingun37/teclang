@@ -9,17 +9,13 @@
     class="font-mono"
     label="Haskell Code"
   />
-  <DefineTecTypes v-model="tecType" />
+  <DefineTecTypes v-if="tecType" v-model="tecType" />
 </template>
 
 <script lang="ts" setup>
 import * as C from "codec";
 import { useAppStore } from "@/stores/app.ts";
-const tecType = ref<C.TecType.TecType>(
-  C.TecType.TecType.make({
-    sumTypes: [],
-  }),
-);
+const tecType = ref<C.TecType.UniqueTecType | null>(null);
 
 const haskellCode = ref("");
 
@@ -34,7 +30,7 @@ function fillSampleCode() {
   haskellCode.value = sampleHaskellCode;
 }
 async function updateTypeAST() {
-  tecType.value = C.jsonToTecType(
+  tecType.value = C.jsonToUniqueTecType(
     JSON.parse(
       await useAppStore().haskell!.exports.encodeHaskellType(haskellCode.value),
     ),
