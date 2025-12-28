@@ -16,6 +16,7 @@ declare module 'vue' {
     DefineClasses: typeof import('./components/DefineClasses.vue')['default']
     DefineParamType: typeof import('./components/DefineParamType.vue')['default']
     DefineParamTypes: typeof import('./components/DefineParamTypes.vue')['default']
+    DefineTecEnum: typeof import('./components/DefineTecEnum.vue')['default']
     DefineTecType: typeof import('./components/DefineTecType.vue')['default']
     DefineTecTypes: typeof import('./components/DefineTecTypes.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']

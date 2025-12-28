@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import * as C from "codec";
+import DefineTecEnum from "@/components/DefineTecEnum.vue";
 const model = defineModel<C.TecType.UniqueTecType>({ required: true });
 function makeDefaultEnum(): C.TecType.TecEnum {
   return C.TecType.TecEnum.make({ tecTypeName: "Default", values: [] });
@@ -15,7 +16,9 @@ function addTecType() {
 <template>
   <v-container fluid>
     <v-row>
-      <v-col v-for="i in model.enums.length" :key="i" cols="12"> enum </v-col>
+      <v-col v-for="(_, i) in model.enums" :key="i" cols="12">
+        <DefineTecEnum v-model="model.enums[i]!" />
+      </v-col>
       <DefineTecType v-model="model.tecType" />
 
       <v-col cols="12">
