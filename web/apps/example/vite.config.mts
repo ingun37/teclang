@@ -54,6 +54,10 @@ export default defineConfig({
             weights: [100, 300, 400, 500, 700, 900],
             styles: ["normal", "italic"],
           },
+          {
+            name: "Roboto Mono",
+            weights: [400, 500, 700],
+          },
         ],
       },
     }),

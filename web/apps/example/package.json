@@ -19,7 +19,8 @@
     "vue-router": "^4.5.1",
     "vuetify": "^3.10.1",
     "@bjorn3/browser_wasi_shim": "~0.4.2",
-    "codec": "workspace:*"
+    "codec": "workspace:*",
+    "@fontsource/roboto-mono": "~5.2.8"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",
