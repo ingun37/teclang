@@ -1,6 +1,11 @@
 import { ConsoleStdout, File, OpenFile, WASI } from "@bjorn3/browser_wasi_shim";
 import wasm_wrapper from "./teclang-wasm.js";
-
+export interface HaskellWasm {
+  decodeHaskellData(jsonStr: string): Promise<string>;
+  decodeHaskellType(jsonStr: string): Promise<string>;
+  encodeHaskellData(jsonStr: string): Promise<string>;
+  // formatHaskell(jsonStr: string): Promise<string>;
+}
 export async function loadTecLangWasm() {
   let args = ["bin", "arg1", "arg2"];
   let env = ["FOO=bar"];
@@ -19,8 +24,8 @@ export async function loadTecLangWasm() {
   Object.assign(__exports, inst.exports);
 
   wasi.initialize(inst as any);
-  const exports = inst.exports as any;
-  exports.hs_init(0, 0);
+  const exports = inst.exports as any as HaskellWasm;
+  (exports as any).hs_init(0, 0);
   (window as any).wasm = exports;
   return exports;
 }

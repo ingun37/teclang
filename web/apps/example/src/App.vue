@@ -7,9 +7,11 @@
 <script lang="ts" setup>
 import { useAppStore } from "@/stores/app.ts";
 import { loadTecLangWasm } from "@/teclang-wasm-load.ts";
+import { createTecLangWasmEffect } from "@/teclang-wasm-effect.ts";
 
-onMounted(() => {
+onMounted(async () => {
   const appStore = useAppStore();
-  if (!appStore.wasmInstance) appStore.setWasmInstance(loadTecLangWasm());
+  if (!appStore.haskell)
+    appStore.setHaskell(createTecLangWasmEffect(await loadTecLangWasm()));
 });
 </script>

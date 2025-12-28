@@ -3,21 +3,17 @@
   "rushVersion": "5.164.0",
   "pnpmVersion": "9.15.9",
   "nodeSupportedVersionRange": ">=24.12.0 <25.0.0",
-  "gitPolicy": {
-  },
-  "repository": {
-  },
+  "gitPolicy": {},
+  "repository": {},
   "eventHooks": {
-    "preRushInstall": [
-    ],
+    "preRushInstall": [],
     "postRushInstall": [],
     "preRushBuild": [],
     "postRushBuild": [],
     "preRushx": [],
     "postRushx": []
   },
-  "variants": [
-  ],
+  "variants": [],
   "projects": [
     {
       "packageName": "example",

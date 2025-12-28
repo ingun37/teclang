@@ -1,18 +1,14 @@
 // Utilities
 import { defineStore } from "pinia";
+import type { HaskellEffect } from "@/teclang-wasm-effect.ts";
 
-export interface HaskellWasm {
-  makeHaskell(jsonStr: string): Promise<string>;
-  parseHaskell(jsonStr: string): Promise<string>;
-  formatHaskell(jsonStr: string): Promise<string>;
-}
 export const useAppStore = defineStore("app", {
   state: () => ({
-    wasmInstance: null as HaskellWasm | null,
+    haskell: null as HaskellEffect | null,
   }),
   actions: {
-    setWasmInstance(exports: any) {
-      this.wasmInstance = exports;
+    setHaskell(he: HaskellEffect) {
+      this.haskell = he;
     },
   },
 });
