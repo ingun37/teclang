@@ -4,6 +4,7 @@ export interface HaskellWasm {
   decodeHaskellData(jsonStr: string): Promise<string>;
   decodeHaskellType(jsonStr: string): Promise<string>;
   encodeHaskellData(jsonStr: string): Promise<string>;
+  encodeHaskellType(jsonStr: string): Promise<string>;
   // formatHaskell(jsonStr: string): Promise<string>;
 }
 export async function loadTecLangWasm() {
