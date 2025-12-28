@@ -1,29 +1,29 @@
 <script setup lang="ts">
 import * as C from "codec";
 import { useAppStore } from "@/stores/app.ts";
-const model = defineModel<C.TecType.TecType[]>({ required: true });
+const model = defineModel<C.TecType.TecType>({ required: true });
 const tecLang = ref("");
-function makeDefaultValue(): C.TecType.TecType {
-  return C.TecType.TecType.make({ tecTypeName: "Default", classes: [] });
+function makeDefaultValue(): C.TecType.TecSum {
+  return C.TecType.TecSum.make({ tecTypeName: "Default", classes: [] });
 }
 function addTecType() {
-  model.value.push(makeDefaultValue());
+  model.value = C.TecType.TecType.make({
+    sumTypes: [...model.value.sumTypes, makeDefaultValue()],
+  });
 }
 async function showTecLang() {
   const app = useAppStore();
-  const jsonStrings = model.value
-    .map(C.tecTypeToJson)
-    .map((x) => JSON.stringify(x));
-  const lines = await app.haskell!.makeHaskellMany(jsonStrings);
-  tecLang.value = lines.join("\n");
+  const jsonString = JSON.stringify(C.tecTypeToJson(model.value));
+  const haskellCode = await app.haskell!.exports.decodeHaskellType(jsonString);
+  tecLang.value = haskellCode;
 }
 </script>
 
 <template>
   <v-container fluid>
     <v-row>
-      <v-col v-for="(_, i) in model" :key="i" cols="12">
-        <DefineTecType v-model="model[i]!" />
+      <v-col v-for="(_, i) in model.sumTypes" :key="i" cols="12">
+        <DefineTecType v-model="model.sumTypes[i]!" />
       </v-col>
 
       <v-col cols="12">

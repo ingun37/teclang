@@ -1,8 +1,12 @@
 <template>
-  <DefineTecTypes v-model="tecTypes" />
+  <DefineTecTypes v-model="tecType" />
 </template>
 
 <script lang="ts" setup>
 import * as C from "codec";
-const tecTypes = ref<C.TecType.TecType[]>([]);
+const tecType = ref<C.TecType.TecType>(
+  C.TecType.TecType.make({
+    sumTypes: [],
+  }),
+);
 </script>

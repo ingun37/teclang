@@ -2,10 +2,10 @@
 import * as C from "codec";
 import DefineClasses from "@/components/DefineClasses.vue";
 
-const model = defineModel<C.TecType.TecType>({ required: true });
+const model = defineModel<C.TecType.TecSum>({ required: true });
 const intermediateName = ref(model.value.tecTypeName);
 function updateTecTypeName(newName: string) {
-  model.value = C.TecType.TecType.make({
+  model.value = C.TecType.TecSum.make({
     tecTypeName: newName,
     classes: model.value.classes,
   });
