@@ -31,9 +31,9 @@ testE logHandle code = do
   lift $ putStrLn code
   logF "---- Original Code ----"
   logF code
-  Parsed {ast, rawAstShow} <- liftEither $ mapLeft ErrTec $ encodeCodeToTec code
+  ast <- liftEither $ mapLeft ErrTec $ encodeCodeToTec code
   logF "---- Raw AST ----"
-  Simple.pHPrintString logHandle rawAstShow
+  Simple.pHPrint logHandle ast
   lift $ putStrLn "---- Final AST ----"
   lift $ Simple.pPrint ast
   lift $ putStrLn "---- Json AST ----"

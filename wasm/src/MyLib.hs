@@ -2,9 +2,6 @@
 
 module MyLib
   ( TecDataAST,
-    Parsed (Parsed),
-    ast,
-    rawAstShow,
     TecError
       ( TecError,
         TecErrorUnknownExp,

@@ -34,7 +34,7 @@ sigData = getConst
 
 encodeHaskell :: forall a. (MyLib.TecAST a, J.ToJSON a) => String -> IO (Const String a)
 encodeHaskell code = do
-  ast <- failIfLeft $ fmap MyLib.ast $ mapLeft LibErr $ MyLib.encodeCodeToTec code :: IO a
+  ast <- failIfLeft $ mapLeft LibErr $ MyLib.encodeCodeToTec code :: IO a
   return $ Const $ T.unpack $ TE.decodeUtf8 $ BS.toStrict $ J.encode ast
 
 encodeHaskellData :: String -> IO String

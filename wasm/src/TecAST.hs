@@ -14,7 +14,7 @@ import TecTypes
 
 class (Show a, Generic a, ToJSON a, FromJSON a) => TecAST a where
   decodeTecToCode :: a -> Either TecError String
-  encodeCodeToTec :: String -> Either TecError (Parsed a)
+  encodeCodeToTec :: String -> Either TecError a
 
 mapWholeExpShow :: (Show l) => l -> Either TecError a -> Either TecError a
 mapWholeExpShow x e = case e of
@@ -35,7 +35,7 @@ instance TecAST TecDataAST where
           E.ParseOk (E.Module _ _ _ _ [E.PatBind _ _ (E.UnGuardedRhs _ e) _]) -> do
             -- tecError (show rhs)
             ast <- mapWholeExpShow e $ encodeTecData e
-            Right $ Parsed {ast = ast, rawAstShow = show e}
+            Right ast
           E.ParseOk x -> do
             Left $ TecErrorUnknownExp (show x)
           E.ParseFailed _ str ->
@@ -51,7 +51,7 @@ instance TecAST TecTypeAST where
      in case result of
           E.ParseOk (E.Module _ Nothing [] [] decls) -> do
             ast <- encodeTecType decls
-            Right $ Parsed {ast = ast, rawAstShow = show ast}
+            Right ast
           E.ParseOk x -> do
             Left $ TecErrorUnknownExp (show x)
           E.ParseFailed _ str ->

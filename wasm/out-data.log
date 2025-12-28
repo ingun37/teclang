@@ -1,26 +1,10 @@
 ---- Original Code ----
 tecData = Logo
 ---- Raw AST ----
-Con
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
-        , srcInfoPoints = []
-        }
-    )
-    ( UnQual
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
-            , srcInfoPoints = []
-            }
-        )
-        ( Ident
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
-                , srcInfoPoints = []
-                }
-            ) "Logo"
-        )
-    )
+TecCon
+    { className = "Logo"
+    , parameters = []
+    }
 ---- Json encoded ----
 {
     "className": "Logo",
@@ -30,64 +14,19 @@ Con
 ---- Original Code ----
 tecData = HStack [Logo]
 ---- Raw AST ----
-App
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 24
-        , srcInfoPoints = []
-        }
-    )
-    ( Con
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-            , srcInfoPoints = []
-            }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-                , srcInfoPoints = []
-                }
-            )
-            ( Ident
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-                    , srcInfoPoints = []
+TecCon
+    { className = "HStack"
+    , parameters =
+        [ TecList
+            { list =
+                [ TecCon
+                    { className = "Logo"
+                    , parameters = []
                     }
-                ) "HStack"
-            )
-        )
-    )
-    ( List
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 24
-            , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 18 1 19
-                , SrcSpan "<unknown>.hs" 1 23 1 24
                 ]
             }
-        )
-        [ Con
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
-                        , srcInfoPoints = []
-                        }
-                    ) "Logo"
-                )
-            )
         ]
-    )
+    }
 ---- Json encoded ----
 {
     "className": "HStack",
@@ -108,47 +47,13 @@ App
 ---- Original Code ----
 tecData = Colorway 0
 ---- Raw AST ----
-App
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 21
-        , srcInfoPoints = []
-        }
-    )
-    ( Con
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 19
-            , srcInfoPoints = []
-            }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 19
-                , srcInfoPoints = []
-                }
-            )
-            ( Ident
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 19
-                    , srcInfoPoints = []
-                    }
-                ) "Colorway"
-            )
-        )
-    )
-    ( Lit
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 21
-            , srcInfoPoints = []
-            }
-        )
-        ( Int
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 21
-                , srcInfoPoints = []
-                }
-            ) 0 "0"
-        )
-    )
+TecCon
+    { className = "Colorway"
+    , parameters =
+        [ TecInt
+            { int = 0 }
+        ]
+    }
 ---- Json encoded ----
 {
     "className": "Colorway",
@@ -163,47 +68,13 @@ App
 ---- Original Code ----
 tecData = Pantone "red"
 ---- Raw AST ----
-App
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 24
-        , srcInfoPoints = []
-        }
-    )
-    ( Con
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 18
-            , srcInfoPoints = []
-            }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 18
-                , srcInfoPoints = []
-                }
-            )
-            ( Ident
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 18
-                    , srcInfoPoints = []
-                    }
-                ) "Pantone"
-            )
-        )
-    )
-    ( Lit
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 24
-            , srcInfoPoints = []
-            }
-        )
-        ( String
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 24
-                , srcInfoPoints = []
-                }
-            ) "red" "red"
-        )
-    )
+TecCon
+    { className = "Pantone"
+    , parameters =
+        [ TecStr
+            { str = "red" }
+        ]
+    }
 ---- Json encoded ----
 {
     "className": "Pantone",
@@ -218,144 +89,35 @@ App
 ---- Original Code ----
 tecData = VStack [HStack [Logo], Colorway 42]
 ---- Raw AST ----
-App
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 46
-        , srcInfoPoints = []
-        }
-    )
-    ( Con
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-            , srcInfoPoints = []
-            }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-                , srcInfoPoints = []
-                }
-            )
-            ( Ident
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-                    , srcInfoPoints = []
-                    }
-                ) "VStack"
-            )
-        )
-    )
-    ( List
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 46
-            , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 18 1 19
-                , SrcSpan "<unknown>.hs" 1 32 1 33
-                , SrcSpan "<unknown>.hs" 1 45 1 46
-                ]
-            }
-        )
-        [ App
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 32
-                , srcInfoPoints = []
-                }
-            )
-            ( Con
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 25
-                    , srcInfoPoints = []
-                    }
-                )
-                ( UnQual
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 25
-                        , srcInfoPoints = []
-                        }
-                    )
-                    ( Ident
-                        ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 25
-                            , srcInfoPoints = []
+TecCon
+    { className = "VStack"
+    , parameters =
+        [ TecList
+            { list =
+                [ TecCon
+                    { className = "HStack"
+                    , parameters =
+                        [ TecList
+                            { list =
+                                [ TecCon
+                                    { className = "Logo"
+                                    , parameters = []
+                                    }
+                                ]
                             }
-                        ) "HStack"
-                    )
-                )
-            )
-            ( List
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 26 1 32
-                    , srcInfoPoints =
-                        [ SrcSpan "<unknown>.hs" 1 26 1 27
-                        , SrcSpan "<unknown>.hs" 1 31 1 32
                         ]
                     }
-                )
-                [ Con
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 31
-                        , srcInfoPoints = []
-                        }
-                    )
-                    ( UnQual
-                        ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 31
-                            , srcInfoPoints = []
-                            }
-                        )
-                        ( Ident
-                            ( SrcSpanInfo
-                                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 31
-                                , srcInfoPoints = []
-                                }
-                            ) "Logo"
-                        )
-                    )
+                , TecCon
+                    { className = "Colorway"
+                    , parameters =
+                        [ TecInt
+                            { int = 42 }
+                        ]
+                    }
                 ]
-            )
-        , App
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 34 1 45
-                , srcInfoPoints = []
-                }
-            )
-            ( Con
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 34 1 42
-                    , srcInfoPoints = []
-                    }
-                )
-                ( UnQual
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 34 1 42
-                        , srcInfoPoints = []
-                        }
-                    )
-                    ( Ident
-                        ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 34 1 42
-                            , srcInfoPoints = []
-                            }
-                        ) "Colorway"
-                    )
-                )
-            )
-            ( Lit
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 43 1 45
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Int
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 43 1 45
-                        , srcInfoPoints = []
-                        }
-                    ) 42 "42"
-                )
-            )
+            }
         ]
-    )
+    }
 ---- Json encoded ----
 {
     "className": "VStack",
@@ -397,75 +159,17 @@ App
 ---- Original Code ----
 tecData = Logo :- Logo
 ---- Raw AST ----
-InfixApp
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 23
-        , srcInfoPoints = []
+TecQuery
+    { op = ":-"
+    , left = TecCon
+        { className = "Logo"
+        , parameters = []
         }
-    )
-    ( Con
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
-            , srcInfoPoints = []
-            }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
-                , srcInfoPoints = []
-                }
-            )
-            ( Ident
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
-                    , srcInfoPoints = []
-                    }
-                ) "Logo"
-            )
-        )
-    )
-    ( QConOp
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 18
-            , srcInfoPoints = []
-            }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 18
-                , srcInfoPoints = []
-                }
-            )
-            ( Symbol
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 18
-                    , srcInfoPoints = []
-                    }
-                ) ":-"
-            )
-        )
-    )
-    ( Con
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
-            , srcInfoPoints = []
-            }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
-                , srcInfoPoints = []
-                }
-            )
-            ( Ident
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
-                    , srcInfoPoints = []
-                    }
-                ) "Logo"
-            )
-        )
-    )
+    , right = TecCon
+        { className = "Logo"
+        , parameters = []
+        }
+    }
 ---- Json encoded ----
 {
     "left": {
@@ -484,145 +188,27 @@ InfixApp
 ---- Original Code ----
 tecData = Logo :- Logo :- Pantone "green"
 ---- Raw AST ----
-InfixApp
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 42
-        , srcInfoPoints = []
+TecQuery
+    { op = ":-"
+    , left = TecQuery
+        { op = ":-"
+        , left = TecCon
+            { className = "Logo"
+            , parameters = []
+            }
+        , right = TecCon
+            { className = "Logo"
+            , parameters = []
+            }
         }
-    )
-    ( InfixApp
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 23
-            , srcInfoPoints = []
-            }
-        )
-        ( Con
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 15
-                        , srcInfoPoints = []
-                        }
-                    ) "Logo"
-                )
-            )
-        )
-        ( QConOp
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 18
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 18
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Symbol
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 16 1 18
-                        , srcInfoPoints = []
-                        }
-                    ) ":-"
-                )
-            )
-        )
-        ( Con
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 23
-                        , srcInfoPoints = []
-                        }
-                    ) "Logo"
-                )
-            )
-        )
-    )
-    ( QConOp
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 26
-            , srcInfoPoints = []
-            }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 26
-                , srcInfoPoints = []
-                }
-            )
-            ( Symbol
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 26
-                    , srcInfoPoints = []
-                    }
-                ) ":-"
-            )
-        )
-    )
-    ( App
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 42
-            , srcInfoPoints = []
-            }
-        )
-        ( Con
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 34
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 34
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 34
-                        , srcInfoPoints = []
-                        }
-                    ) "Pantone"
-                )
-            )
-        )
-        ( Lit
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 35 1 42
-                , srcInfoPoints = []
-                }
-            )
-            ( String
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 35 1 42
-                    , srcInfoPoints = []
-                    }
-                ) "green" "green"
-            )
-        )
-    )
+    , right = TecCon
+        { className = "Pantone"
+        , parameters =
+            [ TecStr
+                { str = "green" }
+            ]
+        }
+    }
 ---- Json encoded ----
 {
     "left": {
@@ -655,58 +241,15 @@ InfixApp
 ---- Original Code ----
 tecData = Colorways [1 ..]
 ---- Raw AST ----
-App
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 27
-        , srcInfoPoints = []
-        }
-    )
-    ( Con
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
-            , srcInfoPoints = []
+TecCon
+    { className = "Colorways"
+    , parameters =
+        [ TecRngInt
+            { fromI = 1
+            , toI = Nothing
             }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
-                , srcInfoPoints = []
-                }
-            )
-            ( Ident
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
-                    , srcInfoPoints = []
-                    }
-                ) "Colorways"
-            )
-        )
-    )
-    ( EnumFrom
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 27
-            , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 21 1 22
-                , SrcSpan "<unknown>.hs" 1 24 1 26
-                , SrcSpan "<unknown>.hs" 1 26 1 27
-                ]
-            }
-        )
-        ( Lit
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
-                , srcInfoPoints = []
-                }
-            )
-            ( Int
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
-                    , srcInfoPoints = []
-                    }
-                ) 1 "1"
-            )
-        )
-    )
+        ]
+    }
 ---- Json encoded ----
 {
     "className": "Colorways",
@@ -722,72 +265,15 @@ App
 ---- Original Code ----
 tecData = Colorways [1 .. 3]
 ---- Raw AST ----
-App
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 29
-        , srcInfoPoints = []
-        }
-    )
-    ( Con
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
-            , srcInfoPoints = []
+TecCon
+    { className = "Colorways"
+    , parameters =
+        [ TecRngInt
+            { fromI = 1
+            , toI = Just 3
             }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
-                , srcInfoPoints = []
-                }
-            )
-            ( Ident
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
-                    , srcInfoPoints = []
-                    }
-                ) "Colorways"
-            )
-        )
-    )
-    ( EnumFromTo
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 29
-            , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 21 1 22
-                , SrcSpan "<unknown>.hs" 1 24 1 26
-                , SrcSpan "<unknown>.hs" 1 28 1 29
-                ]
-            }
-        )
-        ( Lit
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
-                , srcInfoPoints = []
-                }
-            )
-            ( Int
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
-                    , srcInfoPoints = []
-                    }
-                ) 1 "1"
-            )
-        )
-        ( Lit
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 28
-                , srcInfoPoints = []
-                }
-            )
-            ( Int
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 27 1 28
-                    , srcInfoPoints = []
-                    }
-                ) 3 "3"
-            )
-        )
-    )
+        ]
+    }
 ---- Json encoded ----
 {
     "className": "Colorways",
@@ -803,75 +289,17 @@ App
 ---- Original Code ----
 tecData = Render 0 Front
 ---- Raw AST ----
-App
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 25
-        , srcInfoPoints = []
-        }
-    )
-    ( App
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 19
-            , srcInfoPoints = []
+TecCon
+    { className = "Render"
+    , parameters =
+        [ TecInt
+            { int = 0 }
+        , TecCon
+            { className = "Front"
+            , parameters = []
             }
-        )
-        ( Con
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-                        , srcInfoPoints = []
-                        }
-                    ) "Render"
-                )
-            )
-        )
-        ( Lit
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 19
-                , srcInfoPoints = []
-                }
-            )
-            ( Int
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 19
-                    , srcInfoPoints = []
-                    }
-                ) 0 "0"
-            )
-        )
-    )
-    ( Con
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 25
-            , srcInfoPoints = []
-            }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 25
-                , srcInfoPoints = []
-                }
-            )
-            ( Ident
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 20 1 25
-                    , srcInfoPoints = []
-                    }
-                ) "Front"
-            )
-        )
-    )
+        ]
+    }
 ---- Json encoded ----
 {
     "className": "Render",
@@ -891,128 +319,25 @@ App
 ---- Original Code ----
 tecData = Colorways [0 ..] :> Fabric "*"
 ---- Raw AST ----
-InfixApp
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 41
-        , srcInfoPoints = []
+TecQuery
+    { op = ":>"
+    , left = TecCon
+        { className = "Colorways"
+        , parameters =
+            [ TecRngInt
+                { fromI = 0
+                , toI = Nothing
+                }
+            ]
         }
-    )
-    ( App
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 27
-            , srcInfoPoints = []
-            }
-        )
-        ( Con
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
-                        , srcInfoPoints = []
-                        }
-                    ) "Colorways"
-                )
-            )
-        )
-        ( EnumFrom
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 27
-                , srcInfoPoints =
-                    [ SrcSpan "<unknown>.hs" 1 21 1 22
-                    , SrcSpan "<unknown>.hs" 1 24 1 26
-                    , SrcSpan "<unknown>.hs" 1 26 1 27
-                    ]
-                }
-            )
-            ( Lit
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Int
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
-                        , srcInfoPoints = []
-                        }
-                    ) 0 "0"
-                )
-            )
-        )
-    )
-    ( QConOp
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 30
-            , srcInfoPoints = []
-            }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 30
-                , srcInfoPoints = []
-                }
-            )
-            ( Symbol
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 30
-                    , srcInfoPoints = []
-                    }
-                ) ":>"
-            )
-        )
-    )
-    ( App
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 31 1 41
-            , srcInfoPoints = []
-            }
-        )
-        ( Con
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 31 1 37
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 31 1 37
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 31 1 37
-                        , srcInfoPoints = []
-                        }
-                    ) "Fabric"
-                )
-            )
-        )
-        ( Lit
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 38 1 41
-                , srcInfoPoints = []
-                }
-            )
-            ( String
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 38 1 41
-                    , srcInfoPoints = []
-                    }
-                ) "*" "*"
-            )
-        )
-    )
+    , right = TecCon
+        { className = "Fabric"
+        , parameters =
+            [ TecStr
+                { str = "*" }
+            ]
+        }
+    }
 ---- Json encoded ----
 {
     "left": {
@@ -1042,57 +367,17 @@ InfixApp
 ---- Original Code ----
 tecData = Colorways [0]
 ---- Raw AST ----
-App
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 24
-        , srcInfoPoints = []
-        }
-    )
-    ( Con
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
-            , srcInfoPoints = []
-            }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
-                , srcInfoPoints = []
-                }
-            )
-            ( Ident
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 20
-                    , srcInfoPoints = []
-                    }
-                ) "Colorways"
-            )
-        )
-    )
-    ( List
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 21 1 24
-            , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 21 1 22
-                , SrcSpan "<unknown>.hs" 1 23 1 24
+TecCon
+    { className = "Colorways"
+    , parameters =
+        [ TecList
+            { list =
+                [ TecInt
+                    { int = 0 }
                 ]
             }
-        )
-        [ Lit
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
-                , srcInfoPoints = []
-                }
-            )
-            ( Int
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 22 1 23
-                    , srcInfoPoints = []
-                    }
-                ) 0 "0"
-            )
         ]
-    )
+    }
 ---- Json encoded ----
 {
     "className": "Colorways",
@@ -1112,141 +397,26 @@ App
 ---- Original Code ----
 tecData = HStack Logo (Render 0 Front)
 ---- Raw AST ----
-App
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 39
-        , srcInfoPoints = []
-        }
-    )
-    ( App
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 22
-            , srcInfoPoints = []
+TecCon
+    { className = "HStack"
+    , parameters =
+        [ TecCon
+            { className = "Logo"
+            , parameters = []
             }
-        )
-        ( Con
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-                    , srcInfoPoints = []
+        , TecCon
+            { className = "Render"
+            , parameters =
+                [ TecInt
+                    { int = 0 }
+                , TecCon
+                    { className = "Front"
+                    , parameters = []
                     }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-                        , srcInfoPoints = []
-                        }
-                    ) "HStack"
-                )
-            )
-        )
-        ( Con
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 22
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 22
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 22
-                        , srcInfoPoints = []
-                        }
-                    ) "Logo"
-                )
-            )
-        )
-    )
-    ( Paren
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 23 1 39
-            , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 23 1 24
-                , SrcSpan "<unknown>.hs" 1 38 1 39
                 ]
             }
-        )
-        ( App
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 38
-                , srcInfoPoints = []
-                }
-            )
-            ( App
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 32
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Con
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 30
-                        , srcInfoPoints = []
-                        }
-                    )
-                    ( UnQual
-                        ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 30
-                            , srcInfoPoints = []
-                            }
-                        )
-                        ( Ident
-                            ( SrcSpanInfo
-                                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 30
-                                , srcInfoPoints = []
-                                }
-                            ) "Render"
-                        )
-                    )
-                )
-                ( Lit
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 31 1 32
-                        , srcInfoPoints = []
-                        }
-                    )
-                    ( Int
-                        ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 31 1 32
-                            , srcInfoPoints = []
-                            }
-                        ) 0 "0"
-                    )
-                )
-            )
-            ( Con
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 33 1 38
-                    , srcInfoPoints = []
-                    }
-                )
-                ( UnQual
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 33 1 38
-                        , srcInfoPoints = []
-                        }
-                    )
-                    ( Ident
-                        ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 33 1 38
-                            , srcInfoPoints = []
-                            }
-                        ) "Front"
-                    )
-                )
-            )
-        )
-    )
+        ]
+    }
 ---- Json encoded ----
 {
     "className": "HStack",
@@ -1277,86 +447,15 @@ App
 ---- Original Code ----
 tecData = Render [Front .. Right]
 ---- Raw AST ----
-App
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 34
-        , srcInfoPoints = []
-        }
-    )
-    ( Con
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-            , srcInfoPoints = []
+TecCon
+    { className = "Render"
+    , parameters =
+        [ TecRngEnum
+            { fromE = "Front"
+            , toE = Just "Right"
             }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-                , srcInfoPoints = []
-                }
-            )
-            ( Ident
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 17
-                    , srcInfoPoints = []
-                    }
-                ) "Render"
-            )
-        )
-    )
-    ( EnumFromTo
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 34
-            , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 18 1 19
-                , SrcSpan "<unknown>.hs" 1 25 1 27
-                , SrcSpan "<unknown>.hs" 1 33 1 34
-                ]
-            }
-        )
-        ( Con
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 24
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 24
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 24
-                        , srcInfoPoints = []
-                        }
-                    ) "Front"
-                )
-            )
-        )
-        ( Con
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 33
-                , srcInfoPoints = []
-                }
-            )
-            ( UnQual
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 33
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 28 1 33
-                        , srcInfoPoints = []
-                        }
-                    ) "Right"
-                )
-            )
-        )
-    )
+        ]
+    }
 ---- Json encoded ----
 {
     "className": "Render",
@@ -1372,89 +471,17 @@ App
 ---- Original Code ----
 tecData = let a = 0 in a
 ---- Raw AST ----
-Let
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 25
-        , srcInfoPoints =
-            [ SrcSpan "<unknown>.hs" 1 11 1 14
-            , SrcSpan "<unknown>.hs" 1 21 1 23
-            ]
-        }
-    )
-    ( BDecls
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 15 1 20
-            , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 15 1 15
-                , SrcSpan "<unknown>.hs" 1 21 1 21
-                ]
-            }
-        )
-        [ PatBind
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 15 1 20
-                , srcInfoPoints = []
-                }
+TecBinding
+    { varMap = fromList
+        [
+            ( "a"
+            , TecInt
+                { int = 0 }
             )
-            ( PVar
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 15 1 16
-                    , srcInfoPoints = []
-                    }
-                )
-                ( Ident
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 15 1 16
-                        , srcInfoPoints = []
-                        }
-                    ) "a"
-                )
-            )
-            ( UnGuardedRhs
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 17 1 20
-                    , srcInfoPoints =
-                        [ SrcSpan "<unknown>.hs" 1 17 1 18 ]
-                    }
-                )
-                ( Lit
-                    ( SrcSpanInfo
-                        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 20
-                        , srcInfoPoints = []
-                        }
-                    )
-                    ( Int
-                        ( SrcSpanInfo
-                            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 19 1 20
-                            , srcInfoPoints = []
-                            }
-                        ) 0 "0"
-                    )
-                )
-            ) Nothing
         ]
-    )
-    ( Var
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 25
-            , srcInfoPoints = []
-            }
-        )
-        ( UnQual
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 25
-                , srcInfoPoints = []
-                }
-            )
-            ( Ident
-                ( SrcSpanInfo
-                    { srcInfoSpan = SrcSpan "<unknown>.hs" 1 24 1 25
-                    , srcInfoPoints = []
-                    }
-                ) "a"
-            )
-        )
-    )
+    , expression = TecVar
+        { varName = "a" }
+    }
 ---- Json encoded ----
 {
     "expression": {
@@ -1472,39 +499,11 @@ Let
 ---- Original Code ----
 tecData = let in 0
 ---- Raw AST ----
-Let
-    ( SrcSpanInfo
-        { srcInfoSpan = SrcSpan "<unknown>.hs" 1 11 1 19
-        , srcInfoPoints =
-            [ SrcSpan "<unknown>.hs" 1 11 1 14
-            , SrcSpan "<unknown>.hs" 1 15 1 17
-            ]
-        }
-    )
-    ( BDecls
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 15 1 15
-            , srcInfoPoints =
-                [ SrcSpan "<unknown>.hs" 1 15 1 15
-                , SrcSpan "<unknown>.hs" 1 15 1 15
-                ]
-            }
-        ) []
-    )
-    ( Lit
-        ( SrcSpanInfo
-            { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 19
-            , srcInfoPoints = []
-            }
-        )
-        ( Int
-            ( SrcSpanInfo
-                { srcInfoSpan = SrcSpan "<unknown>.hs" 1 18 1 19
-                , srcInfoPoints = []
-                }
-            ) 0 "0"
-        )
-    )
+TecBinding
+    { varMap = fromList []
+    , expression = TecInt
+        { int = 0 }
+    }
 ---- Json encoded ----
 {
     "expression": {
