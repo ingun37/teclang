@@ -1,14 +1,12 @@
 module TecDecode where
 
 import Control.Monad (foldM)
-
 import Data.Functor ((<&>))
 import Data.Map qualified as Map
-
 import Language.Haskell.Exts qualified as E
 import TecData
-import TecTypes
 import TecError
+import TecTypes
 
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))
@@ -51,7 +49,10 @@ decodeQualConDecl (TecClass name params) = do
   types <- traverse decodeType params
   return $ E.QualConDecl () Nothing Nothing (E.ConDecl () (E.Ident () name) types)
 
-decodeTecType :: TecTypeAST -> Either TecError [E.Decl ()]
-decodeTecType (TecSum name classes) = do
+decodeTecSum :: TecSum -> Either TecError (E.Decl ())
+decodeTecSum (TecSum name classes) = do
   xs <- traverse decodeQualConDecl classes
-  return [E.DataDecl () (E.DataType ()) Nothing (E.DHead () (E.Ident () name)) xs []]
+  return $ E.DataDecl () (E.DataType ()) Nothing (E.DHead () (E.Ident () name)) xs []
+
+decodeTecType :: TecTypeAST -> Either TecError [E.Decl ()]
+decodeTecType (TecTypeAST tecSums) = traverse decodeTecSum tecSums

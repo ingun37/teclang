@@ -50,13 +50,8 @@ instance TecAST TecTypeAST where
     let result = E.parseModule code
      in case result of
           E.ParseOk (E.Module _ Nothing [] [] decls) -> do
-            case decls of
-              [decl] -> do
-                let f e = mapWholeExpShow e $ encodeTecType e
-                ast <- f decl
-                Right $ Parsed {ast = ast, rawAstShow = show ast}
-              [] -> Left $ TecError "decls is empty"
-              _ -> Left $ TecErrorUnknownExpWithMessage (show decls) "More than one decl is given"
+            ast <- encodeTecType decls
+            Right $ Parsed {ast = ast, rawAstShow = show ast}
           E.ParseOk x -> do
             Left $ TecErrorUnknownExp (show x)
           E.ParseFailed _ str ->

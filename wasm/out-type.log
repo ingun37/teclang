@@ -2,76 +2,88 @@
 data TecType = A
              | B
 ---- Raw AST ----
-TecSum
-    { tecTypeName = "TecType"
-    , classes =
-        [ TecClass
-            { className = "A"
-            , parameterTypes = []
-            }
-        , TecClass
-            { className = "B"
-            , parameterTypes = []
-            }
-        ]
-    }
----- Json encoded ----
-{
-    "classes": [
-        {
-            "className": "A",
-            "parameterTypes": []
-        },
-        {
-            "className": "B",
-            "parameterTypes": []
+TecTypeAST
+    [ TecSum
+        { tecTypeName = "TecType"
+        , classes =
+            [ TecClass
+                { className = "A"
+                , parameterTypes = []
+                }
+            , TecClass
+                { className = "B"
+                , parameterTypes = []
+                }
+            ]
         }
-    ],
-    "tecTypeName": "TecType"
-}
+    ]
+---- Json encoded ----
+[
+    {
+        "classes": [
+            {
+                "className": "A",
+                "parameterTypes": []
+            },
+            {
+                "className": "B",
+                "parameterTypes": []
+            }
+        ],
+        "tecTypeName": "TecType"
+    }
+]
 ---- Original Code ----
 data TecType = A
 ---- Raw AST ----
-TecSum
-    { tecTypeName = "TecType"
-    , classes =
-        [ TecClass
-            { className = "A"
-            , parameterTypes = []
-            }
-        ]
-    }
----- Json encoded ----
-{
-    "classes": [
-        {
-            "className": "A",
-            "parameterTypes": []
+TecTypeAST
+    [ TecSum
+        { tecTypeName = "TecType"
+        , classes =
+            [ TecClass
+                { className = "A"
+                , parameterTypes = []
+                }
+            ]
         }
-    ],
-    "tecTypeName": "TecType"
-}
+    ]
+---- Json encoded ----
+[
+    {
+        "classes": [
+            {
+                "className": "A",
+                "parameterTypes": []
+            }
+        ],
+        "tecTypeName": "TecType"
+    }
+]
 ---- Original Code ----
 data TecType = A String
 ---- Raw AST ----
-TecSum
-    { tecTypeName = "TecType"
-    , classes =
-        [ TecClass
-            { className = "A"
-            , parameterTypes = [ "String" ]
-            }
-        ]
-    }
----- Json encoded ----
-{
-    "classes": [
-        {
-            "className": "A",
-            "parameterTypes": [
-                "String"
+TecTypeAST
+    [ TecSum
+        { tecTypeName = "TecType"
+        , classes =
+            [ TecClass
+                { className = "A"
+                , parameterTypes = [ "String" ]
+                }
             ]
         }
-    ],
-    "tecTypeName": "TecType"
-}
+    ]
+---- Json encoded ----
+[
+    {
+        "classes": [
+            {
+                "className": "A",
+                "parameterTypes": [
+                    "String"
+                ]
+            }
+        ],
+        "tecTypeName": "TecType"
+    }
+]

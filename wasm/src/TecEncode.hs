@@ -3,8 +3,8 @@ module TecEncode where
 import Data.Functor ((<&>))
 import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
-import TecError
 import TecData
+import TecError
 import TecTypes
 
 encodeDecl :: (Show l) => E.Decl l -> Either TecError (String, E.Exp l)
@@ -62,8 +62,13 @@ encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name)
   return $ TecClass name types
 encodeQualConDecl x = Left $ TecErrorUnknownExp (show x)
 
-encodeTecType :: (Show l) => E.Decl l -> Either TecError TecTypeAST
-encodeTecType (E.DataDecl _ (E.DataType _) Nothing (E.DHead _ (E.Ident _ name)) decls []) = do
+encodeTecSum :: (Show l) => E.Decl l -> Either TecError TecSum
+encodeTecSum (E.DataDecl _ (E.DataType _) Nothing (E.DHead _ (E.Ident _ name)) decls []) = do
   paramTypes <- traverse encodeQualConDecl decls
   return $ TecSum name paramTypes
-encodeTecType x = Left $ TecErrorUnknownExp (show x)
+encodeTecSum x = Left $ TecErrorUnknownExp (show x)
+
+encodeTecType :: (Show l) => [E.Decl l] -> Either TecError TecTypeAST
+encodeTecType decls = do
+  tecSums <- traverse encodeTecSum decls
+  return $ TecTypeAST tecSums
