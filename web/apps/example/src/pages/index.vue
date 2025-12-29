@@ -46,7 +46,7 @@ function fillSampleCode() {
   haskellCode.value = sampleHaskellCode;
 }
 async function updateUI() {
-  tecType.value = C.jsonToUniqueTecType(
+  tecType.value = C.jsonToTecSchema(
     JSON.parse(
       await useAppStore().haskell!.exports.encodeHaskellType(haskellCode.value),
     ),
@@ -56,7 +56,7 @@ async function updateUI() {
 watch(tecType, async (newTecType) => {
   if (newTecType)
     haskellCode.value = await useAppStore().haskell!.exports.decodeHaskellType(
-      JSON.stringify(C.uniqueTecTypeToJson(newTecType)),
+      JSON.stringify(C.tecSchemaToJson(newTecType)),
     );
 });
 </script>
