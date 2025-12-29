@@ -21,7 +21,7 @@
         <v-btn color="primary" @click="updateUI">update ui</v-btn>
       </v-col>
       <v-col cols="12">
-        <DefineTecTypes v-if="tecType" v-model="tecType" />
+        <DefineTecSchema v-if="tecType" v-model="tecType" />
       </v-col>
     </v-row>
   </v-container>

@@ -10,7 +10,7 @@ const model = defineModel<C.TecType.TecSchema>({ required: true });
         <DefineTecEnums v-model="model.tecEnums" />
       </v-col>
       <v-col cols="12">
-        <DefineTecType v-model="model.tecSum" :tecEnums="model.tecEnums" />
+        <DefineTecSum v-model="model.tecSum" :tecEnums="model.tecEnums" />
       </v-col>
     </v-row>
   </v-container>
