@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import * as C from "codec";
 const model = defineModel<string>({ required: true });
-const primitiveOptions = ["String", "Number"];
+const primitiveOptions = ["String", "Number", "Image"];
 const props = defineProps<{ tecEnums: readonly C.TecType.TecEnum[] }>();
 const options = computed<string[]>(() => {
   return primitiveOptions.concat(props.tecEnums.map((e) => e.tecTypeName));
