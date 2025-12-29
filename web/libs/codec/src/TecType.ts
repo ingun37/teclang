@@ -71,7 +71,7 @@ const decodeEnums = (enums: TecSum[]) =>
     E.Array.map((x) => S.decodeEither(TecEnumFromSum)(x)),
     E.Either.all,
   );
-export const UniqueTecTypeFromTecType = TecType.pipe(
+export const TecSchemaFromTecType = TecType.pipe(
   S.transformOrFail(TecSchema, {
     strict: true,
     decode(input) {

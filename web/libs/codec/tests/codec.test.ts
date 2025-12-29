@@ -37,8 +37,8 @@ test("enum from sum", () => {
   expect(e).toStrictEqual({ tecTypeName: "Foo", values: ["A", "B"] });
 });
 
-test("unique tec type from tec type", () => {
-  const u = S.decodeUnknownSync(lib.TecType.UniqueTecTypeFromTecType)({
+test("tec schema from tec type", () => {
+  const u = S.decodeUnknownSync(lib.TecType.TecSchemaFromTecType)({
     sumTypes: [
       {
         tecTypeName: "Side",
@@ -63,9 +63,9 @@ test("unique tec type from tec type", () => {
   });
 });
 
-test("unique tec type from tec type fail", () => {
+test("tec schema from tec type fail", () => {
   const f = () =>
-    S.decodeUnknownSync(lib.TecType.UniqueTecTypeFromTecType)({
+    S.decodeUnknownSync(lib.TecType.TecSchemaFromTecType)({
       sumTypes: [
         {
           tecTypeName: "Side",

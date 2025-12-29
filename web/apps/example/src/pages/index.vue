@@ -30,7 +30,7 @@
 <script lang="ts" setup>
 import * as C from "codec";
 import { useAppStore } from "@/stores/app.ts";
-const tecType = ref<C.TecType.UniqueTecType | null>(null);
+const tecType = ref<C.TecType.TecSchema | null>(null);
 
 const haskellCode = ref("");
 
