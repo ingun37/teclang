@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
+    DataInputStage: typeof import('./components/DataInputStage.vue')['default']
     DefineClass: typeof import('./components/DefineClass.vue')['default']
     DefineClasses: typeof import('./components/DefineClasses.vue')['default']
     DefineParamType: typeof import('./components/DefineParamType.vue')['default']
@@ -21,7 +22,9 @@ declare module 'vue' {
     DefineTecSchema: typeof import('./components/DefineTecSchema.vue')['default']
     DefineTecSum: typeof import('./components/DefineTecSum.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
+    InputClass: typeof import('./components/InputClass.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SchemaStage: typeof import('./components/SchemaStage.vue')['default']
   }
 }
