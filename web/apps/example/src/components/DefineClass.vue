@@ -2,7 +2,7 @@
 import * as C from "codec";
 import DefineParamTypes from "@/components/DefineParamTypes.vue";
 const model = defineModel<C.TecType.TecClass>({ required: true });
-const props = defineProps<{ enums: readonly C.TecType.TecEnum[] }>();
+const props = defineProps<{ tecEnums: readonly C.TecType.TecEnum[] }>();
 </script>
 
 <template>
@@ -17,7 +17,10 @@ const props = defineProps<{ enums: readonly C.TecType.TecEnum[] }>();
         class="mb-2"
         variant="underlined"
       />
-      <DefineParamTypes v-model="model.parameterTypes" :enums="props.enums" />
+      <DefineParamTypes
+        v-model="model.parameterTypes"
+        :tecEnums="props.tecEnums"
+      />
     </v-card-text>
   </v-card>
 </template>

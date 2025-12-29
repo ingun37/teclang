@@ -55,7 +55,7 @@ test("unique tec type from tec type", () => {
   });
 
   expect(u).toStrictEqual({
-    enums: [{ tecTypeName: "Side", values: ["Front", "Back"] }],
+    tecEnums: [{ tecTypeName: "Side", values: ["Front", "Back"] }],
     tecType: {
       tecTypeName: "TecType",
       classes: [{ className: "Render", parameterTypes: ["Side", "String"] }],

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import * as C from "codec";
 const model = defineModel<readonly C.TecType.TecClass[]>({ required: true });
-const props = defineProps<{ enums: readonly C.TecType.TecEnum[] }>();
+const props = defineProps<{ tecEnums: readonly C.TecType.TecEnum[] }>();
 
 function addClass() {
   model.value = model.value.concat([
@@ -17,7 +17,7 @@ function addClass() {
       <v-container>
         <v-row dense>
           <v-col cols="auto" v-for="(_, i) in model" :key="i">
-            <DefineClass v-model="model[i]!" :enums="props.enums" />
+            <DefineClass v-model="model[i]!" :tecEnums="props.tecEnums" />
           </v-col>
           <v-col cols="auto">
             <v-card>

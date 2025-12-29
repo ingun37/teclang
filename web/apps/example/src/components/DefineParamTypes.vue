@@ -3,7 +3,7 @@ import DefineParamType from "@/components/DefineParamType.vue";
 import * as C from "codec";
 
 const model = defineModel<readonly string[]>({ required: true });
-const props = defineProps<{ enums: readonly C.TecType.TecEnum[] }>();
+const props = defineProps<{ tecEnums: readonly C.TecType.TecEnum[] }>();
 
 function addParamType() {
   model.value = model.value.concat(["String"]);
@@ -17,7 +17,7 @@ function addParamType() {
       v-for="(_, i) in model"
       v-model="model[i]!"
       :key="i"
-      :enums="props.enums"
+      :tecEnums="props.tecEnums"
     />
 
     <v-btn

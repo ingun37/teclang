@@ -3,11 +3,11 @@ import * as C from "codec";
 import DefineClasses from "@/components/DefineClasses.vue";
 
 const model = defineModel<C.TecType.TecSum>({ required: true });
-const props = defineProps<{ enums: readonly C.TecType.TecEnum[] }>();
+const props = defineProps<{ tecEnums: readonly C.TecType.TecEnum[] }>();
 </script>
 
 <template>
-  <DefineClasses v-model="model.classes" :enums="props.enums" />
+  <DefineClasses v-model="model.classes" :tecEnums="props.tecEnums" />
 </template>
 
 <style scoped lang="sass"></style>

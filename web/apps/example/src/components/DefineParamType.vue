@@ -2,9 +2,9 @@
 import * as C from "codec";
 const model = defineModel<string>({ required: true });
 const primitiveOptions = ["String", "Number"];
-const props = defineProps<{ enums: readonly C.TecType.TecEnum[] }>();
+const props = defineProps<{ tecEnums: readonly C.TecType.TecEnum[] }>();
 const options = computed<string[]>(() => {
-  return primitiveOptions.concat(props.enums.map((e) => e.tecTypeName));
+  return primitiveOptions.concat(props.tecEnums.map((e) => e.tecTypeName));
 });
 </script>
 

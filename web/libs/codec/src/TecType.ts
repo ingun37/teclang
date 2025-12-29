@@ -60,8 +60,8 @@ export const TecType = S.Struct({
 
 export type TecType = typeof TecType.Type;
 export const TecSchema = S.Struct({
-  enums: S.Array(TecEnum),
-  tecType: TecSum,
+  tecEnums: S.Array(TecEnum),
+  tecSum: TecSum,
 });
 export type TecSchema = typeof TecSchema.Type;
 
@@ -83,7 +83,9 @@ export const UniqueTecTypeFromTecType = TecType.pipe(
           return E.pipe(
             enums,
             decodeEnums,
-            E.Either.map((enums) => TecSchema.make({ enums, tecType: sum })),
+            E.Either.map((enums) =>
+              TecSchema.make({ tecEnums: enums, tecSum: sum }),
+            ),
           );
         }),
         E.Either.mapLeft((x) => x.issue),
@@ -91,11 +93,11 @@ export const UniqueTecTypeFromTecType = TecType.pipe(
     },
     encode(uniqueTT: TecSchema) {
       return E.pipe(
-        uniqueTT.enums,
+        uniqueTT.tecEnums,
         E.Array.map((x) => S.encodeEither(TecEnumFromSum)(x)),
         E.Either.all,
         E.Either.map((sums) =>
-          TecType.make({ sumTypes: E.Array.append(sums, uniqueTT.tecType) }),
+          TecType.make({ sumTypes: E.Array.append(sums, uniqueTT.tecSum) }),
         ),
         E.Either.mapLeft((x) => x.issue),
       );
