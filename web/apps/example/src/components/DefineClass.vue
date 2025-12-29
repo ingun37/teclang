@@ -10,25 +10,29 @@ function updateClassName(newName: string) {
 </script>
 
 <template>
-  <v-text-field
-    v-model="intermediateName"
-    compact
-    hide-details
-    density="compact"
-    label="Class Name"
-    class="mb-2"
-    @keyup.enter="updateClassName(intermediateName)"
-  >
-    <template #append-inner>
-      <v-btn
-        icon="mdi-check"
-        variant="text"
+  <v-card>
+    <v-card-text>
+      <v-text-field
+        v-model="intermediateName"
+        compact
+        hide-details
         density="compact"
-        @click="updateClassName(intermediateName)"
-      />
-    </template>
-  </v-text-field>
-  <DefineParamTypes v-model="model.parameterTypes" />
+        label="Class Name"
+        class="mb-2"
+        @keyup.enter="updateClassName(intermediateName)"
+      >
+        <template #append-inner>
+          <v-btn
+            icon="mdi-check"
+            variant="text"
+            density="compact"
+            @click="updateClassName(intermediateName)"
+          />
+        </template>
+      </v-text-field>
+      <DefineParamTypes v-model="model.parameterTypes" />
+    </v-card-text>
+  </v-card>
 </template>
 
 <style scoped lang="sass"></style>

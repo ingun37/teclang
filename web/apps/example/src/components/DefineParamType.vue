@@ -7,7 +7,6 @@ const options = ["String", "Number"];
   <v-select
     v-model="model"
     :items="options"
-    label="Parameter Type"
     density="compact"
     hide-details
     variant="outlined"

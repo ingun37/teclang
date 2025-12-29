@@ -9,7 +9,7 @@ function addParamType() {
 </script>
 
 <template>
-  <div class="ml-4 mb-4">
+  <div class="d-flex flex-column">
     <div class="text-caption mb-2">Parameter Types</div>
     <DefineParamType v-for="(_, i) in model" v-model="model[i]!" :key="i" />
 

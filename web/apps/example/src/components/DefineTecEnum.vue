@@ -11,7 +11,7 @@ function addValue() {
 </script>
 
 <template>
-  <v-card class="pa-4">
+  <v-card>
     <v-card-text>
       <v-text-field
         v-model="model.tecTypeName"
@@ -19,15 +19,16 @@ function addValue() {
         density="compact"
       />
 
-      <div class="d-flex flex-column ga-2 align-center">
-        <div v-for="(_, index) in model.values" :key="index" style="width: 7em">
-          <v-text-field
-            v-model="model.values[index]"
-            :label="`Value ${index}`"
-            density="compact"
-            hide-details
-          />
-        </div>
+      <div class="d-flex flex-column ga-2 align-start">
+        <div class="text-caption mb-2">Values</div>
+
+        <v-text-field
+          v-for="(_, index) in model.values"
+          v-model="model.values[index]"
+          density="compact"
+          hide-details
+          style="width: 6rem"
+        />
         <v-btn
           prepend-icon="mdi-plus"
           variant="plain"
