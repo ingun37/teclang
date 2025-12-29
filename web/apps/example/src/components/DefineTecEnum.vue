@@ -12,7 +12,6 @@ function addValue() {
 
 <template>
   <v-card class="pa-4">
-    <v-card-subtitle>Enum</v-card-subtitle>
     <v-card-text>
       <v-text-field
         v-model="model.tecTypeName"
@@ -20,7 +19,7 @@ function addValue() {
         density="compact"
       />
 
-      <div class="d-flex flex-row flex-wrap ga-2 align-center">
+      <div class="d-flex flex-column ga-2 align-center">
         <div v-for="(_, index) in model.values" :key="index" style="width: 7em">
           <v-text-field
             v-model="model.values[index]"
@@ -30,12 +29,13 @@ function addValue() {
           />
         </div>
         <v-btn
-          icon="mdi-plus"
-          variant="tonal"
+          prepend-icon="mdi-plus"
+          variant="plain"
           size="small"
-          color="primary"
           @click="addValue"
-        />
+        >
+          Add Value
+        </v-btn>
       </div>
     </v-card-text>
   </v-card>
