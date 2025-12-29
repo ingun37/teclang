@@ -10,7 +10,7 @@ const model = defineModel<C.TecType.UniqueTecType>({ required: true });
         <DefineTecEnums v-model="model.enums" />
       </v-col>
       <v-col cols="12">
-        <DefineTecType v-model="model.tecType" />
+        <DefineTecType v-model="model.tecType" :enums="model.enums" />
       </v-col>
     </v-row>
   </v-container>
