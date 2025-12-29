@@ -4,7 +4,6 @@
       <v-col cols="12">
         <div class="d-flex flex-row ga-2 mb-4">
           <v-btn @click="fillSampleCode">fill sample code</v-btn>
-          <v-btn color="primary" @click="updateUI">update ui</v-btn>
         </div>
       </v-col>
 
@@ -18,6 +17,9 @@
         />
       </v-col>
 
+      <v-col cols="12">
+        <v-btn color="primary" @click="updateUI">update ui</v-btn>
+      </v-col>
       <v-col cols="12">
         <DefineTecTypes v-if="tecType" v-model="tecType" />
       </v-col>
