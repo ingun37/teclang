@@ -18,15 +18,19 @@ function addClass() {
           <v-col cols="auto" v-for="(_, i) in model" :key="i">
             <DefineClass v-model="model[i]!" />
           </v-col>
-          <v-col cols="auto" class="d-flex align-center">
-            <v-btn
-              prepend-icon="mdi-plus"
-              variant="plain"
-              size="small"
-              @click="addClass"
-            >
-              Add Class
-            </v-btn>
+          <v-col cols="auto">
+            <v-card>
+              <v-card-text>
+                <v-btn
+                  prepend-icon="mdi-plus"
+                  variant="plain"
+                  size="small"
+                  @click="addClass"
+                >
+                  Add Class
+                </v-btn>
+              </v-card-text>
+            </v-card>
           </v-col>
         </v-row>
       </v-container>
