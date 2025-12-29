@@ -18,7 +18,10 @@
       </v-col>
 
       <v-col cols="12">
-        <v-btn color="primary" @click="updateUI">update ui</v-btn>
+        <div class="d-flex ga-2">
+          <v-btn color="primary" @click="updateUI">update ui</v-btn>
+          <v-btn color="primary" @click="updateCode">update code</v-btn>
+        </div>
       </v-col>
       <v-col cols="12">
         <DefineTecSchema v-if="tecType" v-model="tecType" />
@@ -53,10 +56,10 @@ async function updateUI() {
   );
 }
 
-watch(tecType, async (newTecType) => {
-  if (newTecType)
+async function updateCode() {
+  if (tecType.value)
     haskellCode.value = await useAppStore().haskell!.exports.decodeHaskellType(
-      JSON.stringify(C.tecSchemaToJson(newTecType)),
+      JSON.stringify(C.tecSchemaToJson(tecType.value)),
     );
-});
+}
 </script>
