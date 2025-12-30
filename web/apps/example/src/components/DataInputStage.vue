@@ -6,7 +6,7 @@ defineProps<{ tecSchema: C.TecType.TecSchema }>();
 
 <template>
   <div v-for="tecClass in tecSchema.tecSum.classes" :key="tecClass.className">
-    <InputClass :tec-class="tecClass" />
+    <InputClass :tec-class="tecClass" :tec-enums="tecSchema.tecEnums" />
   </div>
 </template>
 

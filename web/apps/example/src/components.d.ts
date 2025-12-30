@@ -23,6 +23,8 @@ declare module 'vue' {
     DefineTecSum: typeof import('./components/DefineTecSum.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     InputClass: typeof import('./components/InputClass.vue')['default']
+    InputParam: typeof import('./components/InputParam.vue')['default']
+    InputRecurse: typeof import('./components/InputRecurse.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SchemaStage: typeof import('./components/SchemaStage.vue')['default']
