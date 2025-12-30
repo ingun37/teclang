@@ -13,8 +13,15 @@ data Side = Front
           | Back
           | Left
           | Right
+
 data Article = A0 | A1
-data TecType = Render Side Article Image`;
+
+data Size = XS | S | M | L | XL | XXL
+
+data Line = A | B | C | D
+
+data TecType = Render Side Article Image | POM Size Line Number | Schematic Side Image
+`;
 
 function fillSampleCode() {
   haskellCode.value = sampleHaskellCode;
