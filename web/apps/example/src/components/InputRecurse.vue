@@ -36,7 +36,7 @@ const iter = computed<C.TecType.TecEnum | null>(() => {
     />
   </div>
   <div v-else>
-    <InputParam />
+    <InputParam :param-type="tecClass.parameterTypes[paramIndex]!" />
   </div>
 </template>
 

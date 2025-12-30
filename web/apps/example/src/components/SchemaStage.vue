@@ -14,7 +14,7 @@ data Side = Front
           | Left
           | Right
 data Article = A0 | A1
-data TecType = Render Side Article`;
+data TecType = Render Side Article Image`;
 
 function fillSampleCode() {
   haskellCode.value = sampleHaskellCode;
