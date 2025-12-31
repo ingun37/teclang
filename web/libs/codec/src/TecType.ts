@@ -1,8 +1,12 @@
 import { ParseResult, Schema as S } from "effect";
 import * as E from "effect";
+
+export const TecParamType = S.String.pipe(S.brand("TecParamType"));
+export type TecParamType = typeof TecParamType.Type;
+
 export const TecClass = S.Struct({
   className: S.String,
-  parameterTypes: S.Array(S.String),
+  parameterTypes: S.Array(TecParamType),
 });
 export type TecClass = typeof TecClass.Type;
 
@@ -93,6 +97,23 @@ export const TecSchemaFromTecType = TecType.pipe(
       );
     },
     encode(tecSchema) {
+      function f(x: {
+        readonly tecTypeName: string;
+        readonly classes: readonly {
+          readonly className: string;
+          readonly parameterTypes: readonly string[];
+        }[];
+      }): TecSum {
+        return TecSum.make({
+          tecTypeName: x.tecTypeName,
+          classes: x.classes.map((c) =>
+            TecClass.make({
+              className: c.className,
+              parameterTypes: c.parameterTypes.map((x) => TecParamType.make(x)),
+            }),
+          ),
+        });
+      }
       return E.pipe(
         tecSchema.tecEnums,
         E.Array.map((tecEnum) =>
@@ -103,7 +124,9 @@ export const TecSchemaFromTecType = TecType.pipe(
         ),
         E.Either.all,
         E.Either.map((sums) =>
-          TecType.make({ sumTypes: E.Array.append(sums, tecSchema.tecSum) }),
+          TecType.make({
+            sumTypes: E.Array.append(sums.map(f), f(tecSchema.tecSum)),
+          }),
         ),
         E.Either.mapLeft((x) => x.issue),
       );
