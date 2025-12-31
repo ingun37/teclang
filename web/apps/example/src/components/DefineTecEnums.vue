@@ -6,7 +6,7 @@ function addEnum() {
   model.value = [
     ...model.value,
     C.TecType.TecEnum.make({
-      tecTypeName: "Foo",
+      tecTypeName: C.TecType.TecEnumName.make("Foo"),
       values: ["A", "B", "C"].map((x) => C.TecType.TecEnumValue.make(x)),
     }),
   ];

@@ -10,19 +10,32 @@ export const TecClass = S.Struct({
 });
 export type TecClass = typeof TecClass.Type;
 
+export const TecSumName = S.String.pipe(S.brand("TecSumName"));
+export type TecSumName = typeof TecSumName.Type;
+
 export const TecSum = S.Struct({
-  tecTypeName: S.String,
+  tecTypeName: TecSumName,
   classes: S.Array(TecClass),
 });
 export type TecSum = typeof TecSum.Type;
 export const TecEnumValue = S.String.pipe(S.brand("TecEnumValue"));
 export type TecEnumValue = typeof TecEnumValue.Type;
+
+export const TecEnumName = S.String.pipe(S.brand("TecEnumName"));
+export type TecEnumName = typeof TecEnumName.Type;
+
 export const TecEnum = S.Struct({
-  tecTypeName: S.String,
+  tecTypeName: TecEnumName,
   values: S.Array(TecEnumValue),
 });
 
 export type TecEnum = typeof TecEnum.Type;
+
+const TecIndexedClass = S.Struct({
+  indexSet: S.Array(TecEnumName),
+  paramType: TecParamType,
+});
+type TecIndexedClass = typeof TecIndexedClass.Type;
 
 export const TecEnumFromSum = TecSum.pipe(
   S.transformOrFail(TecEnum, {
@@ -38,7 +51,7 @@ export const TecEnumFromSum = TecSum.pipe(
         E.Either.all,
         E.Either.map((_) =>
           TecEnum.make({
-            tecTypeName: input.tecTypeName,
+            tecTypeName: TecEnumName.make(input.tecTypeName),
             values: input.classes.map((c) => TecEnumValue.make(c.className)),
           }),
         ),
@@ -48,7 +61,7 @@ export const TecEnumFromSum = TecSum.pipe(
     encode(input) {
       return E.ParseResult.succeed(
         TecSum.make({
-          tecTypeName: input.tecTypeName,
+          tecTypeName: TecSumName.make(input.tecTypeName),
           classes: input.values.map((v) =>
             TecClass.make({ className: v, parameterTypes: [] }),
           ),
@@ -65,6 +78,7 @@ export const TecType = S.Struct({
 export type TecType = typeof TecType.Type;
 export const TecSchema = S.Struct({
   tecEnums: S.Array(TecEnum),
+
   tecSum: TecSum,
 });
 export type TecSchema = typeof TecSchema.Type;
