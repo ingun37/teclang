@@ -1,6 +1,6 @@
 import { ParseResult, Schema as S } from "effect";
 import * as E from "effect";
-
+import * as H from "./helper.js";
 export const TecParamType = S.String.pipe(S.brand("TecParamType"));
 export type TecParamType = typeof TecParamType.Type;
 
@@ -97,35 +97,13 @@ export const TecSchemaFromTecType = TecType.pipe(
       );
     },
     encode(tecSchema) {
-      function f(x: {
-        readonly tecTypeName: string;
-        readonly classes: readonly {
-          readonly className: string;
-          readonly parameterTypes: readonly string[];
-        }[];
-      }): TecSum {
-        return TecSum.make({
-          tecTypeName: x.tecTypeName,
-          classes: x.classes.map((c) =>
-            TecClass.make({
-              className: c.className,
-              parameterTypes: c.parameterTypes.map((x) => TecParamType.make(x)),
-            }),
-          ),
-        });
-      }
       return E.pipe(
         tecSchema.tecEnums,
-        E.Array.map((tecEnum) =>
-          S.encodeEither(TecEnumFromSum)({
-            tecTypeName: tecEnum.tecTypeName,
-            values: tecEnum.values.map((x) => TecEnumValue.make(x)),
-          }),
-        ),
+        E.Array.map(H.commuteEncode(TecEnumFromSum, TecEnum)),
         E.Either.all,
-        E.Either.map((sums) =>
-          TecType.make({
-            sumTypes: E.Array.append(sums.map(f), f(tecSchema.tecSum)),
+        E.Either.andThen((sums) =>
+          S.decodeEither(TecType)({
+            sumTypes: E.Array.append(sums, tecSchema.tecSum),
           }),
         ),
         E.Either.mapLeft((x) => x.issue),
