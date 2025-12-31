@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import * as C from "codec";
-import DefineParamTypes from "@/components/DefineParamTypes.vue";
+import DefineIndexSet from "@/components/DefineIndexSet.vue";
 const model = defineModel<C.TecType.TecIndexedClass>({ required: true });
 const props = defineProps<{ tecEnums: readonly C.TecType.TecEnum[] }>();
 </script>
@@ -25,7 +25,7 @@ const props = defineProps<{ tecEnums: readonly C.TecType.TecEnum[] }>();
           variant="outlined"
         />
 
-        <DefineParamTypes v-model="model.indexSet" :tecEnums="props.tecEnums" />
+        <DefineIndexSet v-model="model.indexSet" :tecEnums="props.tecEnums" />
       </div>
     </v-card-text>
   </v-card>

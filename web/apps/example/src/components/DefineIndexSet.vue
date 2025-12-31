@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DefineParamType from "@/components/DefineParamType.vue";
+import DefineIndex from "@/components/DefineIndex.vue";
 import * as C from "codec";
 
 const model = defineModel<readonly C.TecType.TecEnumName[]>({ required: true });
@@ -14,8 +14,8 @@ function addParamType() {
 
 <template>
   <div class="d-flex flex-column">
-    <div class="text-caption mb-2">Parameter Types</div>
-    <DefineParamType
+    <div class="text-caption mb-2">Index set</div>
+    <DefineIndex
       v-for="(_, i) in model"
       v-model="model[i]!"
       :key="i"
