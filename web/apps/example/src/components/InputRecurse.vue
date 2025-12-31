@@ -6,7 +6,7 @@ import InputParam from "@/components/InputParam.vue";
 const props = defineProps<{
   axis: Axis;
   paramIndex: number;
-  tecClass: C.TecType.TecClass;
+  tecIndexedClass: C.TecType.TecIndexedClass;
   tecEnums: readonly C.TecType.TecEnum[];
 }>();
 const iter = computed<C.TecType.TecEnum | null>(() => {
@@ -14,7 +14,8 @@ const iter = computed<C.TecType.TecEnum | null>(() => {
     props.tecEnums,
     E.Array.findFirst(
       (tecEnum) =>
-        tecEnum.tecTypeName === props.tecClass.parameterTypes[props.paramIndex],
+        tecEnum.tecTypeName ===
+        props.tecIndexedClass.indexSet[props.paramIndex],
     ),
     E.Option.getOrNull,
   );
@@ -31,12 +32,12 @@ const iter = computed<C.TecType.TecEnum | null>(() => {
       :key="value"
       :axis="axis === 'x' ? 'y' : 'x'"
       :paramIndex="paramIndex + 1"
-      :tecClass="tecClass"
+      :tecIndexedClass="tecIndexedClass"
       :tecEnums="tecEnums"
     />
   </div>
   <div v-else>
-    <InputParam :param-type="tecClass.parameterTypes[paramIndex]!" />
+    <InputParam :param-type="tecIndexedClass.paramType" />
   </div>
 </template>
 

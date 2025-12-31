@@ -1,26 +1,32 @@
 <script setup lang="ts">
 import * as C from "codec";
 import DefineParamTypes from "@/components/DefineParamTypes.vue";
-const model = defineModel<C.TecType.TecClass>({ required: true });
+const model = defineModel<C.TecType.TecIndexedClass>({ required: true });
 const props = defineProps<{ tecEnums: readonly C.TecType.TecEnum[] }>();
 </script>
 
 <template>
   <v-card>
     <v-card-text>
-      <v-text-field
-        v-model="model.className"
-        label="Class Name"
-        compact
-        hide-details
-        density="compact"
-        class="mb-2"
-        variant="underlined"
-      />
-      <DefineParamTypes
-        v-model="model.parameterTypes"
-        :tecEnums="props.tecEnums"
-      />
+      <div class="d-flex flex-column ga-1">
+        <v-text-field
+          v-model="model.className"
+          label="Class Name"
+          compact
+          hide-details
+          density="compact"
+          variant="underlined"
+        />
+        <v-select
+          v-model="model.paramType"
+          :items="['String', 'Number', 'Image']"
+          density="compact"
+          hide-details
+          variant="outlined"
+        />
+
+        <DefineParamTypes v-model="model.indexSet" :tecEnums="props.tecEnums" />
+      </div>
     </v-card-text>
   </v-card>
 </template>

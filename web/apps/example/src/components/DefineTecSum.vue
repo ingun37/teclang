@@ -1,13 +1,5 @@
-<script setup lang="ts">
-import * as C from "codec";
-import DefineClasses from "@/components/DefineClasses.vue";
+<script setup lang="ts"></script>
 
-const model = defineModel<C.TecType.TecSum>({ required: true });
-const props = defineProps<{ tecEnums: readonly C.TecType.TecEnum[] }>();
-</script>
-
-<template>
-  <DefineClasses v-model="model.classes" :tecEnums="props.tecEnums" />
-</template>
+<template></template>
 
 <style scoped lang="sass"></style>

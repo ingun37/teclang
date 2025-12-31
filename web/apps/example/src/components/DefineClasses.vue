@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import * as C from "codec";
-const model = defineModel<readonly C.TecType.TecClass[]>({ required: true });
+const model = defineModel<readonly C.TecType.TecIndexedClass[]>({
+  required: true,
+});
 const props = defineProps<{ tecEnums: readonly C.TecType.TecEnum[] }>();
 
 function addClass() {
   model.value = model.value.concat([
-    C.TecType.TecClass.make({ className: "NewClass", parameterTypes: [] }),
+    C.TecType.TecIndexedClass.make({
+      className: "NewClass",
+      indexSet: [],
+      paramType: C.TecType.TecParamType.make("String"),
+    }),
   ]);
 }
 </script>

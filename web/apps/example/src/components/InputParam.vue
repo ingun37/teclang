@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
-
-const props = defineProps<{ paramType: string }>();
+import * as C from "codec";
+const props = defineProps<{ paramType: C.TecType.TecParamType }>();
 
 const textValue = ref("");
 const numberValue = ref<number | null>(null);

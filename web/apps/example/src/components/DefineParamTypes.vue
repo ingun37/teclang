@@ -2,11 +2,13 @@
 import DefineParamType from "@/components/DefineParamType.vue";
 import * as C from "codec";
 
-const model = defineModel<readonly string[]>({ required: true });
+const model = defineModel<readonly C.TecType.TecEnumName[]>({ required: true });
 const props = defineProps<{ tecEnums: readonly C.TecType.TecEnum[] }>();
 
 function addParamType() {
-  model.value = model.value.concat(["String"]);
+  model.value = model.value.concat(
+    props.tecEnums[props.tecEnums.length - 1]!.tecTypeName,
+  );
 }
 </script>
 

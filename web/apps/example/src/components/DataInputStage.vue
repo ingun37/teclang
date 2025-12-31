@@ -8,11 +8,14 @@ defineProps<{ tecSchema: C.TecType.TecSchema }>();
   <v-container>
     <v-row>
       <v-col
-        v-for="tecClass in tecSchema.tecSum.classes"
+        v-for="tecClass in tecSchema.indexedClasses"
         :key="tecClass.className"
         cols="12"
       >
-        <InputClass :tec-class="tecClass" :tec-enums="tecSchema.tecEnums" />
+        <InputClass
+          :tec-indexed-class="tecClass"
+          :tec-enums="tecSchema.tecEnums"
+        />
       </v-col>
     </v-row>
   </v-container>

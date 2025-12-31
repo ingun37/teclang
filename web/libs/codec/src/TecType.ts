@@ -31,11 +31,12 @@ export const TecEnum = S.Struct({
 
 export type TecEnum = typeof TecEnum.Type;
 
-const TecIndexedClass = S.Struct({
+export const TecIndexedClass = S.Struct({
+  className: S.String,
   indexSet: S.Array(TecEnumName),
   paramType: TecParamType,
 });
-type TecIndexedClass = typeof TecIndexedClass.Type;
+export type TecIndexedClass = typeof TecIndexedClass.Type;
 
 export const TecEnumFromSum = TecSum.pipe(
   S.transformOrFail(TecEnum, {
@@ -78,8 +79,7 @@ export const TecType = S.Struct({
 export type TecType = typeof TecType.Type;
 export const TecSchema = S.Struct({
   tecEnums: S.Array(TecEnum),
-
-  tecSum: TecSum,
+  indexedClasses: S.Array(TecIndexedClass),
 });
 export type TecSchema = typeof TecSchema.Type;
 
@@ -89,6 +89,48 @@ const decodeEnums = (enums: TecSum[]) =>
     E.Array.map((x) => S.decodeEither(TecEnumFromSum)(x)),
     E.Either.all,
   );
+function makeIndexedClass(tecEnumsTable: TecEnum[]) {
+  return function (tecClass: TecClass) {
+    if (E.Array.isNonEmptyReadonlyArray(tecClass.parameterTypes)) {
+      const [enumParams, typeParam] = E.Array.unappend(tecClass.parameterTypes);
+      return E.pipe(
+        enumParams,
+        E.Array.map((enumParam) =>
+          E.Array.findFirst(
+            tecEnumsTable,
+            (tecEnumEntry) =>
+              (tecEnumEntry.tecTypeName as string) === (enumParam as string),
+          ).pipe(
+            E.Either.fromOption(() =>
+              E.ParseResult.parseError(
+                new E.ParseResult.Unexpected(
+                  tecEnumsTable,
+                  `Can't find enum for: ${enumParam}`,
+                ),
+              ),
+            ),
+          ),
+        ),
+        E.Either.all,
+        E.Either.map((enums) => {
+          return TecIndexedClass.make({
+            className: tecClass.className,
+            indexSet: enums.map((e) => e.tecTypeName),
+            paramType: typeParam,
+          });
+        }),
+      );
+    } else
+      return E.Either.left(
+        E.ParseResult.parseError(
+          new E.ParseResult.Unexpected(
+            tecClass,
+            "parameterTypes must be non empty array",
+          ),
+        ),
+      );
+  };
+}
 export const TecSchemaFromTecType = TecType.pipe(
   S.transformOrFail(TecSchema, {
     strict: true,
@@ -101,9 +143,16 @@ export const TecSchemaFromTecType = TecType.pipe(
           return E.pipe(
             enums,
             decodeEnums,
-            E.Either.map((enums) =>
-              TecSchema.make({ tecEnums: enums, tecSum: sum }),
-            ),
+            E.Either.andThen((enums) => {
+              return E.pipe(
+                sum.classes,
+                E.Array.map(makeIndexedClass(enums)),
+                E.Either.all,
+                E.Either.map((indexedClasses) => {
+                  return TecSchema.make({ tecEnums: enums, indexedClasses });
+                }),
+              );
+            }),
           );
         }),
         E.Either.mapLeft((x) => x.issue),
@@ -114,11 +163,24 @@ export const TecSchemaFromTecType = TecType.pipe(
         tecSchema.tecEnums,
         E.Array.map(H.commuteEncode(TecEnumFromSum, TecEnum)),
         E.Either.all,
-        E.Either.andThen((sums) =>
-          S.decodeEither(TecType)({
-            sumTypes: E.Array.append(sums, tecSchema.tecSum),
-          }),
-        ),
+        E.Either.andThen((sums) => {
+          return S.decodeEither(TecType)({
+            sumTypes: E.Array.append(
+              sums,
+              TecSum.make({
+                tecTypeName: TecSumName.make("TecType"),
+                classes: tecSchema.indexedClasses.map((x) =>
+                  TecClass.make({
+                    className: x.className,
+                    parameterTypes: x.indexSet
+                      .concat([x.paramType])
+                      .map((x) => TecParamType.make(x)),
+                  }),
+                ),
+              }),
+            ),
+          });
+        }),
         E.Either.mapLeft((x) => x.issue),
       );
     },

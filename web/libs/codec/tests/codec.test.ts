@@ -53,13 +53,22 @@ test("tec schema from tec type", () => {
       },
     ],
   });
-
+  /*
+const TecIndexedClass = S.Struct({
+  className: S.String,
+  indexSet: S.Array(TecEnumName),
+  paramType: TecParamType,
+});
+ */
   expect(u).toStrictEqual({
     tecEnums: [{ tecTypeName: "Side", values: ["Front", "Back"] }],
-    tecType: {
-      tecTypeName: "TecType",
-      classes: [{ className: "Render", parameterTypes: ["Side", "String"] }],
-    },
+    indexedClasses: [
+      {
+        className: "Render",
+        indexSet: ["Side"],
+        paramType: "String",
+      },
+    ],
   });
 });
 
@@ -83,5 +92,7 @@ test("tec schema from tec type fail", () => {
       ],
     });
 
-  expect(f).toThrowError("Class cannot have parameter types in an enum");
+  expect(f).toThrowError(
+    'Expected an array of exactly 0 item(s), actual ["Ha!"]',
+  );
 });
