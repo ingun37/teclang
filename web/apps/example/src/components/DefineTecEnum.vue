@@ -5,7 +5,7 @@ const model = defineModel<C.TecType.TecEnum>({ required: true });
 function addValue() {
   model.value = {
     ...model.value,
-    values: [...model.value.values, "Foo"],
+    values: [...model.value.values, C.TecType.TecEnumValue.make("Foo")],
   };
 }
 </script>

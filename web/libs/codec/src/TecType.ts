@@ -1,4 +1,4 @@
-import { ParseResult, Schema as S } from "effect";
+import { Schema as S } from "effect";
 import * as E from "effect";
 import * as H from "./helper.js";
 export const TecParamType = S.String.pipe(S.brand("TecParamType"));
@@ -27,23 +27,22 @@ export type TecEnum = typeof TecEnum.Type;
 export const TecEnumFromSum = TecSum.pipe(
   S.transformOrFail(TecEnum, {
     strict: true,
-    decode(input, options, ast) {
-      for (const c of input.classes) {
-        if (0 < c.parameterTypes.length) {
-          return E.ParseResult.fail(
-            new ParseResult.Type(
-              ast,
-              c,
-              "Class cannot have parameter types in an enum",
-            ),
-          );
-        }
-      }
-      return E.ParseResult.succeed(
-        TecEnum.make({
-          tecTypeName: input.tecTypeName,
-          values: input.classes.map((c) => TecEnumValue.make(c.className)),
-        }),
+    decode(input) {
+      return E.pipe(
+        input.classes,
+        E.Array.map((c) =>
+          S.decodeEither(S.Array(S.Any).pipe(S.itemsCount(0)))(
+            c.parameterTypes,
+          ),
+        ),
+        E.Either.all,
+        E.Either.map((_) =>
+          TecEnum.make({
+            tecTypeName: input.tecTypeName,
+            values: input.classes.map((c) => TecEnumValue.make(c.className)),
+          }),
+        ),
+        E.Either.mapLeft((x) => x.issue),
       );
     },
     encode(input) {
