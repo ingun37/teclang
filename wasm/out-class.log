@@ -5,8 +5,10 @@ TecClassAST
     { classes =
         [ TecClass
             { className = "f"
-            , indexSet = []
-            , attributes = [ "A" ]
+            , tecSignature = TecSignature
+                { indexSet = []
+                , attributes = [ "A" ]
+                }
             }
         ]
     }
@@ -14,11 +16,47 @@ TecClassAST
 {
     "classes": [
         {
-            "attributes": [
-                "A"
-            ],
             "className": "f",
-            "indexSet": []
+            "tecSignature": {
+                "attributes": [
+                    "A"
+                ],
+                "indexSet": []
+            }
+        }
+    ]
+}
+---- Original Code ----
+f :: A -> B -> C
+---- Raw AST ----
+TecClassAST
+    { classes =
+        [ TecClass
+            { className = "f"
+            , tecSignature = TecSignature
+                { indexSet =
+                    [ "A"
+                    , "B"
+                    ]
+                , attributes = [ "C" ]
+                }
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "classes": [
+        {
+            "className": "f",
+            "tecSignature": {
+                "attributes": [
+                    "C"
+                ],
+                "indexSet": [
+                    "A",
+                    "B"
+                ]
+            }
         }
     ]
 }

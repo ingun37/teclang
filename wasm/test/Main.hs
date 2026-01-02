@@ -122,7 +122,8 @@ testEnum =
 testClass :: [String]
 testClass = 
   [
-    "f :: A"
+    "f :: A",
+    "f :: A -> B -> C"
   ]
 testFormatUnit :: IO.Handle -> String -> IO ()
 testFormatUnit h s = do

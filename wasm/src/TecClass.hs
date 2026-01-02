@@ -8,7 +8,22 @@ import Data.Aeson
   )
 import GHC.Generics (Generic)
 
-data TecClass = TecClass {className :: String, indexSet :: [String], attributes :: [String]} deriving (Show, Generic)
+data TecSignature = TecSignature
+  { indexSet :: [String],
+    attributes :: [String]
+  }
+  deriving (Show, Generic)
+
+instance ToJSON TecSignature where
+  toEncoding = genericToEncoding defaultOptions
+
+instance FromJSON TecSignature
+
+data TecClass = TecClass
+  { className :: String,
+    tecSignature :: TecSignature
+  }
+  deriving (Show, Generic)
 
 instance ToJSON TecClass where
   toEncoding = genericToEncoding defaultOptions

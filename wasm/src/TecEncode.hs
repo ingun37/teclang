@@ -70,8 +70,18 @@ encodeTecEnumAST decls = do
   tecEnums <- traverse encodeTecEnum decls
   return $ TecEnumAST tecEnums
 
+encodeTecSignature :: (Show l) => E.Type l -> Either TecError TecSignature
+encodeTecSignature (E.TyCon _ (E.UnQual _ (E.Ident _ y))) = do
+  return $ TecSignature [] [y]
+encodeTecSignature (E.TyFun _ (E.TyCon _ (E.UnQual _ (E.Ident _ idx))) right) = do
+  (TecSignature idxs attribs) <- encodeTecSignature right
+  return $ TecSignature (idx : idxs) attribs
+encodeTecSignature t = Left $ TecErrorUnknownExp (show t)
+
 encodeTecClass :: (Show l) => E.Decl l -> Either TecError TecClass
-encodeTecClass (E.TypeSig _ [E.Ident _ className] (E.TyCon _ (E.UnQual _ (E.Ident _ y)))) = Right $ TecClass className [] [y]
+encodeTecClass (E.TypeSig _ [E.Ident _ className] sig) = do
+  s <- encodeTecSignature sig
+  return $ TecClass className s
 encodeTecClass decl = Left $ TecErrorUnknownExp (show decl)
 
 encodeTecClassAST :: (Show l) => [E.Decl l] -> Either TecError TecClassAST
