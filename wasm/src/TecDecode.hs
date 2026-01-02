@@ -44,8 +44,8 @@ decodeTecData (TecRngEnum from to) = do
 decodeType :: String -> Either TecError (E.Type ())
 decodeType name = return $ E.TyCon () (E.UnQual () (E.Ident () name))
 
-decodeQualConDecl :: TecClass -> Either TecError (E.QualConDecl ())
-decodeQualConDecl (TecClass name) = do
+decodeQualConDecl :: TecValue -> Either TecError (E.QualConDecl ())
+decodeQualConDecl (TecValue name) = do
   types <- traverse decodeType []
   return $ E.QualConDecl () Nothing Nothing (E.ConDecl () (E.Ident () name) types)
 

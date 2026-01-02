@@ -7,8 +7,8 @@ TecTypeAST
         [ TecSum
             { tecTypeName = "TecType"
             , classes =
-                [ TecClass "A"
-                , TecClass "B"
+                [ TecValue "A"
+                , TecValue "B"
                 ]
             }
         ]
@@ -33,7 +33,7 @@ TecTypeAST
         [ TecSum
             { tecTypeName = "TecType"
             , classes =
-                [ TecClass "A" ]
+                [ TecValue "A" ]
             }
         ]
     }
@@ -60,15 +60,15 @@ TecTypeAST
         [ TecSum
             { tecTypeName = "Enum0"
             , classes =
-                [ TecClass "A"
-                , TecClass "B"
-                , TecClass "C"
+                [ TecValue "A"
+                , TecValue "B"
+                , TecValue "C"
                 ]
             }
         , TecSum
             { tecTypeName = "TecType"
             , classes =
-                [ TecClass "AType" ]
+                [ TecValue "AType" ]
             }
         ]
     }

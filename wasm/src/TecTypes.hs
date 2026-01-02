@@ -8,14 +8,14 @@ import Data.Aeson
   )
 import GHC.Generics (Generic)
 
-data TecClass = TecClass String deriving (Show, Generic)
+data TecValue = TecValue String deriving (Show, Generic)
 
-instance ToJSON TecClass where
+instance ToJSON TecValue where
   toEncoding = genericToEncoding defaultOptions
 
-instance FromJSON TecClass
+instance FromJSON TecValue
 
-data TecSum = TecSum {tecTypeName :: String, classes :: [TecClass]}
+data TecSum = TecSum {tecTypeName :: String, classes :: [TecValue]}
   deriving (Show, Generic)
 
 instance ToJSON TecSum where

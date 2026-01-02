@@ -56,9 +56,9 @@ encodeType :: (Show l) => E.Type l -> Either TecError String
 encodeType (E.TyCon _ (E.UnQual _ (E.Ident _ name))) = return name
 encodeType x = Left $ TecErrorUnknownExp (show x)
 
-encodeQualConDecl :: (Show l) => E.QualConDecl l -> Either TecError TecClass
+encodeQualConDecl :: (Show l) => E.QualConDecl l -> Either TecError TecValue
 encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name) [])) = do
-  return $ TecClass name
+  return $ TecValue name
 encodeQualConDecl x = Left $ TecErrorUnknownExp (show x)
 
 encodeTecSum :: (Show l) => E.Decl l -> Either TecError TecSum
