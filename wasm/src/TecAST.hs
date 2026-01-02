@@ -43,7 +43,7 @@ instance TecAST TecDataAST where
 
 instance TecAST TecEnumAST where
   decodeTecToCode ast = do
-    decls <- decodeTecType ast
+    decls <- decodeTecEnumAST ast
     let m = E.Module () Nothing [] [] decls
     return $ E.prettyPrint m
   encodeCodeToTec code =
