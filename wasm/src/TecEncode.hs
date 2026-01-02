@@ -3,9 +3,10 @@ module TecEncode where
 import Data.Functor ((<&>))
 import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
+import TecClass
 import TecData
-import TecError
 import TecEnum
+import TecError
 
 encodeDecl :: (Show l) => E.Decl l -> Either TecError (String, E.Exp l)
 encodeDecl (E.PatBind _ (E.PVar _ (E.Ident _ name)) (E.UnGuardedRhs _ expr) _) = Right $ (name, expr)
@@ -68,3 +69,6 @@ encodeTecEnumAST :: (Show l) => [E.Decl l] -> Either TecError TecEnumAST
 encodeTecEnumAST decls = do
   tecEnums <- traverse encodeTecEnum decls
   return $ TecEnumAST tecEnums
+
+encodeTecClassAST :: (Show l) => [E.Decl l] -> Either TecError TecClassAST
+encodeTecClassAST decls = Left $ TecErrorUnknownExp (show decls)

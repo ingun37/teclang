@@ -64,7 +64,7 @@ failIfLeft b =
       putStrLn "\n\n---- Entire AST show ----\n\n"
       Simple.pPrintString rawWholeAstShow
       fail "test failed"
-    (Left (ErrTec (TecErrorUnknownExp expShow ))) -> do
+    (Left (ErrTec (TecErrorUnknownExp expShow))) -> do
       putStrLn "\n\n---- Unknown Expression ----\n\n"
       Simple.pPrintString expShow
       fail "test failed"
@@ -103,10 +103,9 @@ testData =
       "let in 0"
     ]
 
-testType :: [String]
-testType =
-  [
-    """
+testEnum :: [String]
+testEnum =
+  [ """
     data TecType = A
                  | B
     """,
@@ -120,6 +119,11 @@ testType =
     """
   ]
 
+testClass :: [String]
+testClass = 
+  [
+    "f :: A"
+  ]
 testFormatUnit :: IO.Handle -> String -> IO ()
 testFormatUnit h s = do
   e <- runExceptT $ formatHaskell s
@@ -142,5 +146,6 @@ main :: IO ()
 main = do
   -- formatTest "out-format.log"
   _ <- testIO testData "out-data.log" :: IO [TecDataAST]
-  _ <- testIO testType "out-type.log" :: IO [TecEnumAST]
+  _ <- testIO testEnum "out-type.log" :: IO [TecEnumAST]
+  _ <- testIO testClass "out-class.log" :: IO [TecEnumAST]
   return ()

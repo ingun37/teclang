@@ -69,10 +69,10 @@ foreign export javascript "decodeHaskellData" decodeHaskellData :: JSString -> I
 decodeHaskellData :: JSString -> IO JSString
 decodeHaskellData code = toJSString <$> Util.decodeHaskellData (fromJSString code)
 
-foreign export javascript "decodeHaskellType" decodeHaskellType :: JSString -> IO JSString
-decodeHaskellType :: JSString -> IO JSString
-decodeHaskellType code = toJSString <$> Util.decodeHaskellType (fromJSString code)
+foreign export javascript "decodeHaskellEnum" decodeHaskellEnum :: JSString -> IO JSString
+decodeHaskellEnum :: JSString -> IO JSString
+decodeHaskellEnum code = toJSString <$> Util.decodeHaskellEnum (fromJSString code)
 
-foreign export javascript "encodeHaskellType" encodeHaskellType :: JSString -> IO JSString
-encodeHaskellType :: JSString -> IO JSString
-encodeHaskellType code = toJSString <$> Util.encodeHaskellType (fromJSString code)
+foreign export javascript "encodeHaskellEnum" encodeHaskellEnum :: JSString -> IO JSString
+encodeHaskellEnum :: JSString -> IO JSString
+encodeHaskellEnum code = toJSString <$> Util.encodeHaskellEnum (fromJSString code)

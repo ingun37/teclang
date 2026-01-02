@@ -6,11 +6,12 @@ import Data.Aeson
   )
 import GHC.Generics (Generic)
 import Language.Haskell.Exts qualified as E
+import TecClass
 import TecData
 import TecDecode
 import TecEncode
-import TecError
 import TecEnum
+import TecError
 
 class (Show a, Generic a, ToJSON a, FromJSON a) => TecAST a where
   decodeTecToCode :: a -> Either TecError String
@@ -51,6 +52,22 @@ instance TecAST TecEnumAST where
      in case result of
           E.ParseOk (E.Module _ Nothing [] [] decls) -> do
             ast <- encodeTecEnumAST decls
+            Right ast
+          E.ParseOk x -> do
+            Left $ TecErrorUnknownExp (show x)
+          E.ParseFailed _ str ->
+            tecError $ "Initial parsing failed:\n" ++ str
+
+instance TecAST TecClassAST where
+  decodeTecToCode ast = do
+    decls <- decodeTecClassAST ast
+    let m = E.Module () Nothing [] [] decls
+    return $ E.prettyPrint m
+  encodeCodeToTec code =
+    let result = E.parseModule code
+     in case result of
+          E.ParseOk (E.Module _ Nothing [] [] decls) -> do
+            ast <- encodeTecClassAST decls
             Right ast
           E.ParseOk x -> do
             Left $ TecErrorUnknownExp (show x)

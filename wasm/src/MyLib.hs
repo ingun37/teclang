@@ -14,11 +14,13 @@ module MyLib
     decodeTecToCode,
     TecEnumAST,
     formatHaskell,
+    TecClassAST,
   )
 where
 
 import TecAST
+import TecClass
+import TecData
+import TecEnum
 import TecError
 import TecFormat
-import TecEnum
-import TecData

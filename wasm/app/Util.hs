@@ -1,8 +1,8 @@
 module Util
   ( encodeHaskellData,
-    encodeHaskellType,
+    encodeHaskellEnum,
     decodeHaskellData,
-    decodeHaskellType,
+    decodeHaskellEnum,
     formatHaskell,
   )
 where
@@ -40,8 +40,8 @@ encodeHaskell code = do
 encodeHaskellData :: String -> IO String
 encodeHaskellData = fmap sigData . encodeHaskell
 
-encodeHaskellType :: String -> IO String
-encodeHaskellType = fmap sigType . encodeHaskell
+encodeHaskellEnum :: String -> IO String
+encodeHaskellEnum = fmap sigType . encodeHaskell
 
 decodeHaskell :: forall a. (MyLib.TecAST a, J.FromJSON a) => String -> IO (Const String a)
 decodeHaskell jsonStr = do
@@ -53,8 +53,8 @@ decodeHaskell jsonStr = do
 decodeHaskellData :: String -> IO String
 decodeHaskellData = fmap sigData . decodeHaskell
 
-decodeHaskellType :: String -> IO String
-decodeHaskellType = fmap sigType . decodeHaskell
+decodeHaskellEnum :: String -> IO String
+decodeHaskellEnum = fmap sigType . decodeHaskell
 
 formatHaskell :: String -> IO String
 formatHaskell code = do

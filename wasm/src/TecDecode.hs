@@ -4,9 +4,10 @@ import Control.Monad (foldM)
 import Data.Functor ((<&>))
 import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
+import TecClass
 import TecData
-import TecError
 import TecEnum
+import TecError
 
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))
@@ -56,3 +57,6 @@ decodeTecEnum (TecEnum name classes) = do
 
 decodeTecEnumAST :: TecEnumAST -> Either TecError [E.Decl ()]
 decodeTecEnumAST (TecEnumAST tecEnums) = traverse decodeTecEnum tecEnums
+
+decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
+decodeTecClassAST ast = Left $ TecErrorUnknownExp (show ast)
