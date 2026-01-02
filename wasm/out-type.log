@@ -3,7 +3,7 @@ data TecType = A
              | B
 ---- Raw AST ----
 TecTypeAST
-    { sumTypes =
+    { tecEnums =
         [ TecEnum
             { tecEnumName = "TecType"
             , tecEnumValues =
@@ -15,7 +15,7 @@ TecTypeAST
     }
 ---- Json encoded ----
 {
-    "sumTypes": [
+    "tecEnums": [
         {
             "tecEnumName": "TecType",
             "tecEnumValues": [
@@ -29,7 +29,7 @@ TecTypeAST
 data TecType = A
 ---- Raw AST ----
 TecTypeAST
-    { sumTypes =
+    { tecEnums =
         [ TecEnum
             { tecEnumName = "TecType"
             , tecEnumValues =
@@ -39,7 +39,7 @@ TecTypeAST
     }
 ---- Json encoded ----
 {
-    "sumTypes": [
+    "tecEnums": [
         {
             "tecEnumName": "TecType",
             "tecEnumValues": [
@@ -56,7 +56,7 @@ data Enum0 = A
 data TecType = AType
 ---- Raw AST ----
 TecTypeAST
-    { sumTypes =
+    { tecEnums =
         [ TecEnum
             { tecEnumName = "Enum0"
             , tecEnumValues =
@@ -74,7 +74,7 @@ TecTypeAST
     }
 ---- Json encoded ----
 {
-    "sumTypes": [
+    "tecEnums": [
         {
             "tecEnumName": "Enum0",
             "tecEnumValues": [
