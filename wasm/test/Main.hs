@@ -64,6 +64,10 @@ failIfLeft b =
       putStrLn "\n\n---- Entire AST show ----\n\n"
       Simple.pPrintString rawWholeAstShow
       fail "test failed"
+    (Left (ErrTec (TecErrorUnknownExp expShow ))) -> do
+      putStrLn "\n\n---- Unknown Expression ----\n\n"
+      Simple.pPrintString expShow
+      fail "test failed"
     (Left e) -> do
       Simple.pPrint e
       fail "test failed"
@@ -100,7 +104,7 @@ testData =
     ]
 
 testType :: [String]
-testType = 
+testType =
   [
     """
     data TecType = A
