@@ -5,7 +5,7 @@ import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
 import TecData
 import TecError
-import TecTypes
+import TecEnum
 
 encodeDecl :: (Show l) => E.Decl l -> Either TecError (String, E.Exp l)
 encodeDecl (E.PatBind _ (E.PVar _ (E.Ident _ name)) (E.UnGuardedRhs _ expr) _) = Right $ (name, expr)

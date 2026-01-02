@@ -6,7 +6,7 @@ import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
 import TecData
 import TecError
-import TecTypes
+import TecEnum
 
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))

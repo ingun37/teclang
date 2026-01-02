@@ -1,4 +1,4 @@
-module TecTypes where
+module TecEnum where
 
 import Data.Aeson
   ( FromJSON,

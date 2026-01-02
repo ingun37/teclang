@@ -10,7 +10,7 @@ import TecData
 import TecDecode
 import TecEncode
 import TecError
-import TecTypes
+import TecEnum
 
 class (Show a, Generic a, ToJSON a, FromJSON a) => TecAST a where
   decodeTecToCode :: a -> Either TecError String

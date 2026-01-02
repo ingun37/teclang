@@ -20,5 +20,5 @@ where
 import TecAST
 import TecError
 import TecFormat
-import TecTypes
+import TecEnum
 import TecData
