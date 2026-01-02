@@ -70,4 +70,4 @@ encodeTecEnum x = Left $ TecErrorUnknownExp (show x)
 encodeTecType :: (Show l) => [E.Decl l] -> Either TecError TecTypeAST
 encodeTecType decls = do
   tecEnums <- traverse encodeTecEnum decls
-  return $ TecTypeAST tecEnums []
+  return $ TecTypeAST tecEnums

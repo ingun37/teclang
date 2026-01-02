@@ -12,11 +12,9 @@ TecTypeAST
                 ]
             }
         ]
-    , tecClasses = []
     }
 ---- Json encoded ----
 {
-    "tecClasses": [],
     "tecEnums": [
         {
             "tecEnumName": "TecType",
@@ -38,11 +36,9 @@ TecTypeAST
                 [ TecValue "A" ]
             }
         ]
-    , tecClasses = []
     }
 ---- Json encoded ----
 {
-    "tecClasses": [],
     "tecEnums": [
         {
             "tecEnumName": "TecType",
@@ -75,11 +71,9 @@ TecTypeAST
                 [ TecValue "AType" ]
             }
         ]
-    , tecClasses = []
     }
 ---- Json encoded ----
 {
-    "tecClasses": [],
     "tecEnums": [
         {
             "tecEnumName": "Enum0",

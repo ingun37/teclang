@@ -55,4 +55,4 @@ decodeTecEnum (TecEnum name classes) = do
   return $ E.DataDecl () (E.DataType ()) Nothing (E.DHead () (E.Ident () name)) xs []
 
 decodeTecType :: TecTypeAST -> Either TecError [E.Decl ()]
-decodeTecType (TecTypeAST tecEnums tecClasses) = traverse decodeTecEnum tecEnums
+decodeTecType (TecTypeAST tecEnums) = traverse decodeTecEnum tecEnums
