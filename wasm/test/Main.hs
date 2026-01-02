@@ -124,7 +124,8 @@ testClass =
   [
     "f :: (A, B)",
     "f :: A",
-    "f :: A -> B -> C"
+    "f :: A -> B -> C",
+    "f :: A -> B -> (C, D)"
   ]
 testFormatUnit :: IO.Handle -> String -> IO ()
 testFormatUnit h s = do
