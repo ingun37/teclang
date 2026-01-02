@@ -6,7 +6,7 @@ TecTypeAST
     { sumTypes =
         [ TecSum
             { tecTypeName = "TecType"
-            , classes =
+            , tecValues =
                 [ TecValue "A"
                 , TecValue "B"
                 ]
@@ -17,11 +17,11 @@ TecTypeAST
 {
     "sumTypes": [
         {
-            "classes": [
+            "tecTypeName": "TecType",
+            "tecValues": [
                 "A",
                 "B"
-            ],
-            "tecTypeName": "TecType"
+            ]
         }
     ]
 }
@@ -32,7 +32,7 @@ TecTypeAST
     { sumTypes =
         [ TecSum
             { tecTypeName = "TecType"
-            , classes =
+            , tecValues =
                 [ TecValue "A" ]
             }
         ]
@@ -41,10 +41,10 @@ TecTypeAST
 {
     "sumTypes": [
         {
-            "classes": [
+            "tecTypeName": "TecType",
+            "tecValues": [
                 "A"
-            ],
-            "tecTypeName": "TecType"
+            ]
         }
     ]
 }
@@ -59,7 +59,7 @@ TecTypeAST
     { sumTypes =
         [ TecSum
             { tecTypeName = "Enum0"
-            , classes =
+            , tecValues =
                 [ TecValue "A"
                 , TecValue "B"
                 , TecValue "C"
@@ -67,7 +67,7 @@ TecTypeAST
             }
         , TecSum
             { tecTypeName = "TecType"
-            , classes =
+            , tecValues =
                 [ TecValue "AType" ]
             }
         ]
@@ -76,18 +76,18 @@ TecTypeAST
 {
     "sumTypes": [
         {
-            "classes": [
+            "tecTypeName": "Enum0",
+            "tecValues": [
                 "A",
                 "B",
                 "C"
-            ],
-            "tecTypeName": "Enum0"
+            ]
         },
         {
-            "classes": [
+            "tecTypeName": "TecType",
+            "tecValues": [
                 "AType"
-            ],
-            "tecTypeName": "TecType"
+            ]
         }
     ]
 }

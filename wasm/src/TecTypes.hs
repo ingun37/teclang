@@ -15,7 +15,7 @@ instance ToJSON TecValue where
 
 instance FromJSON TecValue
 
-data TecSum = TecSum {tecTypeName :: String, classes :: [TecValue]}
+data TecSum = TecSum {tecTypeName :: String, tecValues :: [TecValue]}
   deriving (Show, Generic)
 
 instance ToJSON TecSum where
