@@ -58,13 +58,17 @@ decodeTecEnum (TecEnum name classes) = do
 decodeTecEnumAST :: TecEnumAST -> Either TecError [E.Decl ()]
 decodeTecEnumAST (TecEnumAST tecEnums) = traverse decodeTecEnum tecEnums
 
+decodeTecAttributes :: TecAttributes -> Either TecError (E.Type ())
+decodeTecAttributes (TecAttributes [a]) = do
+  return $ E.TyCon () $ E.UnQual () $ E.Ident () a
+decodeTecAttributes (TecAttributes attribs) = do
+  return $ E.TyTuple () E.Boxed (map (E.TyCon () . E.UnQual () . E.Ident ()) attribs)
+
 decodeTecSignature :: TecSignature -> Either TecError (E.Type ())
-decodeTecSignature (TecSignature idxs [attribs]) = do
+decodeTecSignature (TecSignature idxs attribs) = do
+  atts <- decodeTecAttributes attribs
   let abb a = E.TyFun () (E.TyCon () (E.UnQual () (E.Ident () a)))
-  let b = E.TyCon () (E.UnQual () (E.Ident () attribs))
-  return $ foldr abb b idxs
-decodeTecSignature s = do
-  Left $ TecErrorUnknownExp (show s)
+  return $ foldr abb atts idxs
 
 decodeTecClass :: TecClass -> Either TecError (E.Decl ())
 decodeTecClass (TecClass className sig) = do

@@ -122,6 +122,7 @@ testEnum =
 testClass :: [String]
 testClass = 
   [
+    "f :: (A, B)",
     "f :: A",
     "f :: A -> B -> C"
   ]
