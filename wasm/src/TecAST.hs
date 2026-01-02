@@ -50,7 +50,7 @@ instance TecAST TecEnumAST where
     let result = E.parseModule code
      in case result of
           E.ParseOk (E.Module _ Nothing [] [] decls) -> do
-            ast <- encodeTecType decls
+            ast <- encodeTecEnumAST decls
             Right ast
           E.ParseOk x -> do
             Left $ TecErrorUnknownExp (show x)

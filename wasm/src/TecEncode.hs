@@ -67,7 +67,7 @@ encodeTecEnum (E.DataDecl _ (E.DataType _) Nothing (E.DHead _ (E.Ident _ name)) 
   return $ TecEnum name paramTypes
 encodeTecEnum x = Left $ TecErrorUnknownExp (show x)
 
-encodeTecType :: (Show l) => [E.Decl l] -> Either TecError TecEnumAST
-encodeTecType decls = do
+encodeTecEnumAST :: (Show l) => [E.Decl l] -> Either TecError TecEnumAST
+encodeTecEnumAST decls = do
   tecEnums <- traverse encodeTecEnum decls
   return $ TecEnumAST tecEnums
