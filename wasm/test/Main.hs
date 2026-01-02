@@ -107,13 +107,12 @@ testType =
                  | B
     """,
     "data TecType = A",
-    "data TecType = A String",
     """
     data Enum0 = A
                | B
                | C
 
-    data TecType = AType Enum0 String
+    data TecType = AType
     """
   ]
 

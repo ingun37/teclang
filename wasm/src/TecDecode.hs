@@ -45,8 +45,8 @@ decodeType :: String -> Either TecError (E.Type ())
 decodeType name = return $ E.TyCon () (E.UnQual () (E.Ident () name))
 
 decodeQualConDecl :: TecClass -> Either TecError (E.QualConDecl ())
-decodeQualConDecl (TecClass name params) = do
-  types <- traverse decodeType params
+decodeQualConDecl (TecClass name) = do
+  types <- traverse decodeType []
   return $ E.QualConDecl () Nothing Nothing (E.ConDecl () (E.Ident () name) types)
 
 decodeTecSum :: TecSum -> Either TecError (E.Decl ())
