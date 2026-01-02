@@ -70,5 +70,11 @@ encodeTecEnumAST decls = do
   tecEnums <- traverse encodeTecEnum decls
   return $ TecEnumAST tecEnums
 
+encodeTecClass :: (Show l) => E.Decl l -> Either TecError TecClass
+encodeTecClass (E.TypeSig _ [E.Ident _ className] (E.TyCon _ (E.UnQual _ (E.Ident _ y)))) = Right $ TecClass className [] [y]
+encodeTecClass decl = Left $ TecErrorUnknownExp (show decl)
+
 encodeTecClassAST :: (Show l) => [E.Decl l] -> Either TecError TecClassAST
-encodeTecClassAST decls = Left $ TecErrorUnknownExp (show decls)
+encodeTecClassAST decls = do
+  classes <- traverse encodeTecClass decls
+  return $ TecClassAST classes

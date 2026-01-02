@@ -1,2 +1,24 @@
 ---- Original Code ----
 f :: A
+---- Raw AST ----
+TecClassAST
+    { classes =
+        [ TecClass
+            { className = "f"
+            , indexSet = []
+            , attributes = [ "A" ]
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "classes": [
+        {
+            "attributes": [
+                "A"
+            ],
+            "className": "f",
+            "indexSet": []
+        }
+    ]
+}

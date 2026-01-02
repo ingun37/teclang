@@ -58,5 +58,11 @@ decodeTecEnum (TecEnum name classes) = do
 decodeTecEnumAST :: TecEnumAST -> Either TecError [E.Decl ()]
 decodeTecEnumAST (TecEnumAST tecEnums) = traverse decodeTecEnum tecEnums
 
+decodeTecClass :: TecClass -> Either TecError (E.Decl ())
+decodeTecClass (TecClass className indexSet [attribute]) = do
+  return (E.TypeSig () [E.Ident () className] (E.TyCon () (E.UnQual () (E.Ident () attribute))))
+decodeTecClass ast = do
+  Left $ TecErrorUnknownExp (show ast)
+
 decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
-decodeTecClassAST ast = Left $ TecErrorUnknownExp (show ast)
+decodeTecClassAST (TecClassAST classes) = traverse decodeTecClass classes
