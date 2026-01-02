@@ -11,46 +11,43 @@ encodeDecl :: (Show l) => E.Decl l -> Either TecError (String, E.Exp l)
 encodeDecl (E.PatBind _ (E.PVar _ (E.Ident _ name)) (E.UnGuardedRhs _ expr) _) = Right $ (name, expr)
 encodeDecl x = Left $ TecErrorUnknownExp (show x)
 
-encodeTecData :: (Show l) => E.Exp l -> Either TecError TecDataAST
-encodeTecData (E.Var _ (E.UnQual _ (E.Ident _ name))) = return $ TecVar name
-encodeTecData (E.Let _ (E.BDecls _ bindings) expression) = do
+encodeTecDataAST :: (Show l) => E.Exp l -> Either TecError TecDataAST
+encodeTecDataAST (E.Var _ (E.UnQual _ (E.Ident _ name))) = return $ TecVar name
+encodeTecDataAST (E.Let _ (E.BDecls _ bindings) expression) = do
   varKVs <- traverse encodeDecl bindings
   let varMap = Map.fromList varKVs
-  varMap' <- traverse encodeTecData varMap
-  expression' <- encodeTecData expression
+  varMap' <- traverse encodeTecDataAST varMap
+  expression' <- encodeTecDataAST expression
   return $ TecBinding varMap' expression'
-encodeTecData (E.App _ lhs rhs) = do
-  l <- encodeTecData lhs
-  r <- encodeTecData rhs
+encodeTecDataAST (E.App _ lhs rhs) = do
+  l <- encodeTecDataAST lhs
+  r <- encodeTecDataAST rhs
   case l of
     (TecCon typeName params) -> return $ TecCon typeName (params ++ [r])
     _ -> Left $ TecError "Unexpected left side"
-encodeTecData (E.Paren _ x) = encodeTecData x
-encodeTecData (E.Con _ (E.UnQual _ (E.Ident _ typeName))) = Right $ TecCon typeName []
-encodeTecData (E.InfixApp _ left (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) right) = do
-  l <- encodeTecData left
-  r <- encodeTecData right
+encodeTecDataAST (E.Paren _ x) = encodeTecDataAST x
+encodeTecDataAST (E.Con _ (E.UnQual _ (E.Ident _ typeName))) = Right $ TecCon typeName []
+encodeTecDataAST (E.InfixApp _ left (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) right) = do
+  l <- encodeTecDataAST left
+  r <- encodeTecDataAST right
   return $ TecQuery op l r
-encodeTecData (E.Lit _ (E.Int _ v _)) = Right $ TecInt (fromInteger v)
-encodeTecData (E.Lit _ (E.String _ v _)) = Right $ TecStr v
-encodeTecData (E.EnumFrom _ e) = do
-  f <- encodeTecData e
+encodeTecDataAST (E.Lit _ (E.Int _ v _)) = Right $ TecInt (fromInteger v)
+encodeTecDataAST (E.Lit _ (E.String _ v _)) = Right $ TecStr v
+encodeTecDataAST (E.EnumFrom _ e) = do
+  f <- encodeTecDataAST e
   case f of
     (TecInt i) -> Right $ TecRngInt i Nothing
     (TecCon label []) -> Right $ TecRngEnum label Nothing
     _ -> Left $ TecErrorUnknownExp (show e)
-encodeTecData (E.EnumFromTo l from to) = do
-  f <- encodeTecData from
-  t <- encodeTecData to
+encodeTecDataAST (E.EnumFromTo l from to) = do
+  f <- encodeTecDataAST from
+  t <- encodeTecDataAST to
   case (f, t) of
     (TecInt a, TecInt b) -> Right $ TecRngInt a (Just b)
     (TecCon a [], TecCon b []) -> Right $ TecRngEnum a (Just b)
     _ -> Left $ TecErrorUnknownExp (show (E.EnumFromTo l from to))
-encodeTecData (E.List _ exps) = traverse encodeTecData exps <&> TecList
-encodeTecData e = Left $ TecErrorUnknownExp (show e)
-
-_encodeTecType :: (Show l) => E.Decl l -> Either TecError TecEnumAST
-_encodeTecType d = Left $ TecErrorUnknownExp (show d)
+encodeTecDataAST (E.List _ exps) = traverse encodeTecDataAST exps <&> TecList
+encodeTecDataAST e = Left $ TecErrorUnknownExp (show e)
 
 encodeType :: (Show l) => E.Type l -> Either TecError String
 encodeType (E.TyCon _ (E.UnQual _ (E.Ident _ name))) = return name

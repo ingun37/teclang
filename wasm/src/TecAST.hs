@@ -26,7 +26,7 @@ tecError str = Left $ TecError str
 
 instance TecAST TecDataAST where
   decodeTecToCode ast = do
-    e <- decodeTecData ast
+    e <- decodeTecDataAST ast
     let m = E.Module () Nothing [] [] [E.PatBind () (E.PVar () (E.Ident () "tecData")) (E.UnGuardedRhs () e) Nothing]
     return $ E.prettyPrint m
   encodeCodeToTec code =
@@ -34,7 +34,7 @@ instance TecAST TecDataAST where
      in case result of
           E.ParseOk (E.Module _ _ _ _ [E.PatBind _ _ (E.UnGuardedRhs _ e) _]) -> do
             -- tecError (show rhs)
-            ast <- mapWholeExpShow e $ encodeTecData e
+            ast <- mapWholeExpShow e $ encodeTecDataAST e
             Right ast
           E.ParseOk x -> do
             Left $ TecErrorUnknownExp (show x)
