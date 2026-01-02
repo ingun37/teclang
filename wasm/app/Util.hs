@@ -26,7 +26,7 @@ failIfLeft = either (fail . show) return
 
 type Sig a = (MyLib.TecAST a) => Const String a -> String
 
-sigType :: Sig MyLib.TecTypeAST
+sigType :: Sig MyLib.TecEnumAST
 sigType = getConst
 
 sigData :: Sig MyLib.TecDataAST

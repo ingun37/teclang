@@ -54,5 +54,5 @@ decodeTecEnum (TecEnum name classes) = do
   xs <- traverse decodeQualConDecl classes
   return $ E.DataDecl () (E.DataType ()) Nothing (E.DHead () (E.Ident () name)) xs []
 
-decodeTecType :: TecTypeAST -> Either TecError [E.Decl ()]
-decodeTecType (TecTypeAST tecEnums) = traverse decodeTecEnum tecEnums
+decodeTecType :: TecEnumAST -> Either TecError [E.Decl ()]
+decodeTecType (TecEnumAST tecEnums) = traverse decodeTecEnum tecEnums

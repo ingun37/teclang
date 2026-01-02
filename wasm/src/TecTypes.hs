@@ -23,9 +23,9 @@ instance ToJSON TecEnum where
 
 instance FromJSON TecEnum
 
-data TecTypeAST = TecTypeAST {tecEnums :: [TecEnum]} deriving (Show, Generic)
+data TecEnumAST = TecEnumAST {tecEnums :: [TecEnum]} deriving (Show, Generic)
 
-instance ToJSON TecTypeAST where
+instance ToJSON TecEnumAST where
   toEncoding = genericToEncoding defaultOptions
 
-instance FromJSON TecTypeAST
+instance FromJSON TecEnumAST

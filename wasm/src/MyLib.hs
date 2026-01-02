@@ -12,7 +12,7 @@ module MyLib
     TecAST,
     encodeCodeToTec,
     decodeTecToCode,
-    TecTypeAST,
+    TecEnumAST,
     formatHaskell,
   )
 where

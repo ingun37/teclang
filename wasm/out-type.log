@@ -2,7 +2,7 @@
 data TecType = A
              | B
 ---- Raw AST ----
-TecTypeAST
+TecEnumAST
     { tecEnums =
         [ TecEnum
             { tecEnumName = "TecType"
@@ -28,7 +28,7 @@ TecTypeAST
 ---- Original Code ----
 data TecType = A
 ---- Raw AST ----
-TecTypeAST
+TecEnumAST
     { tecEnums =
         [ TecEnum
             { tecEnumName = "TecType"
@@ -55,7 +55,7 @@ data Enum0 = A
 
 data TecType = AType
 ---- Raw AST ----
-TecTypeAST
+TecEnumAST
     { tecEnums =
         [ TecEnum
             { tecEnumName = "Enum0"

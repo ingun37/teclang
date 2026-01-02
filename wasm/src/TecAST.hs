@@ -41,7 +41,7 @@ instance TecAST TecDataAST where
           E.ParseFailed _ str ->
             tecError $ "Initial parsing failed:\n" ++ str
 
-instance TecAST TecTypeAST where
+instance TecAST TecEnumAST where
   decodeTecToCode ast = do
     decls <- decodeTecType ast
     let m = E.Module () Nothing [] [] decls

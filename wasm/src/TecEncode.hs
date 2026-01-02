@@ -49,7 +49,7 @@ encodeTecData (E.EnumFromTo l from to) = do
 encodeTecData (E.List _ exps) = traverse encodeTecData exps <&> TecList
 encodeTecData e = Left $ TecErrorUnknownExp (show e)
 
-_encodeTecType :: (Show l) => E.Decl l -> Either TecError TecTypeAST
+_encodeTecType :: (Show l) => E.Decl l -> Either TecError TecEnumAST
 _encodeTecType d = Left $ TecErrorUnknownExp (show d)
 
 encodeType :: (Show l) => E.Type l -> Either TecError String
@@ -67,7 +67,7 @@ encodeTecEnum (E.DataDecl _ (E.DataType _) Nothing (E.DHead _ (E.Ident _ name)) 
   return $ TecEnum name paramTypes
 encodeTecEnum x = Left $ TecErrorUnknownExp (show x)
 
-encodeTecType :: (Show l) => [E.Decl l] -> Either TecError TecTypeAST
+encodeTecType :: (Show l) => [E.Decl l] -> Either TecError TecEnumAST
 encodeTecType decls = do
   tecEnums <- traverse encodeTecEnum decls
-  return $ TecTypeAST tecEnums
+  return $ TecEnumAST tecEnums

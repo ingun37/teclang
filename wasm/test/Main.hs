@@ -142,5 +142,5 @@ main :: IO ()
 main = do
   -- formatTest "out-format.log"
   _ <- testIO testData "out-data.log" :: IO [TecDataAST]
-  _ <- testIO testType "out-type.log" :: IO [TecTypeAST]
+  _ <- testIO testType "out-type.log" :: IO [TecEnumAST]
   return ()
