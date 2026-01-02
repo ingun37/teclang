@@ -130,3 +130,45 @@ TecClassAST
         }
     ]
 }
+---- Original Code ----
+f :: A -> B -> C -> (D, E, F)
+---- Raw AST ----
+TecClassAST
+    { classes =
+        [ TecClass
+            { className = "f"
+            , tecSignature = TecSignature
+                { indexSet =
+                    [ "A"
+                    , "B"
+                    , "C"
+                    ]
+                , attributes = TecAttributes
+                    [ "D"
+                    , "E"
+                    , "F"
+                    ]
+                }
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "classes": [
+        {
+            "className": "f",
+            "tecSignature": {
+                "attributes": [
+                    "D",
+                    "E",
+                    "F"
+                ],
+                "indexSet": [
+                    "A",
+                    "B",
+                    "C"
+                ]
+            }
+        }
+    ]
+}
