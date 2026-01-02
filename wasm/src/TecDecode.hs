@@ -49,10 +49,10 @@ decodeQualConDecl (TecValue name) = do
   types <- traverse decodeType []
   return $ E.QualConDecl () Nothing Nothing (E.ConDecl () (E.Ident () name) types)
 
-decodeTecSum :: TecEnum -> Either TecError (E.Decl ())
-decodeTecSum (TecEnum name classes) = do
+decodeTecEnum :: TecEnum -> Either TecError (E.Decl ())
+decodeTecEnum (TecEnum name classes) = do
   xs <- traverse decodeQualConDecl classes
   return $ E.DataDecl () (E.DataType ()) Nothing (E.DHead () (E.Ident () name)) xs []
 
 decodeTecType :: TecTypeAST -> Either TecError [E.Decl ()]
-decodeTecType (TecTypeAST tecSums) = traverse decodeTecSum tecSums
+decodeTecType (TecTypeAST tecSums) = traverse decodeTecEnum tecSums
