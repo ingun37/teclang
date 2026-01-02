@@ -5,8 +5,8 @@ data TecType = A
 TecTypeAST
     { sumTypes =
         [ TecSum
-            { tecTypeName = "TecType"
-            , tecValues =
+            { tecEnumName = "TecType"
+            , tecEnumValues =
                 [ TecValue "A"
                 , TecValue "B"
                 ]
@@ -17,8 +17,8 @@ TecTypeAST
 {
     "sumTypes": [
         {
-            "tecTypeName": "TecType",
-            "tecValues": [
+            "tecEnumName": "TecType",
+            "tecEnumValues": [
                 "A",
                 "B"
             ]
@@ -31,8 +31,8 @@ data TecType = A
 TecTypeAST
     { sumTypes =
         [ TecSum
-            { tecTypeName = "TecType"
-            , tecValues =
+            { tecEnumName = "TecType"
+            , tecEnumValues =
                 [ TecValue "A" ]
             }
         ]
@@ -41,8 +41,8 @@ TecTypeAST
 {
     "sumTypes": [
         {
-            "tecTypeName": "TecType",
-            "tecValues": [
+            "tecEnumName": "TecType",
+            "tecEnumValues": [
                 "A"
             ]
         }
@@ -58,16 +58,16 @@ data TecType = AType
 TecTypeAST
     { sumTypes =
         [ TecSum
-            { tecTypeName = "Enum0"
-            , tecValues =
+            { tecEnumName = "Enum0"
+            , tecEnumValues =
                 [ TecValue "A"
                 , TecValue "B"
                 , TecValue "C"
                 ]
             }
         , TecSum
-            { tecTypeName = "TecType"
-            , tecValues =
+            { tecEnumName = "TecType"
+            , tecEnumValues =
                 [ TecValue "AType" ]
             }
         ]
@@ -76,16 +76,16 @@ TecTypeAST
 {
     "sumTypes": [
         {
-            "tecTypeName": "Enum0",
-            "tecValues": [
+            "tecEnumName": "Enum0",
+            "tecEnumValues": [
                 "A",
                 "B",
                 "C"
             ]
         },
         {
-            "tecTypeName": "TecType",
-            "tecValues": [
+            "tecEnumName": "TecType",
+            "tecEnumValues": [
                 "AType"
             ]
         }
