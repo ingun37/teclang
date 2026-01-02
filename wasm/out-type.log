@@ -4,7 +4,7 @@ data TecType = A
 ---- Raw AST ----
 TecTypeAST
     { sumTypes =
-        [ TecSum
+        [ TecEnum
             { tecEnumName = "TecType"
             , tecEnumValues =
                 [ TecValue "A"
@@ -30,7 +30,7 @@ data TecType = A
 ---- Raw AST ----
 TecTypeAST
     { sumTypes =
-        [ TecSum
+        [ TecEnum
             { tecEnumName = "TecType"
             , tecEnumValues =
                 [ TecValue "A" ]
@@ -57,7 +57,7 @@ data TecType = AType
 ---- Raw AST ----
 TecTypeAST
     { sumTypes =
-        [ TecSum
+        [ TecEnum
             { tecEnumName = "Enum0"
             , tecEnumValues =
                 [ TecValue "A"
@@ -65,7 +65,7 @@ TecTypeAST
                 , TecValue "C"
                 ]
             }
-        , TecSum
+        , TecEnum
             { tecEnumName = "TecType"
             , tecEnumValues =
                 [ TecValue "AType" ]

@@ -61,10 +61,10 @@ encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name)
   return $ TecValue name
 encodeQualConDecl x = Left $ TecErrorUnknownExp (show x)
 
-encodeTecSum :: (Show l) => E.Decl l -> Either TecError TecSum
+encodeTecSum :: (Show l) => E.Decl l -> Either TecError TecEnum
 encodeTecSum (E.DataDecl _ (E.DataType _) Nothing (E.DHead _ (E.Ident _ name)) decls []) = do
   paramTypes <- traverse encodeQualConDecl decls
-  return $ TecSum name paramTypes
+  return $ TecEnum name paramTypes
 encodeTecSum x = Left $ TecErrorUnknownExp (show x)
 
 encodeTecType :: (Show l) => [E.Decl l] -> Either TecError TecTypeAST

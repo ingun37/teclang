@@ -15,15 +15,15 @@ instance ToJSON TecValue where
 
 instance FromJSON TecValue
 
-data TecSum = TecSum {tecEnumName :: String, tecEnumValues :: [TecValue]}
+data TecEnum = TecEnum {tecEnumName :: String, tecEnumValues :: [TecValue]}
   deriving (Show, Generic)
 
-instance ToJSON TecSum where
+instance ToJSON TecEnum where
   toEncoding = genericToEncoding defaultOptions
 
-instance FromJSON TecSum
+instance FromJSON TecEnum
 
-data TecTypeAST = TecTypeAST {sumTypes :: [TecSum]} deriving (Show, Generic)
+data TecTypeAST = TecTypeAST {sumTypes :: [TecEnum]} deriving (Show, Generic)
 
 instance ToJSON TecTypeAST where
   toEncoding = genericToEncoding defaultOptions
