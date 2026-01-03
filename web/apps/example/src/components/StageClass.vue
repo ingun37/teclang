@@ -11,7 +11,9 @@ const tecClassAST = ref<C.TecClass.TecClassAST | null>(null);
 const haskellCode = ref("");
 
 const sampleHaskellCode = `\
-f :: A -> B -> C D
+render :: Side -> Article -> Image
+pom :: Side -> Line -> Number
+schematic :: Side -> Image
 `;
 
 function fillSampleCode() {
