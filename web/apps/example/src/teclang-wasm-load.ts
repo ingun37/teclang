@@ -3,8 +3,10 @@ import wasm_wrapper from "./teclang-wasm.js";
 export interface HaskellWasm {
   decodeHaskellData(jsonStr: string): Promise<string>;
   decodeHaskellEnum(jsonStr: string): Promise<string>;
+  decodeHaskellClass(jsonStr: string): Promise<string>;
   encodeHaskellData(jsonStr: string): Promise<string>;
   encodeHaskellEnum(jsonStr: string): Promise<string>;
+  encodeHaskellClass(jsonStr: string): Promise<string>;
   // formatHaskell(jsonStr: string): Promise<string>;
 }
 export async function loadTecLangWasm() {
