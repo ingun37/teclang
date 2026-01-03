@@ -13,7 +13,6 @@
       </v-col>
       <v-col v-if="tecEnumAst" cols="12">
         <StageClass :tec-enum-ast="tecEnumAst" @update="tecClassAst = $event" />
-        />
       </v-col>
 
       <v-col cols="12">
