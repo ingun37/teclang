@@ -1,3 +1,5 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
 module TecClass where
 
 import Data.Aeson
@@ -9,7 +11,7 @@ import Data.Aeson
 import GHC.Generics (Generic)
 
 newtype TecAttributes = TecAttributes [String]
-  deriving (Show, Generic)
+  deriving (Show, Generic, Semigroup)
 
 instance ToJSON TecAttributes where
   toEncoding = genericToEncoding defaultOptions

@@ -73,9 +73,10 @@ encodeTecEnumAST decls = do
 encodeTecAttributes :: (Show l) => E.Type l -> Either TecError TecAttributes
 encodeTecAttributes (E.TyCon _ (E.UnQual _ (E.Ident _ y))) = do
   return $ TecAttributes [y]
-encodeTecAttributes (E.TyTuple _ E.Boxed elements) = do
-  tecs <- traverse encodeTecAttributes elements
-  return $ TecAttributes $ concat [x | TecAttributes x <- tecs]
+encodeTecAttributes (E.TyApp _ left right) = do
+  l <- encodeTecAttributes left
+  r <- encodeTecAttributes right
+  return $ l <> r
 encodeTecAttributes e = do
   Left $ TecErrorUnknownExp (show e)
 

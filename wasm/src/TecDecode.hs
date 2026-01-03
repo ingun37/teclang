@@ -59,10 +59,12 @@ decodeTecEnumAST :: TecEnumAST -> Either TecError [E.Decl ()]
 decodeTecEnumAST (TecEnumAST tecEnums) = traverse decodeTecEnum tecEnums
 
 decodeTecAttributes :: TecAttributes -> Either TecError (E.Type ())
-decodeTecAttributes (TecAttributes [a]) = do
-  return $ E.TyCon () $ E.UnQual () $ E.Ident () a
-decodeTecAttributes (TecAttributes attribs) = do
-  return $ E.TyTuple () E.Boxed (map (E.TyCon () . E.UnQual () . E.Ident ()) attribs)
+decodeTecAttributes (TecAttributes []) = do
+  Left $ TecError "TecAttributes are empty"
+decodeTecAttributes (TecAttributes (a:as)) = do
+  let bab b a = E.TyApp () b (E.TyCon () $ E.UnQual () $ E.Ident () a)
+  let b = E.TyCon () $ E.UnQual () $ E.Ident () a
+  return $ foldl bab b as
 
 decodeTecSignature :: TecSignature -> Either TecError (E.Type ())
 decodeTecSignature (TecSignature idxs attribs) = do

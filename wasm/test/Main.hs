@@ -122,11 +122,12 @@ testEnum =
 testClass :: [String]
 testClass = 
   [
-    "f :: (A, B)",
+    "f :: A B C",
+    "f :: A B",
     "f :: A",
     "f :: A -> B -> C",
-    "f :: A -> B -> (C, D)",
-    "f :: A -> B -> C -> (D, E, F)"
+    "f :: A -> B -> C D",
+    "f :: A -> B -> C -> D E F"
   ]
 testFormatUnit :: IO.Handle -> String -> IO ()
 testFormatUnit h s = do
