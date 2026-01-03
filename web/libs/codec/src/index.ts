@@ -1,19 +1,9 @@
-import * as TecType from "./TecType.js";
 import * as TecEnum from "./TecEnum.js";
 import * as TecClass from "./TecClass.js";
 import { Schema as S } from "effect";
 
-export * as TecType from "./TecType.js";
 export * as TecEnum from "./TecEnum.js";
 export * as TecClass from "./TecClass.js";
-
-export function tecSchemaToJson(decoded: TecType.TecSchema): any {
-  return S.encodeUnknownSync(TecType.TecSchemaFromTecType)(decoded);
-}
-
-export function jsonToTecSchema(json: any): TecType.TecSchema {
-  return S.decodeUnknownSync(TecType.TecSchemaFromTecType)(json);
-}
 
 export function jsonToTecEnumAST(json: any): TecEnum.TecEnumAST {
   return S.decodeUnknownSync(TecEnum.TecEnumAST)(json);
