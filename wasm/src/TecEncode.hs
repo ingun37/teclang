@@ -89,12 +89,12 @@ encodeTecSignature t = do
   return $ TecSignature [] attribs
 
 encodeTecClass :: (Show l) => E.Decl l -> Either TecError TecClass
-encodeTecClass (E.TypeSig _ [E.Ident _ className] sig) = do
+encodeTecClass (E.TypeSig _ [E.Ident _ tecClassName] sig) = do
   s <- encodeTecSignature sig
-  return $ TecClass className s
+  return $ TecClass tecClassName s
 encodeTecClass decl = Left $ TecErrorUnknownExp (show decl)
 
 encodeTecClassAST :: (Show l) => [E.Decl l] -> Either TecError TecClassAST
 encodeTecClassAST decls = do
-  classes <- traverse encodeTecClass decls
-  return $ TecClassAST classes
+  tecClasses <- traverse encodeTecClass decls
+  return $ TecClassAST tecClasses

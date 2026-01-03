@@ -2,9 +2,9 @@
 f :: A B C
 ---- Raw AST ----
 TecClassAST
-    { classes =
+    { tecClasses =
         [ TecClass
-            { className = "f"
+            { tecClassName = "f"
             , tecSignature = TecSignature
                 { indexSet = []
                 , attributes = TecAttributes
@@ -18,9 +18,9 @@ TecClassAST
     }
 ---- Json encoded ----
 {
-    "classes": [
+    "tecClasses": [
         {
-            "className": "f",
+            "tecClassName": "f",
             "tecSignature": {
                 "attributes": [
                     "A",
@@ -36,9 +36,9 @@ TecClassAST
 f :: A B
 ---- Raw AST ----
 TecClassAST
-    { classes =
+    { tecClasses =
         [ TecClass
-            { className = "f"
+            { tecClassName = "f"
             , tecSignature = TecSignature
                 { indexSet = []
                 , attributes = TecAttributes
@@ -51,9 +51,9 @@ TecClassAST
     }
 ---- Json encoded ----
 {
-    "classes": [
+    "tecClasses": [
         {
-            "className": "f",
+            "tecClassName": "f",
             "tecSignature": {
                 "attributes": [
                     "A",
@@ -68,9 +68,9 @@ TecClassAST
 f :: A
 ---- Raw AST ----
 TecClassAST
-    { classes =
+    { tecClasses =
         [ TecClass
-            { className = "f"
+            { tecClassName = "f"
             , tecSignature = TecSignature
                 { indexSet = []
                 , attributes = TecAttributes [ "A" ]
@@ -80,9 +80,9 @@ TecClassAST
     }
 ---- Json encoded ----
 {
-    "classes": [
+    "tecClasses": [
         {
-            "className": "f",
+            "tecClassName": "f",
             "tecSignature": {
                 "attributes": [
                     "A"
@@ -96,9 +96,9 @@ TecClassAST
 f :: A -> B -> C
 ---- Raw AST ----
 TecClassAST
-    { classes =
+    { tecClasses =
         [ TecClass
-            { className = "f"
+            { tecClassName = "f"
             , tecSignature = TecSignature
                 { indexSet =
                     [ "A"
@@ -111,9 +111,9 @@ TecClassAST
     }
 ---- Json encoded ----
 {
-    "classes": [
+    "tecClasses": [
         {
-            "className": "f",
+            "tecClassName": "f",
             "tecSignature": {
                 "attributes": [
                     "C"
@@ -130,9 +130,9 @@ TecClassAST
 f :: A -> B -> C D
 ---- Raw AST ----
 TecClassAST
-    { classes =
+    { tecClasses =
         [ TecClass
-            { className = "f"
+            { tecClassName = "f"
             , tecSignature = TecSignature
                 { indexSet =
                     [ "A"
@@ -148,9 +148,9 @@ TecClassAST
     }
 ---- Json encoded ----
 {
-    "classes": [
+    "tecClasses": [
         {
-            "className": "f",
+            "tecClassName": "f",
             "tecSignature": {
                 "attributes": [
                     "C",
@@ -168,9 +168,9 @@ TecClassAST
 f :: A -> B -> C -> D E F
 ---- Raw AST ----
 TecClassAST
-    { classes =
+    { tecClasses =
         [ TecClass
-            { className = "f"
+            { tecClassName = "f"
             , tecSignature = TecSignature
                 { indexSet =
                     [ "A"
@@ -188,9 +188,9 @@ TecClassAST
     }
 ---- Json encoded ----
 {
-    "classes": [
+    "tecClasses": [
         {
-            "className": "f",
+            "tecClassName": "f",
             "tecSignature": {
                 "attributes": [
                     "D",

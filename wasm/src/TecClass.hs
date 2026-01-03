@@ -30,7 +30,7 @@ instance ToJSON TecSignature where
 instance FromJSON TecSignature
 
 data TecClass = TecClass
-  { className :: String,
+  { tecClassName :: String,
     tecSignature :: TecSignature
   }
   deriving (Show, Generic)
@@ -40,7 +40,7 @@ instance ToJSON TecClass where
 
 instance FromJSON TecClass
 
-data TecClassAST = TecClassAST {classes :: [TecClass]} deriving (Show, Generic)
+data TecClassAST = TecClassAST {tecClasses :: [TecClass]} deriving (Show, Generic)
 
 instance ToJSON TecClassAST where
   toEncoding = genericToEncoding defaultOptions

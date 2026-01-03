@@ -73,9 +73,9 @@ decodeTecSignature (TecSignature idxs attribs) = do
   return $ foldr abb atts idxs
 
 decodeTecClass :: TecClass -> Either TecError (E.Decl ())
-decodeTecClass (TecClass className sig) = do
+decodeTecClass (TecClass tecClassName sig) = do
   s <- decodeTecSignature sig
-  return (E.TypeSig () [E.Ident () className] s)
+  return (E.TypeSig () [E.Ident () tecClassName] s)
 
 decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
-decodeTecClassAST (TecClassAST classes) = traverse decodeTecClass classes
+decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
