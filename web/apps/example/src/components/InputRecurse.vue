@@ -6,16 +6,18 @@ import InputParam from "@/components/InputParam.vue";
 const props = defineProps<{
   axis: Axis;
   paramIndex: number;
-  tecIndexedClass: C.TecType.TecIndexedClass;
-  tecEnums: readonly C.TecType.TecEnum[];
+  tecIndexedClass: C.TecClass.TecClass;
+  tecEnums: C.TecEnum.TecEnumAST;
 }>();
-const iter = computed<C.TecType.TecEnum | null>(() => {
+const iter = computed<C.TecEnum.TecEnum | null>(() => {
   return E.pipe(
-    props.tecEnums,
+    props.tecEnums.tecEnums,
     E.Array.findFirst(
       (tecEnum) =>
-        tecEnum.tecTypeName ===
-        props.tecIndexedClass.indexSet[props.paramIndex],
+        (tecEnum.tecEnumName as string) ===
+        (props.tecIndexedClass.tecSignature.indexSet[
+          props.paramIndex
+        ] as string),
     ),
     E.Option.getOrNull,
   );
@@ -28,7 +30,7 @@ const iter = computed<C.TecType.TecEnum | null>(() => {
     :class="['d-flex', axis === 'x' ? 'flex-row' : 'flex-column']"
   >
     <InputRecurse
-      v-for="value in iter.values"
+      v-for="value in iter.tecEnumValues"
       :key="value"
       :axis="axis === 'x' ? 'y' : 'x'"
       :paramIndex="paramIndex + 1"
@@ -37,7 +39,7 @@ const iter = computed<C.TecType.TecEnum | null>(() => {
     />
   </div>
   <div v-else>
-    <InputParam :param-type="tecIndexedClass.paramType" />
+    <InputParam :param-type="tecIndexedClass.tecSignature.attributes[0]" />
   </div>
 </template>
 

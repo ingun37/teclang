@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import * as C from "codec";
 import InputClass from "@/components/InputClass.vue";
-defineProps<{ tecSchema: C.TecType.TecSchema }>();
+defineProps<{
+  tecClassAst: C.TecClass.TecClassAST;
+  tecEnumAst: C.TecEnum.TecEnumAST;
+}>();
 </script>
 
 <template>
   <v-container>
     <v-row>
       <v-col
-        v-for="tecClass in tecSchema.indexedClasses"
-        :key="tecClass.className"
+        v-for="tecClass in tecClassAst.tecClasses"
+        :key="tecClass.tecClassName"
         cols="12"
       >
-        <InputClass
-          :tec-indexed-class="tecClass"
-          :tec-enums="tecSchema.tecEnums"
-        />
+        <InputClass :tec-class="tecClass" :tec-enums="tecEnumAst" />
       </v-col>
     </v-row>
   </v-container>

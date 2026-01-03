@@ -18,8 +18,11 @@
       <v-col cols="12">
         <div :class="['text-h2']">Stage 2. Data Input</div>
       </v-col>
-      <v-col v-if="tecSchema" cols="12">
-        <DataInputStage :tec-schema="tecSchema" />
+      <v-col v-if="tecEnumAst && tecClassAst" cols="12">
+        <DataInputStage
+          :tec-class-ast="tecClassAst"
+          :tec-enum-ast="tecEnumAst"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -31,6 +34,5 @@ import DataInputStage from "@/components/DataInputStage.vue";
 import StageEnum from "@/components/StageEnum.vue";
 import StageClass from "@/components/StageClass.vue";
 const tecEnumAst = ref<C.TecEnum.TecEnumAST | null>(null);
-const tecSchema = ref<C.TecType.TecSchema | null>(null);
 const tecClassAst = ref<C.TecClass.TecClassAST | null>(null);
 </script>
