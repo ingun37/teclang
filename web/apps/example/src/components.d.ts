@@ -27,5 +27,8 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SchemaStage: typeof import('./components/SchemaStage.vue')['default']
+    StageEnum: typeof import('./components/StageEnum.vue')['default']
+    TecEnum: typeof import('./components/TecEnum.vue')['default']
+    TecEnumAST: typeof import('./components/TecEnumAST.vue')['default']
   }
 }

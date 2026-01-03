@@ -1,6 +1,4 @@
 import { Schema as S } from "effect";
-import * as E from "effect";
-import * as H from "./helper.js";
 export const TecEnumValue = S.String.pipe(S.brand("TecEnumValue"));
 export type TecEnumValue = typeof TecEnumValue.Type;
 
@@ -11,4 +9,6 @@ export const TecEnum = S.Struct({
   tecEnumName: TecEnumName,
   tecEnumValues: S.Array(TecEnumValue),
 });
+export type TecEnum = typeof TecEnum.Type;
 export const TecEnumAST = S.Struct({ tecEnums: S.Array(TecEnum) });
+export type TecEnumAST = typeof TecEnumAST.Type;
