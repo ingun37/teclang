@@ -1,8 +1,10 @@
 module Util
   ( encodeHaskellData,
     encodeHaskellEnum,
+    encodeHaskellClass,
     decodeHaskellData,
     decodeHaskellEnum,
+    decodeHaskellClass,
     formatHaskell,
   )
 where
@@ -26,11 +28,14 @@ failIfLeft = either (fail . show) return
 
 type Sig a = (MyLib.TecAST a) => Const String a -> String
 
-sigType :: Sig MyLib.TecEnumAST
-sigType = getConst
+sigEnum :: Sig MyLib.TecEnumAST
+sigEnum = getConst
 
 sigData :: Sig MyLib.TecDataAST
 sigData = getConst
+
+sigClass :: Sig MyLib.TecClassAST
+sigClass = getConst
 
 encodeHaskell :: forall a. (MyLib.TecAST a, J.ToJSON a) => String -> IO (Const String a)
 encodeHaskell code = do
@@ -41,7 +46,10 @@ encodeHaskellData :: String -> IO String
 encodeHaskellData = fmap sigData . encodeHaskell
 
 encodeHaskellEnum :: String -> IO String
-encodeHaskellEnum = fmap sigType . encodeHaskell
+encodeHaskellEnum = fmap sigEnum . encodeHaskell
+
+encodeHaskellClass :: String -> IO String
+encodeHaskellClass = fmap sigClass . encodeHaskell
 
 decodeHaskell :: forall a. (MyLib.TecAST a, J.FromJSON a) => String -> IO (Const String a)
 decodeHaskell jsonStr = do
@@ -54,7 +62,10 @@ decodeHaskellData :: String -> IO String
 decodeHaskellData = fmap sigData . decodeHaskell
 
 decodeHaskellEnum :: String -> IO String
-decodeHaskellEnum = fmap sigType . decodeHaskell
+decodeHaskellEnum = fmap sigEnum . decodeHaskell
+
+decodeHaskellClass :: String -> IO String
+decodeHaskellClass = fmap sigClass . decodeHaskell
 
 formatHaskell :: String -> IO String
 formatHaskell code = do
