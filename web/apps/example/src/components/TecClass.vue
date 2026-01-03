@@ -17,10 +17,7 @@ defineProps<{ tecEnumAst: C.TecEnum.TecEnumAST }>();
           density="compact"
           variant="underlined"
         />
-        <TecSignature
-          :tec-enum-ast="tecEnumAst"
-          :model-value="model.tecSignature"
-        />
+        <TecSignature :tec-enum-ast="tecEnumAst" v-model="model.tecSignature" />
       </div>
     </v-card-text>
   </v-card>
