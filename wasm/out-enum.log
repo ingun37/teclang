@@ -1,5 +1,5 @@
 ---- Original Code ----
-data TecType = A{x :: X}
+data TecType = A X
 ---- Raw AST ----
 TecEnumAST
     { tecEnums =
@@ -8,13 +8,7 @@ TecEnumAST
             , tecEnumValues =
                 [ TecValue "A" ]
             , tecEnumRepresentation = TecEnumRepresentation
-                { repAttribs =
-                    [ TecEnumRepresentationAttribute
-                        { repAttribKey = "x"
-                        , repAttribType = "X"
-                        }
-                    ]
-                }
+                { repAttribs = [ "X" ] }
             }
         ]
     }
@@ -25,10 +19,7 @@ TecEnumAST
             "tecEnumName": "TecType",
             "tecEnumRepresentation": {
                 "repAttribs": [
-                    {
-                        "repAttribKey": "x",
-                        "repAttribType": "X"
-                    }
+                    "X"
                 ]
             },
             "tecEnumValues": [
@@ -38,7 +29,7 @@ TecEnumAST
     ]
 }
 ---- Original Code ----
-data TecType = A{x :: X, y :: Y}
+data TecType = A X Y
 ---- Raw AST ----
 TecEnumAST
     { tecEnums =
@@ -48,14 +39,8 @@ TecEnumAST
                 [ TecValue "A" ]
             , tecEnumRepresentation = TecEnumRepresentation
                 { repAttribs =
-                    [ TecEnumRepresentationAttribute
-                        { repAttribKey = "x"
-                        , repAttribType = "X"
-                        }
-                    , TecEnumRepresentationAttribute
-                        { repAttribKey = "y"
-                        , repAttribType = "Y"
-                        }
+                    [ "X"
+                    , "Y"
                     ]
                 }
             }
@@ -68,14 +53,8 @@ TecEnumAST
             "tecEnumName": "TecType",
             "tecEnumRepresentation": {
                 "repAttribs": [
-                    {
-                        "repAttribKey": "x",
-                        "repAttribType": "X"
-                    },
-                    {
-                        "repAttribKey": "y",
-                        "repAttribType": "Y"
-                    }
+                    "X",
+                    "Y"
                 ]
             },
             "tecEnumValues": [
@@ -86,7 +65,7 @@ TecEnumAST
 }
 ---- Original Code ----
 data TecType = A
-             | B{x :: X, y :: Y}
+             | B X Y
 ---- Raw AST ----
 TecEnumAST
     { tecEnums =
@@ -98,14 +77,8 @@ TecEnumAST
                 ]
             , tecEnumRepresentation = TecEnumRepresentation
                 { repAttribs =
-                    [ TecEnumRepresentationAttribute
-                        { repAttribKey = "x"
-                        , repAttribType = "X"
-                        }
-                    , TecEnumRepresentationAttribute
-                        { repAttribKey = "y"
-                        , repAttribType = "Y"
-                        }
+                    [ "X"
+                    , "Y"
                     ]
                 }
             }
@@ -118,14 +91,8 @@ TecEnumAST
             "tecEnumName": "TecType",
             "tecEnumRepresentation": {
                 "repAttribs": [
-                    {
-                        "repAttribKey": "x",
-                        "repAttribType": "X"
-                    },
-                    {
-                        "repAttribKey": "y",
-                        "repAttribType": "Y"
-                    }
+                    "X",
+                    "Y"
                 ]
             },
             "tecEnumValues": [

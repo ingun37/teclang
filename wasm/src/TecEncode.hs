@@ -59,26 +59,15 @@ encodeTecDataAST (E.List _ exps) = traverse encodeTecDataAST exps <&> TecList
 encodeTecDataAST e = Left $ TecErrorUnknownExp (show e)
 
 encodeQualConDecl :: (Show l) => E.QualConDecl l -> Either TecError TecValue
-encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ ident [])) = do
-  name <- getIdent ident
-  return $ TecValue name
-encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.RecDecl _ ident _)) = do
+encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ ident _)) = do
   name <- getIdent ident
   return $ TecValue name
 encodeQualConDecl x = Left $ TecErrorUnknownExp (show x)
 
-
-encodeTecEnumRepAttrib :: (Show l) => E.FieldDecl l -> Either TecError TecEnumRepresentationAttribute
-encodeTecEnumRepAttrib (E.FieldDecl _ [ident] tyCon) = do
-  k <- getIdent ident
-  v <- getTyCon tyCon
-  return $ TecEnumRepresentationAttribute k v
-encodeTecEnumRepAttrib d = Left $ TecErrorUnknownExp (show d)
-
-encodeTecEnumRep :: (Show l) => [E.FieldDecl l] -> Either TecError TecEnumRepresentation
+encodeTecEnumRep :: (Show l) => [E.Type l] -> Either TecError TecEnumRepresentation
 encodeTecEnumRep decls = do
-  kvs <- traverse encodeTecEnumRepAttrib decls
-  return $ TecEnumRepresentation kvs
+  attribs <- traverse getTyCon decls
+  return $ TecEnumRepresentation attribs
 
 safeLast :: [a] -> Maybe a
 safeLast = foldl (\_ x -> Just x) Nothing
@@ -86,7 +75,7 @@ safeLast = foldl (\_ x -> Just x) Nothing
 encodeTecEnum :: (Show l) => E.Decl l -> Either TecError TecEnum
 encodeTecEnum (E.DataDecl _ (E.DataType _) Nothing (E.DHead _ (E.Ident _ name)) decls []) = do
   paramTypes <- traverse encodeQualConDecl decls
-  let lastFieldDecls = safeLast [x | E.QualConDecl _ Nothing Nothing (E.RecDecl _ _ x) <- decls]
+  let lastFieldDecls = safeLast [(x:xs) | E.QualConDecl _ Nothing Nothing (E.ConDecl _ _ (x:xs)) <- decls]
   rep <- maybe (Right $ TecEnumRepresentation []) encodeTecEnumRep lastFieldDecls
   return $ TecEnum name paramTypes rep
 encodeTecEnum x = Left $ TecErrorUnknownExp (show x)

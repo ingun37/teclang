@@ -105,11 +105,11 @@ testData =
 
 testEnum :: [String]
 testEnum =
-  [ "data TecType = A{x :: X}",
-    "data TecType = A{x :: X, y :: Y}",
+  [ "data TecType = A X",
+    "data TecType = A X Y",
     """
     data TecType = A
-                 | B{x :: X, y :: Y}
+                 | B X Y
     """,
     """
     data TecType = A
