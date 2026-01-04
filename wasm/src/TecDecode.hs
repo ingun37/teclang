@@ -9,26 +9,28 @@ import TecData
 import TecEnum
 import TecError
 
-getIdent name = E.Ident () name
+getIdent :: String -> E.Name ()
+getIdent = E.Ident ()
 
-getTyCon name = E.TyCon () (E.UnQual () (E.Ident () name))
+getTyCon :: String -> E.Type ()
+getTyCon name = E.TyCon () (E.UnQual () (getIdent name))
 
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))
 
 decodeDecl :: (String, E.Exp ()) -> Either TecError (E.Decl ())
 decodeDecl (varName, varExp) =
-  return $ E.PatBind () (E.PVar () (E.Ident () varName)) (E.UnGuardedRhs () varExp) Nothing
+  return $ E.PatBind () (E.PVar () (getIdent varName)) (E.UnGuardedRhs () varExp) Nothing
 
 decodeTecDataAST :: TecDataAST -> Either TecError (E.Exp ())
-decodeTecDataAST (TecVar varName) = return (E.Var () (E.UnQual () (E.Ident () varName)))
+decodeTecDataAST (TecVar varName) = return (E.Var () (E.UnQual () (getIdent varName)))
 decodeTecDataAST (TecBinding varMap exp) = do
   varMap' <- traverse decodeTecDataAST varMap
   decls <- traverse decodeDecl (Map.toList varMap')
   exp' <- decodeTecDataAST exp
   return (E.Let () (E.BDecls () decls) exp')
 decodeTecDataAST (TecCon typeName params) = do
-  let seed = E.Con () (E.UnQual () (E.Ident () typeName))
+  let seed = E.Con () (E.UnQual () (getIdent typeName))
   foldM (\e p -> decodeTecDataAST p <&> E.App () e) seed params
 decodeTecDataAST (TecList list) = traverse decodeTecDataAST list <&> E.List ()
 decodeTecDataAST (TecQuery op left right) = do
@@ -47,12 +49,12 @@ decodeTecDataAST (TecRngEnum from to) = do
     Just to' -> decodeTecDataAST (TecCon to' []) <&> E.EnumFromTo () f
 
 decodeType :: String -> Either TecError (E.Type ())
-decodeType name = return $ E.TyCon () (E.UnQual () (E.Ident () name))
+decodeType name = return $ getTyCon name
 
 decodeQualConDecl :: TecValue -> Either TecError (E.QualConDecl ())
 decodeQualConDecl (TecValue name) = do
   types <- traverse decodeType []
-  return $ E.QualConDecl () Nothing Nothing (E.ConDecl () (E.Ident () name) types)
+  return $ E.QualConDecl () Nothing Nothing (E.ConDecl () (getIdent name) types)
 
 decodeTecEnumRepAttrib :: TecEnumRepresentationAttribute -> Either TecError (E.FieldDecl ())
 decodeTecEnumRepAttrib (TecEnumRepresentationAttribute k v) = do
@@ -68,8 +70,8 @@ overLastM f (x : xs) = (x :) <$> overLastM f xs
 
 appendRep :: [E.FieldDecl ()] -> E.QualConDecl () -> Either TecError (E.QualConDecl ())
 appendRep [] d = return d
-appendRep decls (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name) [])) = do
-  return $ E.QualConDecl () Nothing Nothing (E.RecDecl () (E.Ident () name) decls)
+appendRep decls (E.QualConDecl _ Nothing Nothing (E.ConDecl _ name [])) = do
+  return $ E.QualConDecl () Nothing Nothing (E.RecDecl () name decls)
 appendRep d _ = Left $ TecErrorUnknownExp (show d)
 
 decodeTecEnum :: TecEnum -> Either TecError (E.Decl ())
@@ -77,7 +79,7 @@ decodeTecEnum (TecEnum name classes rep) = do
   xs <- traverse decodeQualConDecl classes
   r <- decodeTecEnumRep rep
   xs' <- overLastM (appendRep r) xs
-  return $ E.DataDecl () (E.DataType ()) Nothing (E.DHead () (E.Ident () name)) xs' []
+  return $ E.DataDecl () (E.DataType ()) Nothing (E.DHead () (getIdent name)) xs' []
 
 decodeTecEnumAST :: TecEnumAST -> Either TecError [E.Decl ()]
 decodeTecEnumAST (TecEnumAST tecEnums) = traverse decodeTecEnum tecEnums
@@ -85,21 +87,20 @@ decodeTecEnumAST (TecEnumAST tecEnums) = traverse decodeTecEnum tecEnums
 decodeTecAttributes :: TecAttributes -> Either TecError (E.Type ())
 decodeTecAttributes (TecAttributes []) = do
   Left $ TecError "TecAttributes are empty"
-decodeTecAttributes (TecAttributes (a : as)) = do
-  let bab b a = E.TyApp () b (E.TyCon () $ E.UnQual () $ E.Ident () a)
-  let b = E.TyCon () $ E.UnQual () $ E.Ident () a
-  return $ foldl bab b as
+decodeTecAttributes (TecAttributes (attrib : attribs)) = do
+  let bab b a = E.TyApp () b (getTyCon a)
+  return $ foldl bab (getTyCon attrib) attribs
 
 decodeTecSignature :: TecSignature -> Either TecError (E.Type ())
 decodeTecSignature (TecSignature idxs attribs) = do
   atts <- decodeTecAttributes attribs
-  let abb a = E.TyFun () (E.TyCon () (E.UnQual () (E.Ident () a)))
+  let abb a = E.TyFun () (getTyCon a)
   return $ foldr abb atts idxs
 
 decodeTecClass :: TecClass -> Either TecError (E.Decl ())
 decodeTecClass (TecClass tecClassName sig) = do
   s <- decodeTecSignature sig
-  return (E.TypeSig () [E.Ident () tecClassName] s)
+  return (E.TypeSig () [getIdent tecClassName] s)
 
 decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
 decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
