@@ -8,14 +8,8 @@ import Data.Aeson
   )
 import GHC.Generics (Generic)
 
-data TecEnumRepresentationAttribute = TecEnumRepresentationAttribute {repAttribKey :: String, repAttribType :: String} deriving (Show, Generic)
 
-instance ToJSON TecEnumRepresentationAttribute where
-  toEncoding = genericToEncoding defaultOptions
-
-instance FromJSON TecEnumRepresentationAttribute
-
-data TecEnumRepresentation = TecEnumRepresentation {repAttribs :: [TecEnumRepresentationAttribute]} deriving (Show, Generic)
+data TecEnumRepresentation = TecEnumRepresentation {repAttribs :: [String]} deriving (Show, Generic)
 
 instance ToJSON TecEnumRepresentation where
   toEncoding = genericToEncoding defaultOptions

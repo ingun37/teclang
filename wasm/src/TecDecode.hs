@@ -56,28 +56,24 @@ decodeQualConDecl (TecValue name) = do
   types <- traverse decodeType []
   return $ E.QualConDecl () Nothing Nothing (E.ConDecl () (getIdent name) types)
 
-decodeTecEnumRepAttrib :: TecEnumRepresentationAttribute -> Either TecError (E.FieldDecl ())
-decodeTecEnumRepAttrib (TecEnumRepresentationAttribute k v) = do
-  return $ E.FieldDecl () [getIdent k] (getTyCon v)
-
-decodeTecEnumRep :: TecEnumRepresentation -> Either TecError [E.FieldDecl ()]
-decodeTecEnumRep (TecEnumRepresentation kvs) = traverse decodeTecEnumRepAttrib kvs
+decodeTecEnumRep :: TecEnumRepresentation -> [E.Type ()]
+decodeTecEnumRep (TecEnumRepresentation kvs) = map getTyCon kvs
 
 overLastM :: (Monad m) => (a -> m a) -> [a] -> m [a]
 overLastM _ [] = return []
 overLastM f [x] = return <$> f x
 overLastM f (x : xs) = (x :) <$> overLastM f xs
 
-appendRep :: [E.FieldDecl ()] -> E.QualConDecl () -> Either TecError (E.QualConDecl ())
+appendRep :: [E.Type ()] -> E.QualConDecl () -> Either TecError (E.QualConDecl ())
 appendRep [] d = return d
 appendRep decls (E.QualConDecl _ Nothing Nothing (E.ConDecl _ name [])) = do
-  return $ E.QualConDecl () Nothing Nothing (E.RecDecl () name decls)
+  return $ E.QualConDecl () Nothing Nothing (E.ConDecl () name decls)
 appendRep d _ = Left $ TecErrorUnknownExp (show d)
 
 decodeTecEnum :: TecEnum -> Either TecError (E.Decl ())
 decodeTecEnum (TecEnum name classes rep) = do
   xs <- traverse decodeQualConDecl classes
-  r <- decodeTecEnumRep rep
+  let r = decodeTecEnumRep rep
   xs' <- overLastM (appendRep r) xs
   return $ E.DataDecl () (E.DataType ()) Nothing (E.DHead () (getIdent name)) xs' []
 
