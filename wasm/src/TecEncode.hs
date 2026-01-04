@@ -62,7 +62,7 @@ encodeQualConDecl x = Left $ TecErrorUnknownExp (show x)
 encodeTecEnum :: (Show l) => E.Decl l -> Either TecError TecEnum
 encodeTecEnum (E.DataDecl _ (E.DataType _) Nothing (E.DHead _ (E.Ident _ name)) decls []) = do
   paramTypes <- traverse encodeQualConDecl decls
-  return $ TecEnum name paramTypes
+  return $ TecEnum name paramTypes (TecEnumRepresentation [])
 encodeTecEnum x = Left $ TecErrorUnknownExp (show x)
 
 encodeTecEnumAST :: (Show l) => [E.Decl l] -> Either TecError TecEnumAST
