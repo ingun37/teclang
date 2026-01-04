@@ -1,4 +1,4 @@
-module TecDecode where
+module TecDecode (decodeTecClassAST, decodeTecEnumAST, decodeTecDataAST) where
 
 import Control.Monad (foldM)
 import Data.Functor ((<&>))
@@ -8,6 +8,10 @@ import TecClass
 import TecData
 import TecEnum
 import TecError
+
+getIdent name = E.Ident () name
+
+getTyCon name = E.TyCon () (E.UnQual () (E.Ident () name))
 
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))
@@ -50,10 +54,6 @@ decodeQualConDecl (TecValue name) = do
   types <- traverse decodeType []
   return $ E.QualConDecl () Nothing Nothing (E.ConDecl () (E.Ident () name) types)
 
-getIdent name = E.Ident () name
-
-getTyCon name = E.TyCon () (E.UnQual () (E.Ident () name))
-
 decodeTecEnumRepAttrib :: TecEnumRepresentationAttribute -> Either TecError (E.FieldDecl ())
 decodeTecEnumRepAttrib (TecEnumRepresentationAttribute k v) = do
   return $ E.FieldDecl () [getIdent k] (getTyCon v)
@@ -62,9 +62,9 @@ decodeTecEnumRep :: TecEnumRepresentation -> Either TecError [E.FieldDecl ()]
 decodeTecEnumRep (TecEnumRepresentation kvs) = traverse decodeTecEnumRepAttrib kvs
 
 overLastM :: (Monad m) => (a -> m a) -> [a] -> m [a]
-overLastM _ []       = return []
-overLastM f [x]      = return <$> f x
-overLastM f (x : xs) = (x:) <$> overLastM f xs
+overLastM _ [] = return []
+overLastM f [x] = return <$> f x
+overLastM f (x : xs) = (x :) <$> overLastM f xs
 
 appendRep :: [E.FieldDecl ()] -> E.QualConDecl () -> Either TecError (E.QualConDecl ())
 appendRep [] d = return d
