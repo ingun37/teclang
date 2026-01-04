@@ -1,6 +1,5 @@
 import { expect, test } from "vitest";
 import * as fs from "node:fs";
-import { Schema as S } from "effect";
 import * as lib from "../src/index.js";
 
 test("parse TecEnum haskell test log", () => {
