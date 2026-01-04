@@ -50,10 +50,34 @@ decodeQualConDecl (TecValue name) = do
   types <- traverse decodeType []
   return $ E.QualConDecl () Nothing Nothing (E.ConDecl () (E.Ident () name) types)
 
+getIdent name = E.Ident () name
+
+getTyCon name = E.TyCon () (E.UnQual () (E.Ident () name))
+
+decodeTecEnumRepAttrib :: TecEnumRepresentationAttribute -> Either TecError (E.FieldDecl ())
+decodeTecEnumRepAttrib (TecEnumRepresentationAttribute k v) = do
+  return $ E.FieldDecl () [getIdent k] (getTyCon v)
+
+decodeTecEnumRep :: TecEnumRepresentation -> Either TecError [E.FieldDecl ()]
+decodeTecEnumRep (TecEnumRepresentation kvs) = traverse decodeTecEnumRepAttrib kvs
+
+overLastM :: (Monad m) => (a -> m a) -> [a] -> m [a]
+overLastM _ []       = return []
+overLastM f [x]      = return <$> f x
+overLastM f (x : xs) = (x:) <$> overLastM f xs
+
+appendRep :: [E.FieldDecl ()] -> E.QualConDecl () -> Either TecError (E.QualConDecl ())
+appendRep [] d = return d
+appendRep decls (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name) [])) = do
+  return $ E.QualConDecl () Nothing Nothing (E.RecDecl () (E.Ident () name) decls)
+appendRep d _ = Left $ TecErrorUnknownExp (show d)
+
 decodeTecEnum :: TecEnum -> Either TecError (E.Decl ())
-decodeTecEnum (TecEnum name classes _) = do
+decodeTecEnum (TecEnum name classes rep) = do
   xs <- traverse decodeQualConDecl classes
-  return $ E.DataDecl () (E.DataType ()) Nothing (E.DHead () (E.Ident () name)) xs []
+  r <- decodeTecEnumRep rep
+  xs' <- overLastM (appendRep r) xs
+  return $ E.DataDecl () (E.DataType ()) Nothing (E.DHead () (E.Ident () name)) xs' []
 
 decodeTecEnumAST :: TecEnumAST -> Either TecError [E.Decl ()]
 decodeTecEnumAST (TecEnumAST tecEnums) = traverse decodeTecEnum tecEnums
@@ -61,7 +85,7 @@ decodeTecEnumAST (TecEnumAST tecEnums) = traverse decodeTecEnum tecEnums
 decodeTecAttributes :: TecAttributes -> Either TecError (E.Type ())
 decodeTecAttributes (TecAttributes []) = do
   Left $ TecError "TecAttributes are empty"
-decodeTecAttributes (TecAttributes (a:as)) = do
+decodeTecAttributes (TecAttributes (a : as)) = do
   let bab b a = E.TyApp () b (E.TyCon () $ E.UnQual () $ E.Ident () a)
   let b = E.TyCon () $ E.UnQual () $ E.Ident () a
   return $ foldl bab b as

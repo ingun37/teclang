@@ -57,12 +57,38 @@ encodeType x = Left $ TecErrorUnknownExp (show x)
 encodeQualConDecl :: (Show l) => E.QualConDecl l -> Either TecError TecValue
 encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name) [])) = do
   return $ TecValue name
+encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.RecDecl _ (E.Ident _ name) _)) = do
+  return $ TecValue name
 encodeQualConDecl x = Left $ TecErrorUnknownExp (show x)
+
+getIdent :: (Show l) => E.Name l -> Either TecError String
+getIdent (E.Ident _ name) = return name
+getIdent d = Left $ TecErrorUnknownExp (show d)
+
+getTyCon :: (Show l) => E.Type l -> Either TecError String
+getTyCon = encodeType
+
+encodeTecEnumRepAttrib :: (Show l) => E.FieldDecl l -> Either TecError TecEnumRepresentationAttribute
+encodeTecEnumRepAttrib (E.FieldDecl _ [ident] tyCon) = do
+  k <- getIdent ident
+  v <- getTyCon tyCon
+  return $ TecEnumRepresentationAttribute k v
+encodeTecEnumRepAttrib d = Left $ TecErrorUnknownExp (show d)
+
+encodeTecEnumRep :: (Show l) => [E.FieldDecl l] -> Either TecError TecEnumRepresentation
+encodeTecEnumRep decls = do
+  kvs <- traverse encodeTecEnumRepAttrib decls
+  return $ TecEnumRepresentation kvs
+
+safeLast :: [a] -> Maybe a
+safeLast = foldl (\_ x -> Just x) Nothing
 
 encodeTecEnum :: (Show l) => E.Decl l -> Either TecError TecEnum
 encodeTecEnum (E.DataDecl _ (E.DataType _) Nothing (E.DHead _ (E.Ident _ name)) decls []) = do
   paramTypes <- traverse encodeQualConDecl decls
-  return $ TecEnum name paramTypes (TecEnumRepresentation [])
+  let lastFieldDecls = safeLast [x | E.QualConDecl _ Nothing Nothing (E.RecDecl _ _ x) <- decls]
+  rep <- maybe (Right $ TecEnumRepresentation []) encodeTecEnumRep lastFieldDecls
+  return $ TecEnum name paramTypes rep
 encodeTecEnum x = Left $ TecErrorUnknownExp (show x)
 
 encodeTecEnumAST :: (Show l) => [E.Decl l] -> Either TecError TecEnumAST

@@ -105,7 +105,9 @@ testData =
 
 testEnum :: [String]
 testEnum =
-  [ """
+  [ 
+    "data TecType = A{x :: X}",
+    """
     data TecType = A
                  | B
     """,
