@@ -105,8 +105,12 @@ testData =
 
 testEnum :: [String]
 testEnum =
-  [ 
-    "data TecType = A{x :: X}",
+  [ "data TecType = A{x :: X}",
+    "data TecType = A{x :: X, y :: Y}",
+    """
+    data TecType = A
+                 | B{x :: X, y :: Y}
+    """,
     """
     data TecType = A
                  | B
@@ -122,15 +126,15 @@ testEnum =
   ]
 
 testClass :: [String]
-testClass = 
-  [
-    "f :: A B C",
+testClass =
+  [ "f :: A B C",
     "f :: A B",
     "f :: A",
     "f :: A -> B -> C",
     "f :: A -> B -> C D",
     "f :: A -> B -> C -> D E F"
   ]
+
 testFormatUnit :: IO.Handle -> String -> IO ()
 testFormatUnit h s = do
   e <- runExceptT $ formatHaskell s

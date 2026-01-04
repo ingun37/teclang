@@ -38,6 +38,104 @@ TecEnumAST
     ]
 }
 ---- Original Code ----
+data TecType = A{x :: X, y :: Y}
+---- Raw AST ----
+TecEnumAST
+    { tecEnums =
+        [ TecEnum
+            { tecEnumName = "TecType"
+            , tecEnumValues =
+                [ TecValue "A" ]
+            , tecEnumRepresentation = TecEnumRepresentation
+                { repAttribs =
+                    [ TecEnumRepresentationAttribute
+                        { repAttribKey = "x"
+                        , repAttribType = "X"
+                        }
+                    , TecEnumRepresentationAttribute
+                        { repAttribKey = "y"
+                        , repAttribType = "Y"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "tecEnums": [
+        {
+            "tecEnumName": "TecType",
+            "tecEnumRepresentation": {
+                "repAttribs": [
+                    {
+                        "repAttribKey": "x",
+                        "repAttribType": "X"
+                    },
+                    {
+                        "repAttribKey": "y",
+                        "repAttribType": "Y"
+                    }
+                ]
+            },
+            "tecEnumValues": [
+                "A"
+            ]
+        }
+    ]
+}
+---- Original Code ----
+data TecType = A
+             | B{x :: X, y :: Y}
+---- Raw AST ----
+TecEnumAST
+    { tecEnums =
+        [ TecEnum
+            { tecEnumName = "TecType"
+            , tecEnumValues =
+                [ TecValue "A"
+                , TecValue "B"
+                ]
+            , tecEnumRepresentation = TecEnumRepresentation
+                { repAttribs =
+                    [ TecEnumRepresentationAttribute
+                        { repAttribKey = "x"
+                        , repAttribType = "X"
+                        }
+                    , TecEnumRepresentationAttribute
+                        { repAttribKey = "y"
+                        , repAttribType = "Y"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "tecEnums": [
+        {
+            "tecEnumName": "TecType",
+            "tecEnumRepresentation": {
+                "repAttribs": [
+                    {
+                        "repAttribKey": "x",
+                        "repAttribType": "X"
+                    },
+                    {
+                        "repAttribKey": "y",
+                        "repAttribType": "Y"
+                    }
+                ]
+            },
+            "tecEnumValues": [
+                "A",
+                "B"
+            ]
+        }
+    ]
+}
+---- Original Code ----
 data TecType = A
              | B
 ---- Raw AST ----
