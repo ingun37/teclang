@@ -51,7 +51,7 @@ async function updateCode() {
           v-model="haskellCode"
           auto-grow
           class="font-mono"
-          label="Haskell Code"
+          label="TecLang"
           variant="outlined"
         />
       </v-col>
