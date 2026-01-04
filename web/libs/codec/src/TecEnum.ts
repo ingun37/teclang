@@ -20,6 +20,8 @@ export const TecEnumRepresentationAttribute = S.Struct({
   repAttribKey: TecEnumRepresentationAttributeKey,
   repAttribType: TecEnumRepresentationAttributeType,
 });
+export type TecEnumRepresentationAttribute =
+  typeof TecEnumRepresentationAttribute.Type;
 export const TecEnumRepresentation = S.Struct({
   repAttribs: S.Array(TecEnumRepresentationAttribute),
 });

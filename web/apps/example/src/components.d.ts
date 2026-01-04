@@ -13,6 +13,9 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     InputClass: typeof import('./components/InputClass.vue')['default']
+    InputEnum: typeof import('./components/InputEnum.vue')['default']
+    InputEnumRepAttrib: typeof import('./components/InputEnumRepAttrib.vue')['default']
+    InputEnums: typeof import('./components/InputEnums.vue')['default']
     InputParam: typeof import('./components/InputParam.vue')['default']
     InputRecurse: typeof import('./components/InputRecurse.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -10,6 +10,9 @@ defineProps<{
 <template>
   <v-container>
     <v-row>
+      <v-col cols="12">
+        <InputEnums :tec-enums="tecEnumAst" />
+      </v-col>
       <v-col
         v-for="tecClass in tecClassAst.tecClasses"
         :key="tecClass.tecClassName"
