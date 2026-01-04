@@ -1,4 +1,4 @@
-module TecEncode where
+module TecEncode (encodeTecDataAST, encodeTecClassAST, encodeTecEnumAST) where
 
 import Data.Functor ((<&>))
 import Data.Map qualified as Map
