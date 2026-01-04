@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import * as C from "codec";
+import * as E from "effect";
 const props = defineProps<{
-  indexCombo: C.TecEnum.TecEnumValue[];
-  paramType: C.TecClass.TecClassAttribute;
+  indexCombo: string[];
+  paramType: string;
+  allEnums: C.TecEnum.TecEnumAST;
 }>();
 
 const textValue = ref("");
@@ -24,6 +26,19 @@ const clearImage = () => {
 
 const label = computed(() => {
   return props.indexCombo.join(", ");
+});
+
+const options = computed<readonly string[]>(() => {
+  return E.Effect.runSync(
+    E.pipe(
+      props.allEnums.tecEnums,
+      E.Array.findFirst(
+        (tecEnum) => (tecEnum.tecEnumName as string) === props.paramType,
+      ),
+      E.Either.fromOption(() => new Error("Failed to find enum with the type")),
+      E.Either.map((foundEnum) => foundEnum.tecEnumValues),
+    ),
+  );
 });
 </script>
 <template>
@@ -82,7 +97,14 @@ const label = computed(() => {
     </template>
 
     <template v-else>
-      <span>{{ paramType }}</span>
+      <v-select
+        :items="options"
+        density="compact"
+        hide-details
+        variant="outlined"
+        style="width: 8rem"
+        :label="label"
+      />
     </template>
   </div>
 </template>

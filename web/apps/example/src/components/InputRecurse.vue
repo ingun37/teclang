@@ -44,6 +44,7 @@ const iter = computed<C.TecEnum.TecEnum | null>(() => {
     <InputParam
       :index-combo="indexCombo"
       :param-type="tecIndexedClass.tecSignature.attributes[0]"
+      :all-enums="tecEnums"
     />
   </div>
 </template>

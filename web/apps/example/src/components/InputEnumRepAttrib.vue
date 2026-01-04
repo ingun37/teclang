@@ -23,13 +23,10 @@ const options = computed<readonly string[]>(() => {
 
 <template>
   <div class="d-flex flex-row ga-2">
-    <span class="text-caption">{{ repAttrib.repAttribKey }}</span>
-    <v-select
-      :items="options"
-      density="compact"
-      hide-details
-      variant="outlined"
-      style="width: 6rem"
+    <InputParam
+      :param-type="repAttrib.repAttribType"
+      :all-enums="props.allEnums"
+      :index-combo="[props.repAttrib.repAttribKey]"
     />
   </div>
 </template>
