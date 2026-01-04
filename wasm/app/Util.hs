@@ -1,37 +1,73 @@
-module Util where
+module Util
+  ( encodeHaskellData,
+    encodeHaskellEnum,
+    encodeHaskellClass,
+    decodeHaskellData,
+    decodeHaskellEnum,
+    decodeHaskellClass,
+    formatHaskell,
+  )
+where
 
 import Control.Monad.Except
 import Data.Aeson qualified as J
 import Data.ByteString qualified as BS
+import Data.Functor.Const
 import Data.Text qualified as T
 import Data.Text.Encoding qualified as TE
 import MyLib qualified
 
-data AppErr = TecErr MyLib.TecError | ErrMsg String deriving (Show)
+data Err = LibErr MyLib.TecError | AppErr String deriving (Show)
 
 mapLeft :: (a -> c) -> Either a b -> Either c b
 mapLeft f (Left a) = Left (f a)
 mapLeft _ (Right a) = Right a
 
-_parseHaskell :: String -> ExceptT AppErr IO String
-_parseHaskell code = do
-  ast <- liftEither $ fmap MyLib.ast $ mapLeft TecErr $ MyLib.parseHaskellStr code
-  let bytes = BS.toStrict $ J.encode ast
-  let text = TE.decodeUtf8 bytes
-  return $ T.unpack text
+failIfLeft :: (Show l) => Either l r -> IO r
+failIfLeft = either (fail . show) return
 
-parseHaskell :: String -> IO String
-parseHaskell x = do
-  e <- runExceptT $ _parseHaskell x
-  either (fail . show) return e
-  
-_makeHaskell :: String -> ExceptT AppErr IO String
-_makeHaskell jsonStr = do
-  let tecAst = J.decodeStrictText (T.pack jsonStr) :: Maybe MyLib.TecAST
-  tecAst' <- liftEither $ maybe (Left $ ErrMsg "json decoding failed") Right tecAst
-  liftEither $ mapLeft TecErr (MyLib.makeHaskellCode tecAst')
+type Sig a = (MyLib.TecAST a) => Const String a -> String
 
-makeHaskell :: String -> IO String
-makeHaskell x = do
-  e <- runExceptT $ _makeHaskell x
-  either (fail . show) return e
+sigEnum :: Sig MyLib.TecEnumAST
+sigEnum = getConst
+
+sigData :: Sig MyLib.TecDataAST
+sigData = getConst
+
+sigClass :: Sig MyLib.TecClassAST
+sigClass = getConst
+
+encodeHaskell :: forall a. (MyLib.TecAST a, J.ToJSON a) => String -> IO (Const String a)
+encodeHaskell code = do
+  ast <- failIfLeft $ mapLeft LibErr $ MyLib.encodeCodeToTec code :: IO a
+  return $ Const $ T.unpack $ TE.decodeUtf8 $ BS.toStrict $ J.encode ast
+
+encodeHaskellData :: String -> IO String
+encodeHaskellData = fmap sigData . encodeHaskell
+
+encodeHaskellEnum :: String -> IO String
+encodeHaskellEnum = fmap sigEnum . encodeHaskell
+
+encodeHaskellClass :: String -> IO String
+encodeHaskellClass = fmap sigClass . encodeHaskell
+
+decodeHaskell :: forall a. (MyLib.TecAST a, J.FromJSON a) => String -> IO (Const String a)
+decodeHaskell jsonStr = do
+  let m = J.decodeStrictText (T.pack jsonStr) :: Maybe a
+  let e = maybe (Left $ AppErr "json decoding failed") Right m
+  let e' = (mapLeft LibErr . MyLib.decodeTecToCode) =<< e
+  failIfLeft (Const <$> e')
+
+decodeHaskellData :: String -> IO String
+decodeHaskellData = fmap sigData . decodeHaskell
+
+decodeHaskellEnum :: String -> IO String
+decodeHaskellEnum = fmap sigEnum . decodeHaskell
+
+decodeHaskellClass :: String -> IO String
+decodeHaskellClass = fmap sigClass . decodeHaskell
+
+formatHaskell :: String -> IO String
+formatHaskell code = do
+  code' <- runExceptT $ MyLib.formatHaskell code
+  either (fail . show) return code'

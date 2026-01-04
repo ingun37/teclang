@@ -13,7 +13,6 @@ import Foreign.Ptr
 import GHC.Internal.Foreign.Marshal.Alloc qualified as Alloc
 import GHC.Wasm.Prim
 import MyLib qualified ()
-import Text.Pretty.Simple qualified as Simple
 import Util qualified
 
 main :: IO ()
@@ -58,14 +57,30 @@ jsTest jsval = do
   putStrLn $ fromJSString jsval
   return $ toJSString "hello js i'm haskell"
 
-foreign export javascript "parseHaskell" parseHaskell :: JSString -> IO JSString
-parseHaskell :: JSString -> IO JSString
-parseHaskell code = toJSString <$> Util.parseHaskell (fromJSString code)
+foreign export javascript "encodeHaskellData" encodeHaskellData :: JSString -> IO JSString
+encodeHaskellData :: JSString -> IO JSString
+encodeHaskellData code = toJSString <$> Util.encodeHaskellData (fromJSString code)
 
 foreign export javascript "formatHaskell" formatHaskell :: JSString -> IO JSString
 formatHaskell :: JSString -> IO JSString
-formatHaskell = return . toJSString . TL.unpack . Simple.pStringNoColor . fromJSString
+formatHaskell code = toJSString <$> Util.formatHaskell (fromJSString code)
 
-foreign export javascript "makeHaskell" makeHaskell :: JSString -> IO JSString
-makeHaskell :: JSString -> IO JSString
-makeHaskell code = toJSString <$> Util.makeHaskell (fromJSString code)
+foreign export javascript "decodeHaskellData" decodeHaskellData :: JSString -> IO JSString
+decodeHaskellData :: JSString -> IO JSString
+decodeHaskellData code = toJSString <$> Util.decodeHaskellData (fromJSString code)
+
+foreign export javascript "decodeHaskellEnum" decodeHaskellEnum :: JSString -> IO JSString
+decodeHaskellEnum :: JSString -> IO JSString
+decodeHaskellEnum code = toJSString <$> Util.decodeHaskellEnum (fromJSString code)
+
+foreign export javascript "decodeHaskellClass" decodeHaskellClass :: JSString -> IO JSString
+decodeHaskellClass :: JSString -> IO JSString
+decodeHaskellClass code = toJSString <$> Util.decodeHaskellClass (fromJSString code)
+
+foreign export javascript "encodeHaskellEnum" encodeHaskellEnum :: JSString -> IO JSString
+encodeHaskellEnum :: JSString -> IO JSString
+encodeHaskellEnum code = toJSString <$> Util.encodeHaskellEnum (fromJSString code)
+
+foreign export javascript "encodeHaskellClass" encodeHaskellClass :: JSString -> IO JSString
+encodeHaskellClass :: JSString -> IO JSString
+encodeHaskellClass code = toJSString <$> Util.encodeHaskellClass (fromJSString code)

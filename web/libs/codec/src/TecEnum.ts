@@ -1,0 +1,36 @@
+import { Schema as S } from "effect";
+export const TecEnumValue = S.String.pipe(S.brand("TecEnumValue"));
+export type TecEnumValue = typeof TecEnumValue.Type;
+
+export const TecEnumName = S.String.pipe(S.brand("TecEnumName"));
+export type TecEnumName = typeof TecEnumName.Type;
+
+export const TecEnumRepresentationAttributeKey = S.String.pipe(
+  S.brand("TecEnumRepresentationAttributeKey"),
+);
+export type TecEnumRepresentationAttributeKey =
+  typeof TecEnumRepresentationAttributeKey.Type;
+
+export const TecEnumRepresentationAttributeType = S.String.pipe(
+  S.brand("TecEnumRepresentationAttributeType"),
+);
+export type TecEnumRepresentationAttributeType =
+  typeof TecEnumRepresentationAttributeType.Type;
+export const TecEnumRepresentationAttribute = S.Struct({
+  repAttribKey: TecEnumRepresentationAttributeKey,
+  repAttribType: TecEnumRepresentationAttributeType,
+});
+export type TecEnumRepresentationAttribute =
+  typeof TecEnumRepresentationAttribute.Type;
+export const TecEnumRepresentation = S.Struct({
+  repAttribs: S.Array(TecEnumRepresentationAttribute),
+});
+export type TecEnumRepresentation = typeof TecEnumRepresentation.Type;
+export const TecEnum = S.Struct({
+  tecEnumName: TecEnumName,
+  tecEnumRepresentation: TecEnumRepresentation,
+  tecEnumValues: S.Array(TecEnumValue),
+});
+export type TecEnum = typeof TecEnum.Type;
+export const TecEnumAST = S.Struct({ tecEnums: S.Array(TecEnum) });
+export type TecEnumAST = typeof TecEnumAST.Type;

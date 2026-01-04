@@ -8,3 +8,9 @@
 // @use 'vuetify/settings' with (
 //   $color-pack: false
 // );
+
+.font-mono {
+  textarea {
+    font-family: 'Roboto Mono', monospace !important;
+  }
+}

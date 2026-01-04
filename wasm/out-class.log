@@ -1,0 +1,208 @@
+---- Original Code ----
+f :: A B C
+---- Raw AST ----
+TecClassAST
+    { tecClasses =
+        [ TecClass
+            { tecClassName = "f"
+            , tecSignature = TecSignature
+                { indexSet = []
+                , attributes = TecAttributes
+                    [ "A"
+                    , "B"
+                    , "C"
+                    ]
+                }
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "tecClasses": [
+        {
+            "tecClassName": "f",
+            "tecSignature": {
+                "attributes": [
+                    "A",
+                    "B",
+                    "C"
+                ],
+                "indexSet": []
+            }
+        }
+    ]
+}
+---- Original Code ----
+f :: A B
+---- Raw AST ----
+TecClassAST
+    { tecClasses =
+        [ TecClass
+            { tecClassName = "f"
+            , tecSignature = TecSignature
+                { indexSet = []
+                , attributes = TecAttributes
+                    [ "A"
+                    , "B"
+                    ]
+                }
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "tecClasses": [
+        {
+            "tecClassName": "f",
+            "tecSignature": {
+                "attributes": [
+                    "A",
+                    "B"
+                ],
+                "indexSet": []
+            }
+        }
+    ]
+}
+---- Original Code ----
+f :: A
+---- Raw AST ----
+TecClassAST
+    { tecClasses =
+        [ TecClass
+            { tecClassName = "f"
+            , tecSignature = TecSignature
+                { indexSet = []
+                , attributes = TecAttributes [ "A" ]
+                }
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "tecClasses": [
+        {
+            "tecClassName": "f",
+            "tecSignature": {
+                "attributes": [
+                    "A"
+                ],
+                "indexSet": []
+            }
+        }
+    ]
+}
+---- Original Code ----
+f :: A -> B -> C
+---- Raw AST ----
+TecClassAST
+    { tecClasses =
+        [ TecClass
+            { tecClassName = "f"
+            , tecSignature = TecSignature
+                { indexSet =
+                    [ "A"
+                    , "B"
+                    ]
+                , attributes = TecAttributes [ "C" ]
+                }
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "tecClasses": [
+        {
+            "tecClassName": "f",
+            "tecSignature": {
+                "attributes": [
+                    "C"
+                ],
+                "indexSet": [
+                    "A",
+                    "B"
+                ]
+            }
+        }
+    ]
+}
+---- Original Code ----
+f :: A -> B -> C D
+---- Raw AST ----
+TecClassAST
+    { tecClasses =
+        [ TecClass
+            { tecClassName = "f"
+            , tecSignature = TecSignature
+                { indexSet =
+                    [ "A"
+                    , "B"
+                    ]
+                , attributes = TecAttributes
+                    [ "C"
+                    , "D"
+                    ]
+                }
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "tecClasses": [
+        {
+            "tecClassName": "f",
+            "tecSignature": {
+                "attributes": [
+                    "C",
+                    "D"
+                ],
+                "indexSet": [
+                    "A",
+                    "B"
+                ]
+            }
+        }
+    ]
+}
+---- Original Code ----
+f :: A -> B -> C -> D E F
+---- Raw AST ----
+TecClassAST
+    { tecClasses =
+        [ TecClass
+            { tecClassName = "f"
+            , tecSignature = TecSignature
+                { indexSet =
+                    [ "A"
+                    , "B"
+                    , "C"
+                    ]
+                , attributes = TecAttributes
+                    [ "D"
+                    , "E"
+                    , "F"
+                    ]
+                }
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "tecClasses": [
+        {
+            "tecClassName": "f",
+            "tecSignature": {
+                "attributes": [
+                    "D",
+                    "E",
+                    "F"
+                ],
+                "indexSet": [
+                    "A",
+                    "B",
+                    "C"
+                ]
+            }
+        }
+    ]
+}
