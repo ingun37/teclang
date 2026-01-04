@@ -8,6 +8,14 @@ import TecData
 import TecEnum
 import TecError
 
+getIdent :: (Show l) => E.Name l -> Either TecError String
+getIdent (E.Ident _ name) = return name
+getIdent d = Left $ TecErrorUnknownExp (show d)
+
+getTyCon :: (Show l) => E.Type l -> Either TecError String
+getTyCon (E.TyCon _ (E.UnQual _ (E.Ident _ name))) = return name
+getTyCon x = Left $ TecErrorUnknownExp (show x)
+
 encodeDecl :: (Show l) => E.Decl l -> Either TecError (String, E.Exp l)
 encodeDecl (E.PatBind _ (E.PVar _ (E.Ident _ name)) (E.UnGuardedRhs _ expr) _) = Right $ (name, expr)
 encodeDecl x = Left $ TecErrorUnknownExp (show x)
@@ -50,23 +58,15 @@ encodeTecDataAST (E.EnumFromTo l from to) = do
 encodeTecDataAST (E.List _ exps) = traverse encodeTecDataAST exps <&> TecList
 encodeTecDataAST e = Left $ TecErrorUnknownExp (show e)
 
-encodeType :: (Show l) => E.Type l -> Either TecError String
-encodeType (E.TyCon _ (E.UnQual _ (E.Ident _ name))) = return name
-encodeType x = Left $ TecErrorUnknownExp (show x)
-
 encodeQualConDecl :: (Show l) => E.QualConDecl l -> Either TecError TecValue
-encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ (E.Ident _ name) [])) = do
+encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ ident [])) = do
+  name <- getIdent ident
   return $ TecValue name
-encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.RecDecl _ (E.Ident _ name) _)) = do
+encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.RecDecl _ ident _)) = do
+  name <- getIdent ident
   return $ TecValue name
 encodeQualConDecl x = Left $ TecErrorUnknownExp (show x)
 
-getIdent :: (Show l) => E.Name l -> Either TecError String
-getIdent (E.Ident _ name) = return name
-getIdent d = Left $ TecErrorUnknownExp (show d)
-
-getTyCon :: (Show l) => E.Type l -> Either TecError String
-getTyCon = encodeType
 
 encodeTecEnumRepAttrib :: (Show l) => E.FieldDecl l -> Either TecError TecEnumRepresentationAttribute
 encodeTecEnumRepAttrib (E.FieldDecl _ [ident] tyCon) = do
@@ -97,26 +97,27 @@ encodeTecEnumAST decls = do
   return $ TecEnumAST tecEnums
 
 encodeTecAttributes :: (Show l) => E.Type l -> Either TecError TecAttributes
-encodeTecAttributes (E.TyCon _ (E.UnQual _ (E.Ident _ y))) = do
-  return $ TecAttributes [y]
 encodeTecAttributes (E.TyApp _ left right) = do
   l <- encodeTecAttributes left
   r <- encodeTecAttributes right
   return $ l <> r
-encodeTecAttributes e = do
-  Left $ TecErrorUnknownExp (show e)
+encodeTecAttributes tyCon = do
+  y <- getTyCon tyCon
+  return $ TecAttributes [y]
 
 encodeTecSignature :: (Show l) => E.Type l -> Either TecError TecSignature
-encodeTecSignature (E.TyFun _ (E.TyCon _ (E.UnQual _ (E.Ident _ idx))) right) = do
+encodeTecSignature (E.TyFun _ tyCon right) = do
   (TecSignature idxs attribs) <- encodeTecSignature right
+  idx <- getTyCon tyCon
   return $ TecSignature (idx : idxs) attribs
 encodeTecSignature t = do
   attribs <- encodeTecAttributes t
   return $ TecSignature [] attribs
 
 encodeTecClass :: (Show l) => E.Decl l -> Either TecError TecClass
-encodeTecClass (E.TypeSig _ [E.Ident _ tecClassName] sig) = do
+encodeTecClass (E.TypeSig _ [ident] sig) = do
   s <- encodeTecSignature sig
+  tecClassName <- getIdent ident
   return $ TecClass tecClassName s
 encodeTecClass decl = Left $ TecErrorUnknownExp (show decl)
 
