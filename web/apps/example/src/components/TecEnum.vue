@@ -10,6 +10,7 @@ function addValue() {
       model.value.tecEnumValues,
       C.TecEnum.TecEnumValue.make("Foo"),
     ),
+    tecEnumRepresentation: model.value.tecEnumRepresentation,
   });
 }
 </script>
@@ -17,18 +18,18 @@ function addValue() {
 <template>
   <v-card>
     <v-card-text>
-      <v-text-field
-        v-model="model.tecEnumName"
-        label="Enum Name"
-        compact
-        hide-details
-        density="compact"
-        class="mb-2"
-        variant="underlined"
-      />
+      <div class="d-flex flex-column ga-2">
+        <v-text-field
+          v-model="model.tecEnumName"
+          label="Enum Name"
+          compact
+          hide-details
+          density="compact"
+          class="mb-2"
+          variant="underlined"
+        />
 
-      <div class="text-caption mb-2">Values</div>
-      <div class="d-flex flex-column ga-2 align-start">
+        <div class="text-caption mb-2">Values</div>
         <v-text-field
           v-for="(_, index) in model.tecEnumValues"
           v-model="model.tecEnumValues[index]"
