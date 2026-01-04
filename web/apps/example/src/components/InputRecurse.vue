@@ -4,6 +4,7 @@ import type { Axis } from "@/Axis.ts";
 import * as E from "effect";
 import InputParam from "@/components/InputParam.vue";
 const props = defineProps<{
+  indexCombo: C.TecEnum.TecEnumValue[];
   axis: Axis;
   paramIndex: number;
   tecIndexedClass: C.TecClass.TecClass;
@@ -32,6 +33,7 @@ const iter = computed<C.TecEnum.TecEnum | null>(() => {
     <InputRecurse
       v-for="value in iter.tecEnumValues"
       :key="value"
+      :index-combo="[...indexCombo, value]"
       :axis="axis === 'x' ? 'y' : 'x'"
       :paramIndex="paramIndex + 1"
       :tecIndexedClass="tecIndexedClass"
@@ -39,7 +41,10 @@ const iter = computed<C.TecEnum.TecEnum | null>(() => {
     />
   </div>
   <div v-else>
-    <InputParam :param-type="tecIndexedClass.tecSignature.attributes[0]" />
+    <InputParam
+      :index-combo="indexCombo"
+      :param-type="tecIndexedClass.tecSignature.attributes[0]"
+    />
   </div>
 </template>
 

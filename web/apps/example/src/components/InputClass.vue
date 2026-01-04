@@ -32,6 +32,7 @@ const dimension = computed(() => {
     >
     <v-card-text>
       <InputRecurse
+        :index-combo="[]"
         axis="x"
         :param-index="0"
         :tec-indexed-class="tecClass"

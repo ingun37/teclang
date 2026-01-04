@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import * as C from "codec";
-defineProps<{ paramType: C.TecClass.TecClassAttribute }>();
+const props = defineProps<{
+  indexCombo: C.TecEnum.TecEnumValue[];
+  paramType: C.TecClass.TecClassAttribute;
+}>();
 
 const textValue = ref("");
 const numberValue = ref<number | null>(null);
@@ -18,13 +21,17 @@ const onFileChange = (e: Event) => {
 const clearImage = () => {
   imageUrl.value = null;
 };
+
+const label = computed(() => {
+  return props.indexCombo.join(", ");
+});
 </script>
 <template>
   <div class="input-param">
     <template v-if="paramType === 'String'">
       <v-text-field
         v-model="textValue"
-        label="String Input"
+        :label="label"
         variant="outlined"
         density="compact"
       />
@@ -34,7 +41,7 @@ const clearImage = () => {
       <v-text-field
         v-model.number="numberValue"
         type="number"
-        label="Number Input"
+        :label="label"
         variant="outlined"
         density="compact"
         hide-details
@@ -45,13 +52,14 @@ const clearImage = () => {
       <div class="image-upload-container">
         <v-file-input
           v-if="!imageUrl"
-          label="Upload Image"
+          :label="label"
           prepend-icon="mdi-camera"
           variant="outlined"
           density="compact"
           accept="image/*"
           hide-details
           @change="onFileChange"
+          style="width: 9rem"
         />
         <div v-else class="thumbnail-preview">
           <v-img
