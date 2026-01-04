@@ -23,12 +23,7 @@ function addAttribute() {
     tecEnumRepresentation: C.TecEnum.TecEnumRepresentation.make({
       repAttribs: E.Array.append(
         model.value.tecEnumRepresentation.repAttribs,
-        C.TecEnum.TecEnumRepresentationAttribute.make({
-          repAttribKey:
-            C.TecEnum.TecEnumRepresentationAttributeKey.make("newKey"),
-          repAttribType:
-            C.TecEnum.TecEnumRepresentationAttributeType.make("String"),
-        }),
+        C.TecEnum.TecEnumRepresentationAttribute.make("String"),
       ),
     }),
   });
@@ -75,19 +70,8 @@ function addAttribute() {
           :key="index"
           class="d-flex ga-2"
         >
-          <v-text-field
-            v-model="
-              model.tecEnumRepresentation.repAttribs[index]!.repAttribKey
-            "
-            label="Key"
-            density="compact"
-            hide-details
-            variant="outlined"
-          />
           <v-select
-            v-model="
-              model.tecEnumRepresentation.repAttribs[index]!.repAttribType
-            "
+            v-model="model.tecEnumRepresentation.repAttribs[index]!"
             :items="possibleOptions"
             label="Type"
             density="compact"
