@@ -2,7 +2,9 @@
 import * as E from "effect";
 import * as C from "codec";
 const model = defineModel<C.TecEnum.TecEnum>({ required: true });
-
+defineProps<{
+  possibleOptions: string[];
+}>();
 function addValue() {
   model.value = C.TecEnum.TecEnum.make({
     tecEnumName: model.value.tecEnumName,
@@ -82,10 +84,11 @@ function addAttribute() {
             hide-details
             variant="outlined"
           />
-          <v-text-field
+          <v-select
             v-model="
               model.tecEnumRepresentation.repAttribs[index]!.repAttribType
             "
+            :items="possibleOptions"
             label="Type"
             density="compact"
             hide-details

@@ -19,6 +19,11 @@ function addEnum() {
     ),
   });
 }
+const possibleRepAttribTypes = computed<string[]>(() => {
+  return model.value.tecEnums
+    .map((x) => x.tecEnumName as string)
+    .concat(["String", "Number"]);
+});
 </script>
 
 <template>
@@ -28,7 +33,10 @@ function addEnum() {
       <v-container>
         <v-row dense>
           <v-col cols="auto" v-for="(_, i) in model.tecEnums" :key="i">
-            <TecEnum v-model="model.tecEnums[i]!" />
+            <TecEnum
+              v-model="model.tecEnums[i]!"
+              :possible-options="possibleRepAttribTypes"
+            />
           </v-col>
           <v-col cols="auto">
             <v-card>
