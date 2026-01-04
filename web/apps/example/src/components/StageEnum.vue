@@ -18,7 +18,8 @@ data Article = A0 | A1
 
 data Size = XS | S | M | L | XL | XXL
 
-data Line = A | B | C | D
+data Pattern = Pattern1 | Pattern2 | Pattern3 | Pattern4
+data Line = Line1 | Line2 | Line3 | Line4{pattern :: Pattern}
 `;
 
 function fillSampleCode() {
