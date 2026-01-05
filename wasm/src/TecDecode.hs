@@ -8,8 +8,10 @@ where
 
 import Control.Monad (foldM)
 import Data.Functor ((<&>))
+import Data.List (unsnoc)
 import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
+import Optics.Core
 import TecClass
 import TecData
 import TecEnum
@@ -21,6 +23,12 @@ getIdent = E.Ident ()
 
 getTyCon :: String -> E.Type ()
 getTyCon name = E.TyCon () (E.UnQual () (getIdent name))
+
+getCon :: String -> E.Exp ()
+getCon name = E.Con () (E.UnQual () (getIdent name))
+
+getPVar :: String -> E.Pat ()
+getPVar s = E.PVar () (getIdent s)
 
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))
@@ -108,5 +116,25 @@ decodeTecClass (TecClass tecClassName sig) = do
 decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
 decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
 
+trivialOp :: E.QOp ()
+trivialOp = E.QConOp () (E.Special () (E.Cons ()))
+
+decodeTecNode :: TecNode -> Either TecError (E.Exp ())
+decodeTecNode (TecNode idxs (att : atts)) = do
+  let bab b a = E.App () b (getCon a)
+  let attribs = foldl bab (getCon att) atts
+  case Data.List.unsnoc idxs of
+    Nothing -> return attribs
+    Just (is, i) -> do
+      let abb a = E.InfixApp () (getCon (view _tecNodeIndex a)) trivialOp
+      let indexs = foldr abb (getCon (view _tecNodeIndex i)) is
+      return $ E.InfixApp () indexs trivialOp attribs
+decodeTecNode s = Left $ TecErrorUnknownExp (show s)
+
+decodeTecNodeSet :: TecNodeSet -> Either TecError (E.Decl ())
+decodeTecNodeSet (TecNodeSet tecNodeClass tecNodes) = do
+  nodes <- traverse decodeTecNode tecNodes
+  return $ E.PatBind () (getPVar tecNodeClass) (E.UnGuardedRhs () (E.List () nodes)) Nothing
+
 decodeTecNodeAST :: TecNodeAST -> Either TecError [E.Decl ()]
-decodeTecNodeAST t = Left $ TecErrorUnknownExp (show t)
+decodeTecNodeAST t = traverse decodeTecNodeSet (tecNodeSets t)

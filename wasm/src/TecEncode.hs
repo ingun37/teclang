@@ -20,6 +20,10 @@ getIdent :: (Show l) => E.Name l -> Either TecError String
 getIdent (E.Ident _ name) = return name
 getIdent d = Left $ TecErrorUnknownExp (show d)
 
+getUnQual :: (Show l) => E.QName l -> Either TecError String
+getUnQual (E.UnQual _ (E.Ident _ name)) = return name
+getUnQual x = Left $ TecErrorUnknownExp (show x)
+
 getTyCon :: (Show l) => E.Type l -> Either TecError String
 getTyCon (E.TyCon _ (E.UnQual _ (E.Ident _ name))) = return name
 getTyCon x = Left $ TecErrorUnknownExp (show x)
@@ -131,20 +135,17 @@ encodeTecClassAST decls = do
   return $ TecClassAST tecClasses
 
 encodeTecNode :: (Show l) => E.Exp l -> Either TecError TecNode
-encodeTecNode (E.InfixApp _ left (E.QConOp _ (E.Special _ (E.Cons _))) right) = do
+encodeTecNode (E.InfixApp _ (E.Con _ luq) (E.QConOp _ (E.Special _ (E.Cons _))) right) = do
   r <- encodeTecNode right
-  i <- getCon left
+  i <- getUnQual luq
   return $ over _indexCombination (TecNodeIndex i :) r
-encodeTecNode (E.App _ left right) = do
-  r <- getCon right
-  case left of
-    (E.App {}) -> do
-      l <- encodeTecNode left
-      return $ over _tecNodeAttributes (++ [r]) l
-    (E.Con _ _) -> do
-      l <- getCon left
-      return $ TecNode [TecNodeIndex l] [r]
-    e -> Left $ TecErrorUnknownExp (show e)
+encodeTecNode (E.Con _ uq) = do
+  a <- getUnQual uq
+  return $ TecNode [] [a]
+encodeTecNode (E.App _ left (E.Con _ uq)) = do
+  l <- encodeTecNode left
+  r <- getUnQual uq
+  return $ over _tecNodeAttributes (++ [r]) l
 encodeTecNode exp = do
   Left $ TecErrorUnknownExp (show exp)
 

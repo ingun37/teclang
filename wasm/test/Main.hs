@@ -137,7 +137,7 @@ testClass =
 
 testNode :: [String]
 testNode =
-  [ "someClass = [I:J:K X Y]"
+  [ "someClass = [I : J : K : X Y]"
   ]
 
 testFormatUnit :: IO.Handle -> String -> IO ()

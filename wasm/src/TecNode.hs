@@ -1,3 +1,5 @@
+{-# LANGUAGE DerivingVia #-}
+
 module TecNode where
 
 import Data.Aeson
@@ -15,6 +17,9 @@ instance ToJSON TecNodeIndex where
   toEncoding = genericToEncoding defaultOptions
 
 instance FromJSON TecNodeIndex
+
+_tecNodeIndex :: Iso' TecNodeIndex String
+_tecNodeIndex = iso (\(TecNodeIndex s) -> s) TecNodeIndex
 
 data TecNode = TecNode
   { indexCombination :: [TecNodeIndex],
