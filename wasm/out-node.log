@@ -1,2 +1,44 @@
 ---- Original Code ----
 someClass = [I:J:K X Y]
+---- Raw AST ----
+TecNodeAST
+    { tecNodeSets =
+        [ TecNodeSet
+            { tecNodeClass = "someClass"
+            , tecNodeSet =
+                [ TecNode
+                    { indexCombination =
+                        [ TecNodeIndex "I"
+                        , TecNodeIndex "J"
+                        , TecNodeIndex "K"
+                        ]
+                    , tecNodeAttributes =
+                        [ "X"
+                        , "Y"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "tecNodeSets": [
+        {
+            "tecNodeClass": "someClass",
+            "tecNodeSet": [
+                {
+                    "indexCombination": [
+                        "I",
+                        "J",
+                        "K"
+                    ],
+                    "tecNodeAttributes": [
+                        "X",
+                        "Y"
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -9,6 +9,7 @@ where
 import Data.Functor ((<&>))
 import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
+import Optics.Core
 import TecClass
 import TecData
 import TecEnum
@@ -132,7 +133,18 @@ encodeTecClassAST decls = do
 encodeTecNode :: (Show l) => E.Exp l -> Either TecError TecNode
 encodeTecNode (E.InfixApp _ left (E.QConOp _ (E.Special _ (E.Cons _))) right) = do
   r <- encodeTecNode right
-  Left $ TecErrorUnknownExp (show left)
+  i <- getCon left
+  return $ over _indexCombination (TecNodeIndex i :) r
+encodeTecNode (E.App _ left right) = do
+  r <- getCon right
+  case left of
+    (E.App {}) -> do
+      l <- encodeTecNode left
+      return $ over _tecNodeAttributes (++ [r]) l
+    (E.Con _ _) -> do
+      l <- getCon left
+      return $ TecNode [TecNodeIndex l] [r]
+    e -> Left $ TecErrorUnknownExp (show e)
 encodeTecNode exp = do
   Left $ TecErrorUnknownExp (show exp)
 
