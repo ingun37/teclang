@@ -6,8 +6,8 @@ TecClassAST
         [ TecClass
             { tecClassName = "f"
             , tecSignature = TecSignature
-                { indexSet = []
-                , attributes = TecAttributes
+                { indexTypeSet = []
+                , attributeTypeSet = TecAttributes
                     [ "A"
                     , "B"
                     , "C"
@@ -22,12 +22,12 @@ TecClassAST
         {
             "tecClassName": "f",
             "tecSignature": {
-                "attributes": [
+                "attributeTypeSet": [
                     "A",
                     "B",
                     "C"
                 ],
-                "indexSet": []
+                "indexTypeSet": []
             }
         }
     ]
@@ -40,8 +40,8 @@ TecClassAST
         [ TecClass
             { tecClassName = "f"
             , tecSignature = TecSignature
-                { indexSet = []
-                , attributes = TecAttributes
+                { indexTypeSet = []
+                , attributeTypeSet = TecAttributes
                     [ "A"
                     , "B"
                     ]
@@ -55,11 +55,11 @@ TecClassAST
         {
             "tecClassName": "f",
             "tecSignature": {
-                "attributes": [
+                "attributeTypeSet": [
                     "A",
                     "B"
                 ],
-                "indexSet": []
+                "indexTypeSet": []
             }
         }
     ]
@@ -72,8 +72,8 @@ TecClassAST
         [ TecClass
             { tecClassName = "f"
             , tecSignature = TecSignature
-                { indexSet = []
-                , attributes = TecAttributes [ "A" ]
+                { indexTypeSet = []
+                , attributeTypeSet = TecAttributes [ "A" ]
                 }
             }
         ]
@@ -84,10 +84,10 @@ TecClassAST
         {
             "tecClassName": "f",
             "tecSignature": {
-                "attributes": [
+                "attributeTypeSet": [
                     "A"
                 ],
-                "indexSet": []
+                "indexTypeSet": []
             }
         }
     ]
@@ -100,11 +100,11 @@ TecClassAST
         [ TecClass
             { tecClassName = "f"
             , tecSignature = TecSignature
-                { indexSet =
+                { indexTypeSet =
                     [ "A"
                     , "B"
                     ]
-                , attributes = TecAttributes [ "C" ]
+                , attributeTypeSet = TecAttributes [ "C" ]
                 }
             }
         ]
@@ -115,10 +115,10 @@ TecClassAST
         {
             "tecClassName": "f",
             "tecSignature": {
-                "attributes": [
+                "attributeTypeSet": [
                     "C"
                 ],
-                "indexSet": [
+                "indexTypeSet": [
                     "A",
                     "B"
                 ]
@@ -134,11 +134,11 @@ TecClassAST
         [ TecClass
             { tecClassName = "f"
             , tecSignature = TecSignature
-                { indexSet =
+                { indexTypeSet =
                     [ "A"
                     , "B"
                     ]
-                , attributes = TecAttributes
+                , attributeTypeSet = TecAttributes
                     [ "C"
                     , "D"
                     ]
@@ -152,11 +152,11 @@ TecClassAST
         {
             "tecClassName": "f",
             "tecSignature": {
-                "attributes": [
+                "attributeTypeSet": [
                     "C",
                     "D"
                 ],
-                "indexSet": [
+                "indexTypeSet": [
                     "A",
                     "B"
                 ]
@@ -172,12 +172,12 @@ TecClassAST
         [ TecClass
             { tecClassName = "f"
             , tecSignature = TecSignature
-                { indexSet =
+                { indexTypeSet =
                     [ "A"
                     , "B"
                     , "C"
                     ]
-                , attributes = TecAttributes
+                , attributeTypeSet = TecAttributes
                     [ "D"
                     , "E"
                     , "F"
@@ -192,12 +192,12 @@ TecClassAST
         {
             "tecClassName": "f",
             "tecSignature": {
-                "attributes": [
+                "attributeTypeSet": [
                     "D",
                     "E",
                     "F"
                 ],
-                "indexSet": [
+                "indexTypeSet": [
                     "A",
                     "B",
                     "C"

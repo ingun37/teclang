@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const dimension = computed(() => {
   const enums = E.pipe(
-    props.tecClass.tecSignature.indexSet,
+    props.tecClass.tecSignature.indexTypeSet,
     E.Array.filterMap((pt) => {
       return E.pipe(
         props.tecEnums.tecEnums,

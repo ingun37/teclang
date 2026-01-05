@@ -6,9 +6,9 @@ const props = defineProps<{ tecEnumAst: C.TecEnum.TecEnumAST }>();
 
 function addIndex() {
   model.value = C.TecClass.TecSignature.make({
-    attributes: model.value.attributes,
-    indexSet: E.Array.append(
-      model.value.indexSet,
+    attributeTypeSet: model.value.attributeTypeSet,
+    indexTypeSet: E.Array.append(
+      model.value.indexTypeSet,
       C.TecClass.TecClassIndex.make(
         props.tecEnumAst.tecEnums[props.tecEnumAst.tecEnums.length - 1]
           ?.tecEnumName ?? "undefined",
@@ -24,7 +24,7 @@ const options = computed<string[]>(() => {
 <template>
   <div class="d-flex flex-column ga-1">
     <v-select
-      v-model="model.attributes[0]"
+      v-model="model.attributeTypeSet[0]"
       :items="['String', 'Number', 'Image']"
       density="compact"
       hide-details
@@ -34,8 +34,8 @@ const options = computed<string[]>(() => {
     <div class="text-caption mb-2">Index set</div>
 
     <v-select
-      v-for="(_, i) in model.indexSet"
-      v-model="model.indexSet[i]!"
+      v-for="(_, i) in model.indexTypeSet"
+      v-model="model.indexTypeSet[i]!"
       :key="i"
       :items="options"
       density="compact"

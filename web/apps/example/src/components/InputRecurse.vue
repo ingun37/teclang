@@ -16,7 +16,7 @@ const iter = computed<C.TecEnum.TecEnum | null>(() => {
     E.Array.findFirst(
       (tecEnum) =>
         (tecEnum.tecEnumName as string) ===
-        (props.tecIndexedClass.tecSignature.indexSet[
+        (props.tecIndexedClass.tecSignature.indexTypeSet[
           props.paramIndex
         ] as string),
     ),
@@ -43,7 +43,7 @@ const iter = computed<C.TecEnum.TecEnum | null>(() => {
   <div v-else>
     <InputParam
       :index-combo="indexCombo"
-      :param-type="tecIndexedClass.tecSignature.attributes[0]"
+      :param-type="tecIndexedClass.tecSignature.attributeTypeSet[0]"
       :all-enums="tecEnums"
     />
   </div>

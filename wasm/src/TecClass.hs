@@ -19,8 +19,8 @@ instance ToJSON TecAttributes where
 instance FromJSON TecAttributes
 
 data TecSignature = TecSignature
-  { indexSet :: [String],
-    attributes :: TecAttributes
+  { indexTypeSet :: [String],
+    attributeTypeSet :: TecAttributes
   }
   deriving (Show, Generic)
 

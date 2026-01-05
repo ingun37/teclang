@@ -1,8 +1,18 @@
 set -xe
 
+UPDATE_REQUIRED=false
+for arg in "$@"; do
+  if [ "$arg" == "--update" ]; then
+    UPDATE_REQUIRED=true
+    break
+  fi
+done
+
 out_path="dist-newstyle/build/wasm32-wasi/ghc-9.12.2.20251128/teclang-0.1.0.0/x/teclang-wasm/build/teclang-wasm/teclang-wasm.wasm"
 
-wasm32-wasi-cabal update
+if [ "$UPDATE_REQUIRED" = true ]; then
+  wasm32-wasi-cabal update
+fi
 
 wasm32-wasi-cabal build
 
