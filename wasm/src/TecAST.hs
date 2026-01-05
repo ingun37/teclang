@@ -12,6 +12,7 @@ import TecDecode
 import TecEncode
 import TecEnum
 import TecError
+import TecNode
 
 class (Show a, Generic a, ToJSON a, FromJSON a) => TecAST a where
   decodeTecToCode :: a -> Either TecError String
@@ -68,6 +69,23 @@ instance TecAST TecClassAST where
      in case result of
           E.ParseOk (E.Module _ Nothing [] [] decls) -> do
             ast <- encodeTecClassAST decls
+            Right ast
+          E.ParseOk x -> do
+            Left $ TecErrorUnknownExp (show x)
+          E.ParseFailed _ str ->
+            tecError $ "Initial parsing failed:\n" ++ str
+
+instance TecAST TecNodeAST where
+  decodeTecToCode ast = do
+    e <- decodeTecNodeAST ast
+    let m = E.Module () Nothing [] [] e
+    return $ E.prettyPrint m
+  encodeCodeToTec code =
+    let result = E.parseModule code
+     in case result of
+          E.ParseOk (E.Module _ _ _ _ decls) -> do
+            -- tecError (show rhs)
+            ast <- mapWholeExpShow decls $ encodeTecNodeAST decls
             Right ast
           E.ParseOk x -> do
             Left $ TecErrorUnknownExp (show x)

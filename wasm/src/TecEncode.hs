@@ -1,4 +1,10 @@
-module TecEncode (encodeTecDataAST, encodeTecClassAST, encodeTecEnumAST) where
+module TecEncode
+  ( encodeTecDataAST,
+    encodeTecClassAST,
+    encodeTecEnumAST,
+    encodeTecNodeAST,
+  )
+where
 
 import Data.Functor ((<&>))
 import Data.Map qualified as Map
@@ -7,6 +13,7 @@ import TecClass
 import TecData
 import TecEnum
 import TecError
+import TecNode
 
 getIdent :: (Show l) => E.Name l -> Either TecError String
 getIdent (E.Ident _ name) = return name
@@ -15,6 +22,13 @@ getIdent d = Left $ TecErrorUnknownExp (show d)
 getTyCon :: (Show l) => E.Type l -> Either TecError String
 getTyCon (E.TyCon _ (E.UnQual _ (E.Ident _ name))) = return name
 getTyCon x = Left $ TecErrorUnknownExp (show x)
+
+getCon :: (Show l) => E.Exp l -> Either TecError String
+getCon (E.Con _ (E.UnQual _ (E.Ident _ name))) = return name
+getCon x = Left $ TecErrorUnknownExp (show x)
+
+getPVar :: (Show l) => E.Pat l -> Either TecError String
+getPVar (E.PVar _ ident) = getIdent ident
 
 encodeDecl :: (Show l) => E.Decl l -> Either TecError (String, E.Exp l)
 encodeDecl (E.PatBind _ (E.PVar _ (E.Ident _ name)) (E.UnGuardedRhs _ expr) _) = Right $ (name, expr)
@@ -75,7 +89,7 @@ safeLast = foldl (\_ x -> Just x) Nothing
 encodeTecEnum :: (Show l) => E.Decl l -> Either TecError TecEnum
 encodeTecEnum (E.DataDecl _ (E.DataType _) Nothing (E.DHead _ (E.Ident _ name)) decls []) = do
   paramTypes <- traverse encodeQualConDecl decls
-  let lastFieldDecls = safeLast [(x:xs) | E.QualConDecl _ Nothing Nothing (E.ConDecl _ _ (x:xs)) <- decls]
+  let lastFieldDecls = safeLast [(x : xs) | E.QualConDecl _ Nothing Nothing (E.ConDecl _ _ (x : xs)) <- decls]
   rep <- maybe (Right $ TecEnumRepresentation []) encodeTecEnumRep lastFieldDecls
   return $ TecEnum name paramTypes rep
 encodeTecEnum x = Left $ TecErrorUnknownExp (show x)
@@ -114,3 +128,20 @@ encodeTecClassAST :: (Show l) => [E.Decl l] -> Either TecError TecClassAST
 encodeTecClassAST decls = do
   tecClasses <- traverse encodeTecClass decls
   return $ TecClassAST tecClasses
+
+encodeTecNode :: (Show l) => E.Exp l -> Either TecError TecNode
+encodeTecNode (E.InfixApp _ left (E.QConOp _ (E.Special _ (E.Cons _))) right) = do
+  r <- encodeTecNode right
+  Left $ TecErrorUnknownExp (show left)
+encodeTecNode exp = do
+  Left $ TecErrorUnknownExp (show exp)
+
+encodeTecNodeSet :: (Show l) => E.Decl l -> Either TecError TecNodeSet
+encodeTecNodeSet (E.PatBind _ pvar (E.UnGuardedRhs _ (E.List _ lst)) Nothing) = do
+  tecNodeClass <- getPVar pvar
+  tecNodeSet <- traverse encodeTecNode lst
+  return $ TecNodeSet tecNodeClass tecNodeSet
+encodeTecNodeSet d = Left $ TecErrorUnknownExp (show d)
+
+encodeTecNodeAST :: (Show l) => [E.Decl l] -> Either TecError TecNodeAST
+encodeTecNodeAST decls = TecNodeAST <$> traverse encodeTecNodeSet decls

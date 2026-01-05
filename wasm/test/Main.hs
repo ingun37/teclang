@@ -135,6 +135,11 @@ testClass =
     "f :: A -> B -> C -> D E F"
   ]
 
+testNode :: [String]
+testNode =
+  [ "someClass = [I:J:K X Y]"
+  ]
+
 testFormatUnit :: IO.Handle -> String -> IO ()
 testFormatUnit h s = do
   e <- runExceptT $ formatHaskell s
@@ -159,4 +164,5 @@ main = do
   _ <- testIO testData "out-data.log" :: IO [TecDataAST]
   _ <- testIO testEnum "out-enum.log" :: IO [TecEnumAST]
   _ <- testIO testClass "out-class.log" :: IO [TecClassAST]
+  _ <- testIO testNode "out-node.log" :: IO [TecNodeAST]
   return ()

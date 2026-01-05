@@ -1,4 +1,10 @@
-module TecDecode (decodeTecClassAST, decodeTecEnumAST, decodeTecDataAST) where
+module TecDecode
+  ( decodeTecClassAST,
+    decodeTecEnumAST,
+    decodeTecDataAST,
+    decodeTecNodeAST,
+  )
+where
 
 import Control.Monad (foldM)
 import Data.Functor ((<&>))
@@ -8,6 +14,7 @@ import TecClass
 import TecData
 import TecEnum
 import TecError
+import TecNode
 
 getIdent :: String -> E.Name ()
 getIdent = E.Ident ()
@@ -100,3 +107,6 @@ decodeTecClass (TecClass tecClassName sig) = do
 
 decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
 decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
+
+decodeTecNodeAST :: TecNodeAST -> Either TecError [E.Decl ()]
+decodeTecNodeAST t = Left $ TecErrorUnknownExp (show t)
