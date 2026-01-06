@@ -6,7 +6,6 @@ module TecEncode
   )
 where
 
-import Data.Functor ((<&>))
 import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
 import Optics.Core

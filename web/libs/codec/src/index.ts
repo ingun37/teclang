@@ -1,9 +1,11 @@
 import * as TecEnum from "./TecEnum.js";
 import * as TecClass from "./TecClass.js";
+import * as TecNode from "./TecNode.js";
 import { Schema as S } from "effect";
 
 export * as TecEnum from "./TecEnum.js";
 export * as TecClass from "./TecClass.js";
+export * as TecNode from "./TecNode.js";
 
 export function jsonToTecEnumAST(json: any): TecEnum.TecEnumAST {
   return S.decodeUnknownSync(TecEnum.TecEnumAST)(json);
@@ -16,4 +18,11 @@ export function jsonToTecClassAST(json: any): TecClass.TecClassAST {
 }
 export function tecClassASTToJson(decoded: TecClass.TecClassAST): any {
   return S.encodeUnknownSync(TecClass.TecClassAST)(decoded);
+}
+
+export function jsonToTecNodeAST(json: any): TecNode.TecNodeAST {
+  return S.decodeUnknownSync(TecNode.TecNodeAST)(json);
+}
+export function tecNodeASTToJson(decoded: TecNode.TecNodeAST): any {
+  return S.encodeUnknownSync(TecNode.TecNodeAST)(decoded);
 }

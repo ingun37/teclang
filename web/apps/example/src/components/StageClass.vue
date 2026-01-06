@@ -11,6 +11,7 @@ const tecClassAST = ref<C.TecClass.TecClassAST | null>(null);
 const haskellCode = ref("");
 
 const sampleHaskellCode = `\
+line :: Line -> Pattern
 render :: Side -> Article -> Image
 pom :: Side -> Line -> Number
 schematic :: Side -> Image

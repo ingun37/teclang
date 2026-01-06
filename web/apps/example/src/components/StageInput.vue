@@ -5,6 +5,17 @@ defineProps<{
   tecClassAst: C.TecClass.TecClassAST;
   tecEnumAst: C.TecEnum.TecEnumAST;
 }>();
+
+defineEmits<{
+  (e: "update", value: C.TecNode.TecNodeAST): void;
+}>();
+const tecNodeAST = ref<C.TecNode.TecNodeAST | null>(null);
+
+const haskellCode = ref("");
+
+const sampleHaskellCode = `\
+// maybe needs to be auto generated?
+`;
 </script>
 
 <template>

@@ -12,9 +12,6 @@ function addEnum() {
         tecEnumValues: ["A", "B", "C"].map((x) =>
           C.TecEnum.TecEnumValue.make(x),
         ),
-        tecEnumRepresentation: C.TecEnum.TecEnumRepresentation.make({
-          repAttribs: [],
-        }),
       }),
     ),
   });

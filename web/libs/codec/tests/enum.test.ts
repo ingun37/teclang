@@ -47,3 +47,26 @@ test("parse TecClass haskell test log", () => {
     expect(encoded).toStrictEqual(jsonObject);
   }
 });
+
+test("parse TecNode haskell test log", () => {
+  const content = fs.readFileSync(
+    "/Users/ingun/projects/teclang/wasm/out-node.log",
+    "utf-8",
+  );
+  const sections = content.split("---- Json encoded ----");
+
+  for (let i = 1; i < sections.length; i++) {
+    const section = sections[i];
+    // Find the end of the JSON object. It starts with { and we want to find the matching } or the next ----
+    const nextHeaderIndex = section.indexOf("----");
+    const jsonStr =
+      nextHeaderIndex === -1
+        ? section.trim()
+        : section.substring(0, nextHeaderIndex).trim();
+    expect(jsonStr).not.toBeNull();
+    const jsonObject = JSON.parse(jsonStr);
+    const decoded = lib.jsonToTecNodeAST(jsonObject);
+    const encoded = lib.tecNodeASTToJson(decoded);
+    expect(encoded).toStrictEqual(jsonObject);
+  }
+});

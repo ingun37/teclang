@@ -12,20 +12,6 @@ function addValue() {
       model.value.tecEnumValues,
       C.TecEnum.TecEnumValue.make("Foo"),
     ),
-    tecEnumRepresentation: model.value.tecEnumRepresentation,
-  });
-}
-
-function addAttribute() {
-  model.value = C.TecEnum.TecEnum.make({
-    tecEnumName: model.value.tecEnumName,
-    tecEnumValues: model.value.tecEnumValues,
-    tecEnumRepresentation: C.TecEnum.TecEnumRepresentation.make({
-      repAttribs: E.Array.append(
-        model.value.tecEnumRepresentation.repAttribs,
-        C.TecEnum.TecEnumRepresentationAttribute.make("String"),
-      ),
-    }),
   });
 }
 </script>
@@ -65,28 +51,6 @@ function addAttribute() {
         <v-divider class="my-2" />
 
         <div class="text-caption mb-2">Representation Attributes</div>
-        <div
-          v-for="(_, index) in model.tecEnumRepresentation.repAttribs"
-          :key="index"
-          class="d-flex ga-2"
-        >
-          <v-select
-            v-model="model.tecEnumRepresentation.repAttribs[index]!"
-            :items="possibleOptions"
-            label="Type"
-            density="compact"
-            hide-details
-            variant="outlined"
-          />
-        </div>
-        <v-btn
-          prepend-icon="mdi-plus"
-          variant="plain"
-          size="small"
-          @click="addAttribute"
-        >
-          Add Attribute
-        </v-btn>
       </div>
     </v-card-text>
   </v-card>
