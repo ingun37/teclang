@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import * as fs from "node:fs";
 import * as lib from "../src/index.js";
-
+import * as E from "effect";
 test("parse TecEnum haskell test log", () => {
   const content = fs.readFileSync(
     "/Users/ingun/projects/teclang/wasm/out-enum.log",
@@ -69,4 +69,56 @@ test("parse TecNode haskell test log", () => {
     const encoded = lib.tecNodeASTToJson(decoded);
     expect(encoded).toStrictEqual(jsonObject);
   }
+});
+
+test("helper", () => {
+  const enumAST = lib.TecEnum.TecEnumAST.make({
+    tecEnums: [
+      lib.TecEnum.TecEnum.make({
+        tecEnumName: lib.TecEnum.TecEnumName.make("Letter"),
+        tecEnumValues: "ab"
+          .split("")
+          .map((l) => lib.TecEnum.TecEnumValue.make(l)),
+      }),
+      lib.TecEnum.TecEnum.make({
+        tecEnumName: lib.TecEnum.TecEnumName.make("Number"),
+        tecEnumValues: "12"
+          .split("")
+          .map((l) => lib.TecEnum.TecEnumValue.make(l)),
+      }),
+      lib.TecEnum.TecEnum.make({
+        tecEnumName: lib.TecEnum.TecEnumName.make("Index"),
+        tecEnumValues: "ij"
+          .split("")
+          .map((l) => lib.TecEnum.TecEnumValue.make(l)),
+      }),
+    ],
+  });
+
+  const iter = (idxTypes: string[]) =>
+    E.Effect.runSync(
+      lib.help.iterateIndexSet(enumAST)(
+        lib.TecClass.TecClass.make({
+          tecClassName: lib.TecClass.TecClassName.make("Foo"),
+          tecSignature: lib.TecClass.TecSignature.make({
+            attributeTypeSet: [lib.TecClass.TecClassAttribute.make("Attrib")],
+            indexTypeSet: idxTypes.map((it) =>
+              lib.TecClass.TecClassIndex.make(it),
+            ),
+          }),
+        }),
+      ),
+    );
+  expect(iter([])).toStrictEqual([[]]);
+  expect(iter(["Letter"])).toStrictEqual([["a"], ["b"]]);
+  expect(iter(["Letter", "Number", "Index"])).toStrictEqual([
+    ["a", "1", "i"],
+    ["a", "1", "j"],
+    ["a", "2", "i"],
+    ["a", "2", "j"],
+    ["b", "1", "i"],
+    ["b", "1", "j"],
+    ["b", "2", "i"],
+    ["b", "2", "j"],
+  ]);
 });

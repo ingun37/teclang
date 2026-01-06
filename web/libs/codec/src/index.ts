@@ -6,6 +6,7 @@ import { Schema as S } from "effect";
 export * as TecEnum from "./TecEnum.js";
 export * as TecClass from "./TecClass.js";
 export * as TecNode from "./TecNode.js";
+export * as help from "./helper.js";
 
 export function jsonToTecEnumAST(json: any): TecEnum.TecEnumAST {
   return S.decodeUnknownSync(TecEnum.TecEnumAST)(json);

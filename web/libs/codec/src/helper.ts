@@ -1,15 +1,34 @@
 import * as E from "effect";
-import { Schema as S } from "effect";
-export interface Branding<T extends S.Schema.Any> {
-  (t: S.Schema.Encoded<T>): S.Schema.Type<T>;
+import * as TC from "./TecClass.js";
+import * as TE from "./TecEnum.js";
+function* recur(enums: readonly TE.TecEnum[]): Generator<TE.TecEnumValue[]> {
+  if (E.Array.isNonEmptyReadonlyArray(enums)) {
+    const [x, xs] = E.Array.unprepend(enums);
+    for (const v of x.tecEnumValues) {
+      for (const tailV of recur(xs)) {
+        yield [v, ...tailV];
+      }
+    }
+  } else {
+    yield [];
+  }
 }
-export function commuteEncode<A, B, C, D extends S.Schema<B, A, never>>(
-  encoder: S.Schema<B, C, never>,
-  decoder: D,
-) {
-  return (x: A) => S.encodeEither(encoder)(S.decodeSync(decoder)(x));
-}
-
-export function commuteEncodeId<A, B>(sch: S.Schema<B, A>) {
-  return (x: A) => S.encodeEither(sch)(S.decodeSync(sch)(x));
+export function iterateIndexSet(enumAST: TE.TecEnumAST) {
+  return function (tc: TC.TecClass) {
+    return E.pipe(
+      tc.tecSignature.indexTypeSet,
+      E.Array.map((t) =>
+        E.Either.fromOption(
+          E.Array.findFirst(
+            enumAST.tecEnums,
+            (e) => e.tecEnumName.toLowerCase() === t.toLowerCase(),
+          ),
+          () => new Error("Failed to find enum with the type"),
+        ),
+      ),
+      E.Either.all,
+      E.Either.map(recur),
+      E.Either.map(E.Array.fromIterable),
+    );
+  };
 }
