@@ -105,17 +105,11 @@ testData =
 
 testEnum :: [String]
 testEnum =
-  [ "data TecType = A X",
-    "data TecType = A X Y",
-    """
-    data TecType = A
-                 | B X Y
-    """,
+  [ "data TecType = A",
     """
     data TecType = A
                  | B
     """,
-    "data TecType = A",
     """
     data Enum0 = A
                | B

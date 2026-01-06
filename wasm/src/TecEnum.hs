@@ -9,13 +9,6 @@ import Data.Aeson
 import GHC.Generics (Generic)
 
 
-data TecEnumRepresentation = TecEnumRepresentation {repAttribs :: [String]} deriving (Show, Generic)
-
-instance ToJSON TecEnumRepresentation where
-  toEncoding = genericToEncoding defaultOptions
-
-instance FromJSON TecEnumRepresentation
-
 data TecValue = TecValue String deriving (Show, Generic)
 
 instance ToJSON TecValue where
@@ -23,7 +16,7 @@ instance ToJSON TecValue where
 
 instance FromJSON TecValue
 
-data TecEnum = TecEnum {tecEnumName :: String, tecEnumValues :: [TecValue], tecEnumRepresentation :: TecEnumRepresentation}
+data TecEnum = TecEnum {tecEnumName :: String, tecEnumValues :: [TecValue]}
   deriving (Show, Generic)
 
 instance ToJSON TecEnum where
