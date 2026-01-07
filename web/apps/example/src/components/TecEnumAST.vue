@@ -24,34 +24,29 @@ const possibleRepAttribTypes = computed<string[]>(() => {
 </script>
 
 <template>
-  <v-card>
-    <v-card-subtitle>Enums</v-card-subtitle>
-    <v-card-text>
-      <v-container>
-        <v-row dense>
-          <v-col cols="auto" v-for="(_, i) in model.tecEnums" :key="i">
-            <TecEnum
-              v-model="model.tecEnums[i]!"
-              :possible-options="possibleRepAttribTypes"
-            />
-          </v-col>
-          <v-col cols="auto">
-            <v-card>
-              <v-card-text>
-                <v-btn
-                  prepend-icon="mdi-plus"
-                  variant="plain"
-                  size="small"
-                  @click="addEnum"
-                >
-                  Add Enum
-                </v-btn>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-card-text>
-  </v-card>
+  <v-container fluid>
+    <v-row dense>
+      <v-col cols="auto" v-for="(_, i) in model.tecEnums" :key="i">
+        <TecEnum
+          v-model="model.tecEnums[i]!"
+          :possible-options="possibleRepAttribTypes"
+        />
+      </v-col>
+      <v-col cols="auto">
+        <v-card>
+          <v-card-text>
+            <v-btn
+              prepend-icon="mdi-plus"
+              variant="plain"
+              size="small"
+              @click="addEnum"
+            >
+              Add Enum
+            </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <style scoped lang="sass"></style>

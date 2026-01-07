@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import * as C from "codec";
 import * as E from "effect";
-import InputClass from "@/components/InputClass.vue";
 import { useAppStore } from "@/stores/app.ts";
 const props = defineProps<{
   tecClassAst: C.TecClass.TecClassAST;
@@ -59,7 +58,7 @@ async function updateCode() {
 </script>
 
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row>
       <v-col cols="12">
         <div class="d-flex flex-row ga-2 mb-4">
