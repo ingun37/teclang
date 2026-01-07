@@ -11,7 +11,9 @@ const props = defineProps<{
 defineEmits<{
   (e: "update", value: C.TecNode.TecNodeAST): void;
 }>();
-const tecNodeAST = ref<C.TecNode.TecNodeAST | null>(null);
+const tecNodeAST = ref<C.TecNode.TecNodeAST>(
+  C.TecNode.TecNodeAST.make({ tecNodeSets: [] }),
+);
 
 const haskellCode = ref("");
 function createInitialHaskellCode() {
@@ -81,16 +83,12 @@ async function updateCode() {
           <v-btn color="primary" @click="updateCode">update code</v-btn>
         </div>
       </v-col>
-      <v-col cols="12">
-        <InputEnums :tec-enums="tecEnumAst" />
-      </v-col>
-      <v-col
-        v-for="tecClass in tecClassAst.tecClasses"
-        :key="tecClass.tecClassName"
-        cols="12"
-      >
-        <InputClass :tec-class="tecClass" :tec-enums="tecEnumAst" />
-      </v-col>
+
+      <TecNodeAST
+        v-model="tecNodeAST"
+        :tec-enums="props.tecEnumAst"
+        :tec-classes="props.tecClassAst"
+      />
     </v-row>
   </v-container>
 </template>

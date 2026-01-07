@@ -4,7 +4,7 @@ import * as TecEnum from "./TecEnum.js";
 
 export const TecNode = S.Struct({
   indexCombination: S.Array(TecEnum.TecEnumValue),
-  tecNodeAttributes: S.Array(S.Any),
+  tecNodeAttributes444: S.Array(S.Any),
 });
 export type TecNode = typeof TecNode.Type;
 

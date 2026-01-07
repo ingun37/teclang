@@ -1,7 +1,7 @@
 import { Schema as S } from "effect";
 export const TecEnumValue = S.String.pipe(S.brand("TecEnumValue"));
 export type TecEnumValue = typeof TecEnumValue.Type;
-
+export const TecEnumValueEquivalence = S.equivalence(TecEnumValue);
 export const TecEnumName = S.String.pipe(S.brand("TecEnumName"));
 export type TecEnumName = typeof TecEnumName.Type;
 

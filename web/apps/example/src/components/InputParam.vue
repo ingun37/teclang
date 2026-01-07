@@ -2,6 +2,10 @@
 import { ref } from "vue";
 import * as C from "codec";
 import * as E from "effect";
+
+const emits = defineEmits<{
+  (e: "update", value: string): void;
+}>();
 const props = defineProps<{
   indexCombo: string[];
   paramType: string;
@@ -9,9 +13,15 @@ const props = defineProps<{
 }>();
 
 const textValue = ref("");
+watch(textValue, (v) => emits("update", v));
 const numberValue = ref<number | null>(null);
+watch(numberValue, (v) => {
+  if (v) emits("update", v.toString());
+});
 const imageUrl = ref<string | null>(null);
-
+watch(imageUrl, (v) => {
+  if (v) emits("update", v);
+});
 const onFileChange = (e: Event) => {
   const target = e.target as HTMLInputElement;
   const file = target.files?.[0];
@@ -104,6 +114,7 @@ const options = computed<readonly string[]>(() => {
         variant="outlined"
         style="width: 8rem"
         :label="label"
+        v-model="textValue"
       />
     </template>
   </div>
