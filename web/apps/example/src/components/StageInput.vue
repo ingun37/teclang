@@ -58,7 +58,7 @@ async function updateCode() {
 </script>
 
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row>
       <v-col cols="12">
         <div class="d-flex flex-row ga-2 mb-4">
