@@ -26,7 +26,7 @@ function createInitialHaskellCode() {
           const each = combs.map(
             (comb) =>
               comb.map((v) => `${v}: `).join("") +
-              c.tecSignature.indexTypeSet.map(() => "A").join(" "),
+              c.tecSignature.attributeTypeSet.map(() => "A").join(" "),
           );
           return `${c.tecClassName} = [\n${each.map((x) => "  " + x).join(",\n")}]`;
         }),
@@ -36,10 +36,9 @@ function createInitialHaskellCode() {
   );
   return a.join("\n");
 }
-const sampleHaskellCode = createInitialHaskellCode();
 
 function fillSampleCode() {
-  haskellCode.value = sampleHaskellCode;
+  haskellCode.value = createInitialHaskellCode();
 }
 async function updateUI() {
   tecNodeAST.value = C.jsonToTecNodeAST(

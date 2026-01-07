@@ -35,7 +35,7 @@ const clearImage = () => {
 };
 
 const label = computed(() => {
-  return props.indexCombo.join(", ");
+  return props.indexCombo.join(", ") + " - " + props.paramType;
 });
 
 const options = computed<readonly string[]>(() => {
