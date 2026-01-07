@@ -49,12 +49,13 @@ const iter = computed<C.TecEnum.TecEnum | null>(() => {
       @update="(x, y, z) => $emit('update', x, y, z)"
     />
   </div>
-  <div v-else>
+  <div v-else class="d-flex flex-column ga-1">
     <InputParam
+      v-for="(_, i) in tecIndexedClass.tecSignature.attributeTypeSet"
       :index-combo="indexCombo"
-      :param-type="tecIndexedClass.tecSignature.attributeTypeSet[0]"
+      :param-type="tecIndexedClass.tecSignature.attributeTypeSet[i]!"
       :all-enums="tecEnums"
-      @update="$emit('update', indexCombo, 0, $event)"
+      @update="$emit('update', indexCombo, i, $event)"
     />
   </div>
 </template>
