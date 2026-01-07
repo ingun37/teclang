@@ -16,6 +16,16 @@ function addIndex() {
     ),
   });
 }
+
+function addAtt() {
+  model.value = C.TecClass.TecSignature.make({
+    attributeTypeSet: E.Array.append(
+      model.value.attributeTypeSet,
+      C.TecClass.TecClassAttribute.make("String"),
+    ),
+    indexTypeSet: model.value.indexTypeSet,
+  });
+}
 const options = computed<string[]>(() => {
   return props.tecEnumAst.tecEnums.map((e) => e.tecEnumName);
 });
@@ -24,13 +34,17 @@ const options = computed<string[]>(() => {
 <template>
   <div class="d-flex flex-column ga-1">
     <v-select
-      v-model="model.attributeTypeSet[0]"
+      v-for="(_, i) in model.attributeTypeSet"
+      :key="i"
+      v-model="model.attributeTypeSet[i]"
       :items="['String', 'Number', 'Image']"
       density="compact"
       hide-details
       variant="outlined"
     />
-
+    <v-btn prepend-icon="mdi-plus" variant="plain" size="small" @click="addAtt">
+      Add Attribute
+    </v-btn>
     <div class="text-caption mb-2">Index set</div>
 
     <v-select
