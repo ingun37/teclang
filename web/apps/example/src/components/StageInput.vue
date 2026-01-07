@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import * as C from "codec";
 import * as E from "effect";
-import InputClass from "@/components/InputClass.vue";
 import { useAppStore } from "@/stores/app.ts";
 const props = defineProps<{
   tecClassAst: C.TecClass.TecClassAST;
