@@ -30,6 +30,9 @@ getCon name = E.Con () (E.UnQual () (getIdent name))
 getPVar :: String -> E.Pat ()
 getPVar s = E.PVar () (getIdent s)
 
+getLit :: String -> E.Exp ()
+getLit str = E.Lit () (E.String () str str)
+
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))
 
@@ -103,16 +106,18 @@ decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
 trivialOp :: E.QOp ()
 trivialOp = E.QConOp () (E.Special () (E.Cons ()))
 
+unsnocIdxs :: [TecNodeIndex] -> Either TecError ([TecNodeIndex], TecNodeIndex)
+unsnocIdxs idxs = maybe (Left $ TecError "TecNodeIndexs are empty") Right (Data.List.unsnoc idxs)
+
 decodeTecNode :: TecNode -> Either TecError (E.Exp ())
 decodeTecNode (TecNode idxs (att : atts)) = do
-  let bab b a = E.App () b (getCon a)
-  let attribs = foldl bab (getCon att) atts
-  case Data.List.unsnoc idxs of
-    Nothing -> return attribs
-    Just (is, i) -> do
-      let abb a = E.InfixApp () (getCon (view _tecNodeIndex a)) trivialOp
-      let indexs = foldr abb (getCon (view _tecNodeIndex i)) is
-      return $ E.InfixApp () indexs trivialOp attribs
+  (idxs',idx) <- unsnocIdxs idxs
+  let initial = E.App () (getCon (view _tecNodeIndex idx)) (getLit att)
+  let bab b a = E.App () b (getLit a)
+  let attribs = foldl bab initial atts
+  let abb a = E.InfixApp () (getCon (view _tecNodeIndex a)) trivialOp
+  let indexs = foldr abb attribs idxs'
+  return indexs
 decodeTecNode s = Left $ TecErrorUnknownExp (show s)
 
 decodeTecNodeSet :: TecNodeSet -> Either TecError (E.Decl ())
