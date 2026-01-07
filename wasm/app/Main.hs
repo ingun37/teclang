@@ -77,6 +77,10 @@ foreign export javascript "decodeHaskellClass" decodeHaskellClass :: JSString ->
 decodeHaskellClass :: JSString -> IO JSString
 decodeHaskellClass code = toJSString <$> Util.decodeHaskellClass (fromJSString code)
 
+foreign export javascript "decodeHaskellNode" decodeHaskellNode :: JSString -> IO JSString
+decodeHaskellNode :: JSString -> IO JSString
+decodeHaskellNode code = toJSString <$> Util.decodeHaskellNode (fromJSString code)
+
 foreign export javascript "encodeHaskellEnum" encodeHaskellEnum :: JSString -> IO JSString
 encodeHaskellEnum :: JSString -> IO JSString
 encodeHaskellEnum code = toJSString <$> Util.encodeHaskellEnum (fromJSString code)
@@ -84,3 +88,7 @@ encodeHaskellEnum code = toJSString <$> Util.encodeHaskellEnum (fromJSString cod
 foreign export javascript "encodeHaskellClass" encodeHaskellClass :: JSString -> IO JSString
 encodeHaskellClass :: JSString -> IO JSString
 encodeHaskellClass code = toJSString <$> Util.encodeHaskellClass (fromJSString code)
+
+foreign export javascript "encodeHaskellNode" encodeHaskellNode :: JSString -> IO JSString
+encodeHaskellNode :: JSString -> IO JSString
+encodeHaskellNode code = toJSString <$> Util.encodeHaskellNode (fromJSString code)

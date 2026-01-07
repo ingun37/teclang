@@ -1,86 +1,12 @@
 ---- Original Code ----
-data TecType = A X
----- Raw AST ----
-TecEnumAST
-    { tecEnums =
-        [ TecEnum
-            { tecEnumName = "TecType"
-            , tecEnumValues =
-                [ TecValue "A" ]
-            , tecEnumRepresentation = TecEnumRepresentation
-                { repAttribs = [ "X" ] }
-            }
-        ]
-    }
----- Json encoded ----
-{
-    "tecEnums": [
-        {
-            "tecEnumName": "TecType",
-            "tecEnumRepresentation": {
-                "repAttribs": [
-                    "X"
-                ]
-            },
-            "tecEnumValues": [
-                "A"
-            ]
-        }
-    ]
-}
----- Original Code ----
-data TecType = A X Y
----- Raw AST ----
-TecEnumAST
-    { tecEnums =
-        [ TecEnum
-            { tecEnumName = "TecType"
-            , tecEnumValues =
-                [ TecValue "A" ]
-            , tecEnumRepresentation = TecEnumRepresentation
-                { repAttribs =
-                    [ "X"
-                    , "Y"
-                    ]
-                }
-            }
-        ]
-    }
----- Json encoded ----
-{
-    "tecEnums": [
-        {
-            "tecEnumName": "TecType",
-            "tecEnumRepresentation": {
-                "repAttribs": [
-                    "X",
-                    "Y"
-                ]
-            },
-            "tecEnumValues": [
-                "A"
-            ]
-        }
-    ]
-}
----- Original Code ----
 data TecType = A
-             | B X Y
 ---- Raw AST ----
 TecEnumAST
     { tecEnums =
         [ TecEnum
             { tecEnumName = "TecType"
             , tecEnumValues =
-                [ TecValue "A"
-                , TecValue "B"
-                ]
-            , tecEnumRepresentation = TecEnumRepresentation
-                { repAttribs =
-                    [ "X"
-                    , "Y"
-                    ]
-                }
+                [ TecValue "A" ]
             }
         ]
     }
@@ -89,15 +15,8 @@ TecEnumAST
     "tecEnums": [
         {
             "tecEnumName": "TecType",
-            "tecEnumRepresentation": {
-                "repAttribs": [
-                    "X",
-                    "Y"
-                ]
-            },
             "tecEnumValues": [
-                "A",
-                "B"
+                "A"
             ]
         }
     ]
@@ -114,8 +33,6 @@ TecEnumAST
                 [ TecValue "A"
                 , TecValue "B"
                 ]
-            , tecEnumRepresentation = TecEnumRepresentation
-                { repAttribs = [] }
             }
         ]
     }
@@ -124,40 +41,9 @@ TecEnumAST
     "tecEnums": [
         {
             "tecEnumName": "TecType",
-            "tecEnumRepresentation": {
-                "repAttribs": []
-            },
             "tecEnumValues": [
                 "A",
                 "B"
-            ]
-        }
-    ]
-}
----- Original Code ----
-data TecType = A
----- Raw AST ----
-TecEnumAST
-    { tecEnums =
-        [ TecEnum
-            { tecEnumName = "TecType"
-            , tecEnumValues =
-                [ TecValue "A" ]
-            , tecEnumRepresentation = TecEnumRepresentation
-                { repAttribs = [] }
-            }
-        ]
-    }
----- Json encoded ----
-{
-    "tecEnums": [
-        {
-            "tecEnumName": "TecType",
-            "tecEnumRepresentation": {
-                "repAttribs": []
-            },
-            "tecEnumValues": [
-                "A"
             ]
         }
     ]
@@ -178,15 +64,11 @@ TecEnumAST
                 , TecValue "B"
                 , TecValue "C"
                 ]
-            , tecEnumRepresentation = TecEnumRepresentation
-                { repAttribs = [] }
             }
         , TecEnum
             { tecEnumName = "TecType"
             , tecEnumValues =
                 [ TecValue "AType" ]
-            , tecEnumRepresentation = TecEnumRepresentation
-                { repAttribs = [] }
             }
         ]
     }
@@ -195,9 +77,6 @@ TecEnumAST
     "tecEnums": [
         {
             "tecEnumName": "Enum0",
-            "tecEnumRepresentation": {
-                "repAttribs": []
-            },
             "tecEnumValues": [
                 "A",
                 "B",
@@ -206,9 +85,6 @@ TecEnumAST
         },
         {
             "tecEnumName": "TecType",
-            "tecEnumRepresentation": {
-                "repAttribs": []
-            },
             "tecEnumValues": [
                 "AType"
             ]

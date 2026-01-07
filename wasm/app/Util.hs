@@ -2,9 +2,11 @@ module Util
   ( encodeHaskellData,
     encodeHaskellEnum,
     encodeHaskellClass,
+    encodeHaskellNode,
     decodeHaskellData,
     decodeHaskellEnum,
     decodeHaskellClass,
+    decodeHaskellNode,
     formatHaskell,
   )
 where
@@ -37,6 +39,9 @@ sigData = getConst
 sigClass :: Sig MyLib.TecClassAST
 sigClass = getConst
 
+sigNode :: Sig MyLib.TecNodeAST
+sigNode = getConst
+
 encodeHaskell :: forall a. (MyLib.TecAST a, J.ToJSON a) => String -> IO (Const String a)
 encodeHaskell code = do
   ast <- failIfLeft $ mapLeft LibErr $ MyLib.encodeCodeToTec code :: IO a
@@ -50,6 +55,9 @@ encodeHaskellEnum = fmap sigEnum . encodeHaskell
 
 encodeHaskellClass :: String -> IO String
 encodeHaskellClass = fmap sigClass . encodeHaskell
+
+encodeHaskellNode :: String -> IO String
+encodeHaskellNode = fmap sigNode . encodeHaskell
 
 decodeHaskell :: forall a. (MyLib.TecAST a, J.FromJSON a) => String -> IO (Const String a)
 decodeHaskell jsonStr = do
@@ -66,6 +74,9 @@ decodeHaskellEnum = fmap sigEnum . decodeHaskell
 
 decodeHaskellClass :: String -> IO String
 decodeHaskellClass = fmap sigClass . decodeHaskell
+
+decodeHaskellNode :: String -> IO String
+decodeHaskellNode = fmap sigNode . decodeHaskell
 
 formatHaskell :: String -> IO String
 formatHaskell code = do

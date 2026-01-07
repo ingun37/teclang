@@ -61,7 +61,16 @@ library
     exposed-modules:  MyLib
 
     -- Modules included in this library but not exported.
-    other-modules: TecEnum, TecEncode, TecDecode, TecAST, TecFormat, TecError, TecData, TecClass
+    other-modules:
+        TecEnum,
+        TecEncode,
+        TecDecode,
+        TecAST,
+        TecFormat,
+        TecError,
+        TecData,
+        TecClass,
+        TecNode
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -78,7 +87,8 @@ library
         aeson,
         containers,
         mtl,
-        transformers
+        transformers,
+        optics-core
         
     -- Directories containing source files.
     hs-source-dirs:   src

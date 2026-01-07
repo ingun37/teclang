@@ -1,19 +1,34 @@
-module TecDecode (decodeTecClassAST, decodeTecEnumAST, decodeTecDataAST) where
+module TecDecode
+  ( decodeTecClassAST,
+    decodeTecEnumAST,
+    decodeTecDataAST,
+    decodeTecNodeAST,
+  )
+where
 
 import Control.Monad (foldM)
 import Data.Functor ((<&>))
+import Data.List (unsnoc)
 import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
+import Optics.Core
 import TecClass
 import TecData
 import TecEnum
 import TecError
+import TecNode
 
 getIdent :: String -> E.Name ()
 getIdent = E.Ident ()
 
 getTyCon :: String -> E.Type ()
 getTyCon name = E.TyCon () (E.UnQual () (getIdent name))
+
+getCon :: String -> E.Exp ()
+getCon name = E.Con () (E.UnQual () (getIdent name))
+
+getPVar :: String -> E.Pat ()
+getPVar s = E.PVar () (getIdent s)
 
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))
@@ -56,26 +71,10 @@ decodeQualConDecl (TecValue name) = do
   types <- traverse decodeType []
   return $ E.QualConDecl () Nothing Nothing (E.ConDecl () (getIdent name) types)
 
-decodeTecEnumRep :: TecEnumRepresentation -> [E.Type ()]
-decodeTecEnumRep (TecEnumRepresentation kvs) = map getTyCon kvs
-
-overLastM :: (Monad m) => (a -> m a) -> [a] -> m [a]
-overLastM _ [] = return []
-overLastM f [x] = return <$> f x
-overLastM f (x : xs) = (x :) <$> overLastM f xs
-
-appendRep :: [E.Type ()] -> E.QualConDecl () -> Either TecError (E.QualConDecl ())
-appendRep [] d = return d
-appendRep decls (E.QualConDecl _ Nothing Nothing (E.ConDecl _ name [])) = do
-  return $ E.QualConDecl () Nothing Nothing (E.ConDecl () name decls)
-appendRep d _ = Left $ TecErrorUnknownExp (show d)
-
 decodeTecEnum :: TecEnum -> Either TecError (E.Decl ())
-decodeTecEnum (TecEnum name classes rep) = do
+decodeTecEnum (TecEnum name classes) = do
   xs <- traverse decodeQualConDecl classes
-  let r = decodeTecEnumRep rep
-  xs' <- overLastM (appendRep r) xs
-  return $ E.DataDecl () (E.DataType ()) Nothing (E.DHead () (getIdent name)) xs' []
+  return $ E.DataDecl () (E.DataType ()) Nothing (E.DHead () (getIdent name)) xs []
 
 decodeTecEnumAST :: TecEnumAST -> Either TecError [E.Decl ()]
 decodeTecEnumAST (TecEnumAST tecEnums) = traverse decodeTecEnum tecEnums
@@ -100,3 +99,26 @@ decodeTecClass (TecClass tecClassName sig) = do
 
 decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
 decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
+
+trivialOp :: E.QOp ()
+trivialOp = E.QConOp () (E.Special () (E.Cons ()))
+
+decodeTecNode :: TecNode -> Either TecError (E.Exp ())
+decodeTecNode (TecNode idxs (att : atts)) = do
+  let bab b a = E.App () b (getCon a)
+  let attribs = foldl bab (getCon att) atts
+  case Data.List.unsnoc idxs of
+    Nothing -> return attribs
+    Just (is, i) -> do
+      let abb a = E.InfixApp () (getCon (view _tecNodeIndex a)) trivialOp
+      let indexs = foldr abb (getCon (view _tecNodeIndex i)) is
+      return $ E.InfixApp () indexs trivialOp attribs
+decodeTecNode s = Left $ TecErrorUnknownExp (show s)
+
+decodeTecNodeSet :: TecNodeSet -> Either TecError (E.Decl ())
+decodeTecNodeSet (TecNodeSet tecNodeClass tecNodes) = do
+  nodes <- traverse decodeTecNode tecNodes
+  return $ E.PatBind () (getPVar tecNodeClass) (E.UnGuardedRhs () (E.List () nodes)) Nothing
+
+decodeTecNodeAST :: TecNodeAST -> Either TecError [E.Decl ()]
+decodeTecNodeAST t = traverse decodeTecNodeSet (tecNodeSets t)

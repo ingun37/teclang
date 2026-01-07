@@ -10,6 +10,14 @@ const props = defineProps<{
   tecIndexedClass: C.TecClass.TecClass;
   tecEnums: C.TecEnum.TecEnumAST;
 }>();
+defineEmits<{
+  (
+    e: "update",
+    indexCombo: C.TecEnum.TecEnumValue[],
+    paramTypeIndex: number,
+    value: any,
+  ): void;
+}>();
 const iter = computed<C.TecEnum.TecEnum | null>(() => {
   return E.pipe(
     props.tecEnums.tecEnums,
@@ -38,6 +46,7 @@ const iter = computed<C.TecEnum.TecEnum | null>(() => {
       :paramIndex="paramIndex + 1"
       :tecIndexedClass="tecIndexedClass"
       :tecEnums="tecEnums"
+      @update="(x, y, z) => $emit('update', x, y, z)"
     />
   </div>
   <div v-else>
@@ -45,6 +54,7 @@ const iter = computed<C.TecEnum.TecEnum | null>(() => {
       :index-combo="indexCombo"
       :param-type="tecIndexedClass.tecSignature.attributeTypeSet[0]"
       :all-enums="tecEnums"
+      @update="$emit('update', indexCombo, 0, $event)"
     />
   </div>
 </template>
