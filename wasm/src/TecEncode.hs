@@ -34,6 +34,10 @@ getCon x = Left $ TecErrorUnknownExp (show x)
 getPVar :: (Show l) => E.Pat l -> Either TecError String
 getPVar (E.PVar _ ident) = getIdent ident
 
+getLit :: (Show l) => E.Exp l -> Either TecError String
+getLit (E.Lit _ (E.String _ x y)) = return y
+getLit x = Left $ TecErrorUnknownExp (show x)
+
 encodeDecl :: (Show l) => E.Decl l -> Either TecError (String, E.Exp l)
 encodeDecl (E.PatBind _ (E.PVar _ (E.Ident _ name)) (E.UnGuardedRhs _ expr) _) = Right $ (name, expr)
 encodeDecl x = Left $ TecErrorUnknownExp (show x)
@@ -134,10 +138,10 @@ encodeTecNode (E.InfixApp _ (E.Con _ luq) (E.QConOp _ (E.Special _ (E.Cons _))) 
   return $ over _indexCombination (TecNodeIndex i :) r
 encodeTecNode (E.Con _ uq) = do
   a <- getUnQual uq
-  return $ TecNode [] [a]
-encodeTecNode (E.App _ left (E.Con _ uq)) = do
+  return $ TecNode [TecNodeIndex a] []
+encodeTecNode (E.App _ left lit) = do
   l <- encodeTecNode left
-  r <- getUnQual uq
+  r <- getLit lit
   return $ over _tecNodeAttributes (++ [r]) l
 encodeTecNode exp = do
   Left $ TecErrorUnknownExp (show exp)

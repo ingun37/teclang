@@ -25,8 +25,8 @@ function createInitialHaskellCode() {
           const combs = yield* combinations(c);
           const each = combs.map(
             (comb) =>
-              comb.map((v) => `${v}: `).join("") +
-              c.tecSignature.attributeTypeSet.map(() => "A").join(" "),
+              comb.map((v) => `${v}`).join(" : ") +
+              c.tecSignature.attributeTypeSet.map(() => ' "A"').join(""),
           );
           return `${c.tecClassName} = [\n${each.map((x) => "  " + x).join(",\n")}]`;
         }),
