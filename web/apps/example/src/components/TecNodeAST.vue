@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import * as C from "codec";
+import * as E from "effect";
 import TecNodeSet from "@/components/TecNodeSet.vue";
 const model = defineModel<C.TecNode.TecNodeAST>({ required: true });
 
-defineProps<{
+const props = defineProps<{
   tecEnums: C.TecEnum.TecEnumAST;
   tecClasses: C.TecClass.TecClassAST;
 }>();
 </script>
 
 <template>
-  <v-container fluid>
+  <v-container>
     <v-row>
       <v-col cols="12" v-for="(_, i) in model.tecNodeSets">
         <TecNodeSet

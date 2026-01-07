@@ -14,8 +14,8 @@ function addClass() {
       C.TecClass.TecClass.make({
         tecClassName: C.TecClass.TecClassName.make("newClass"),
         tecSignature: C.TecClass.TecSignature.make({
-          attributeTypeSet: [C.TecClass.TecClassAttribute.make("String")],
-          indexTypeSet: [],
+          attributes: [C.TecClass.TecClassAttribute.make("String")],
+          indexSet: [],
         }),
       }),
     ),
@@ -24,30 +24,35 @@ function addClass() {
 </script>
 
 <template>
-  <v-container fluid>
-    <v-row dense>
-      <v-col cols="auto" v-for="(_, i) in model.tecClasses" :key="i">
-        <TecClass
-          v-model="model.tecClasses[i]!"
-          :tec-enum-ast="props.tecEnumAst"
-        />
-      </v-col>
-      <v-col cols="auto">
-        <v-card>
-          <v-card-text>
-            <v-btn
-              prepend-icon="mdi-plus"
-              variant="plain"
-              size="small"
-              @click="addClass"
-            >
-              Add Class
-            </v-btn>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-card>
+    <v-card-subtitle>Classes</v-card-subtitle>
+    <v-card-text>
+      <v-container>
+        <v-row dense>
+          <v-col cols="auto" v-for="(_, i) in model.tecClasses" :key="i">
+            <TecClass
+              v-model="model.tecClasses[i]!"
+              :tec-enum-ast="props.tecEnumAst"
+            />
+          </v-col>
+          <v-col cols="auto">
+            <v-card>
+              <v-card-text>
+                <v-btn
+                  prepend-icon="mdi-plus"
+                  variant="plain"
+                  size="small"
+                  @click="addClass"
+                >
+                  Add Class
+                </v-btn>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
+  </v-card>
 </template>
 
 <style scoped lang="sass"></style>
