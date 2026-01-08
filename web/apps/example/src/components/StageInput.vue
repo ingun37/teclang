@@ -45,6 +45,20 @@ function createInitialHaskellCode() {
                     ][Math.floor(Math.random() * 10)];
                   case "Image":
                     return `/${c.tecClassName}/${comb.map((x) => x.toLowerCase()).join("-")}.png`;
+                  default:
+                    return E.pipe(
+                      props.tecEnumAst.tecEnums,
+                      E.Array.findFirst(
+                        (te) => (te.tecEnumName as string) === at,
+                      ),
+                      E.Option.map(
+                        (te) =>
+                          te.tecEnumValues[
+                            Math.floor(Math.random() * te.tecEnumValues.length)
+                          ],
+                      ),
+                      E.Option.getOrElse(() => "unknown"),
+                    );
                 }
               },
             );
