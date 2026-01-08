@@ -23,11 +23,50 @@ function createInitialHaskellCode() {
       E.Array.map((c) =>
         E.Either.gen(function* () {
           const combs = yield* combinations(c);
-          const each = combs.map(
-            (comb) =>
+
+          const each = combs.map((comb) => {
+            const sampleAttributes = c.tecSignature.attributeTypeSet.map(
+              (at) => {
+                switch (at) {
+                  case "Number":
+                    return (Math.random() * 30 + 10).toFixed(1);
+                  case "String":
+                    return [
+                      "Lion",
+                      "Tiger",
+                      "Bear",
+                      "Elephant",
+                      "Giraffe",
+                      "Zebra",
+                      "Panda",
+                      "Koala",
+                      "Kangaroo",
+                      "Penguin",
+                    ][Math.floor(Math.random() * 10)];
+                  case "Image":
+                    return `/${c.tecClassName}/${comb.map((x) => x.toLowerCase()).join("-")}.png`;
+                  default:
+                    return E.pipe(
+                      props.tecEnumAst.tecEnums,
+                      E.Array.findFirst(
+                        (te) => (te.tecEnumName as string) === at,
+                      ),
+                      E.Option.map(
+                        (te) =>
+                          te.tecEnumValues[
+                            Math.floor(Math.random() * te.tecEnumValues.length)
+                          ],
+                      ),
+                      E.Option.getOrElse(() => "unknown"),
+                    );
+                }
+              },
+            );
+            return (
               comb.map((v) => `${v}`).join(" : ") +
-              c.tecSignature.attributeTypeSet.map(() => ' "A"').join(""),
-          );
+              sampleAttributes.map((x) => ` "${x}"`).join("")
+            );
+          });
           return `${c.tecClassName} = [\n${each.map((x) => "  " + x).join(",\n")}]`;
         }),
       ),

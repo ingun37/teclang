@@ -15,7 +15,6 @@ declare module 'vue' {
     InputEnum: typeof import('./components/InputEnum.vue')['default']
     InputEnumRepAttrib: typeof import('./components/InputEnumRepAttrib.vue')['default']
     InputParam: typeof import('./components/InputParam.vue')['default']
-    InputRecurse: typeof import('./components/InputRecurse.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     StageClass: typeof import('./components/StageClass.vue')['default']
@@ -25,8 +24,10 @@ declare module 'vue' {
     TecClassAST: typeof import('./components/TecClassAST.vue')['default']
     TecEnum: typeof import('./components/TecEnum.vue')['default']
     TecEnumAST: typeof import('./components/TecEnumAST.vue')['default']
+    TecNode: typeof import('./components/TecNode.vue')['default']
     TecNodeAST: typeof import('./components/TecNodeAST.vue')['default']
     TecNodeSet: typeof import('./components/TecNodeSet.vue')['default']
+    TecNodesRecurse: typeof import('./components/TecNodesRecurse.vue')['default']
     TecSignature: typeof import('./components/TecSignature.vue')['default']
   }
 }

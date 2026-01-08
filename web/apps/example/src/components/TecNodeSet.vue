@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import * as C from "codec";
-import InputRecurse from "@/components/InputRecurse.vue";
 import * as E from "effect";
+import TecNodesRecurse from "@/components/TecNodesRecurse.vue";
 
 const model = defineModel<C.TecNode.TecNodeSet>({ required: true });
 
@@ -37,39 +37,6 @@ const dimension = computed(() => {
   const names = enums.map((x) => x.tecEnumName + `(${x.tecEnumValues.length})`);
   return `${names.join(" x ")}`;
 });
-function inputUpdate(
-  indexCombo: C.TecEnum.TecEnumValue[],
-  paramTypeIndex: number,
-  value: any,
-) {
-  const foundIdx = E.Array.findFirstIndex(model.value.tecNodeSet, (x) => {
-    return E.Array.getEquivalence(C.TecEnum.TecEnumValueEquivalence)(
-      x.indexCombination,
-      indexCombo,
-    );
-  });
-
-  E.Effect.runSync(
-    E.Either.gen(function* () {
-      const idx = yield* E.Either.fromOption(
-        foundIdx,
-        () => new Error("Failed to find node at " + indexCombo.join(", ")),
-      );
-      const attribs = model.value.tecNodeSet[idx]!.tecNodeAttributes;
-      model.value = C.TecNode.TecNodeSet.make({
-        tecNodeClass: model.value.tecNodeClass,
-        tecNodeSet: E.Array.replace(
-          model.value.tecNodeSet,
-          idx,
-          C.TecNode.TecNode.make({
-            indexCombination: indexCombo,
-            tecNodeAttributes: E.Array.replace(attribs, paramTypeIndex, value),
-          }),
-        ),
-      });
-    }),
-  );
-}
 </script>
 
 <template>
@@ -79,13 +46,13 @@ function inputUpdate(
       {{ dimension }}</v-card-subtitle
     >
     <v-card-text>
-      <InputRecurse
+      <TecNodesRecurse
+        v-model="model.tecNodeSet"
         :index-combo="[]"
         axis="x"
         :param-index="0"
         :tec-indexed-class="tecClass"
         :tec-enums="tecEnums"
-        @update="(x, y, z) => inputUpdate(x, y, z)"
       />
     </v-card-text>
   </v-card>

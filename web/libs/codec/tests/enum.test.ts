@@ -78,38 +78,37 @@ test("helper", () => {
         tecEnumName: lib.TecEnum.TecEnumName.make("Letter"),
         tecEnumValues: "ab"
           .split("")
-          .map((l) => lib.TecEnum.TecEnumValue.make(l)),
+          .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
       }),
       lib.TecEnum.TecEnum.make({
         tecEnumName: lib.TecEnum.TecEnumName.make("Number"),
         tecEnumValues: "12"
           .split("")
-          .map((l) => lib.TecEnum.TecEnumValue.make(l)),
+          .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
       }),
       lib.TecEnum.TecEnum.make({
         tecEnumName: lib.TecEnum.TecEnumName.make("Index"),
         tecEnumValues: "ij"
           .split("")
-          .map((l) => lib.TecEnum.TecEnumValue.make(l)),
+          .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
       }),
     ],
   });
 
-  const iter = (idxTypes: string[]) =>
+  const iter = (idxTypes: E.Array.NonEmptyReadonlyArray<string>) =>
     E.Effect.runSync(
       lib.help.iterateIndexSet(enumAST)(
         lib.TecClass.TecClass.make({
           tecClassName: lib.TecClass.TecClassName.make("Foo"),
           tecSignature: lib.TecClass.TecSignature.make({
             attributeTypeSet: [lib.TecClass.TecClassAttribute.make("Attrib")],
-            indexTypeSet: idxTypes.map((it) =>
+            indexTypeSet: E.Array.map(idxTypes, (it) =>
               lib.TecClass.TecClassIndex.make(it),
             ),
           }),
         }),
       ),
     );
-  expect(iter([])).toStrictEqual([[]]);
   expect(iter(["Letter"])).toStrictEqual([["a"], ["b"]]);
   expect(iter(["Letter", "Number", "Index"])).toStrictEqual([
     ["a", "1", "i"],

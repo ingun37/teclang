@@ -7,7 +7,7 @@ export type TecEnumName = typeof TecEnumName.Type;
 
 export const TecEnum = S.Struct({
   tecEnumName: TecEnumName,
-  tecEnumValues: S.Array(TecEnumValue),
+  tecEnumValues: S.NonEmptyArray(TecEnumValue),
 });
 export type TecEnum = typeof TecEnum.Type;
 export const TecEnumAST = S.Struct({ tecEnums: S.Array(TecEnum) });
