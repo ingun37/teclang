@@ -2,9 +2,11 @@ import { Schema as S } from "effect";
 import * as TecClass from "./TecClass.js";
 import * as TecEnum from "./TecEnum.js";
 
+const IndexCombination = S.NonEmptyArray(TecEnum.TecEnumValue);
+export type IndexCombination = typeof IndexCombination.Type;
 export const TecNode = S.Struct({
-  indexCombination: S.Array(TecEnum.TecEnumValue),
-  tecNodeAttributes444: S.Array(S.Any),
+  indexCombination: IndexCombination,
+  tecNodeAttributes: S.Array(S.Any),
 });
 export type TecNode = typeof TecNode.Type;
 

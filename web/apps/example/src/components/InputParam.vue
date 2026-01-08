@@ -12,26 +12,21 @@ const props = defineProps<{
   allEnums: C.TecEnum.TecEnumAST;
 }>();
 
-const textValue = ref("");
-watch(textValue, (v) => emits("update", v));
-const numberValue = ref<number | null>(null);
-watch(numberValue, (v) => {
-  if (v) emits("update", v.toString());
-});
-const imageUrl = ref<string | null>(null);
-watch(imageUrl, (v) => {
+const inputValue = ref("");
+watch(inputValue, (v) => {
   if (v) emits("update", v);
 });
+
 const onFileChange = (e: Event) => {
   const target = e.target as HTMLInputElement;
   const file = target.files?.[0];
   if (file) {
-    imageUrl.value = URL.createObjectURL(file);
+    inputValue.value = URL.createObjectURL(file);
   }
 };
 
 const clearImage = () => {
-  imageUrl.value = null;
+  inputValue.value = "";
 };
 
 const label = computed(() => {
@@ -55,7 +50,7 @@ const options = computed<readonly string[]>(() => {
   <div class="input-param">
     <template v-if="paramType === 'String'">
       <v-text-field
-        v-model="textValue"
+        v-model="inputValue"
         :label="label"
         variant="outlined"
         density="compact"
@@ -64,7 +59,7 @@ const options = computed<readonly string[]>(() => {
 
     <template v-else-if="paramType === 'Number'">
       <v-text-field
-        v-model.number="numberValue"
+        v-model.number="inputValue"
         type="number"
         :label="label"
         variant="outlined"
@@ -76,7 +71,7 @@ const options = computed<readonly string[]>(() => {
     <template v-else-if="paramType === 'Image'">
       <div class="image-upload-container">
         <v-file-input
-          v-if="!imageUrl"
+          v-if="!inputValue"
           :label="label"
           prepend-icon="mdi-camera"
           variant="outlined"
@@ -88,7 +83,7 @@ const options = computed<readonly string[]>(() => {
         />
         <div v-else class="thumbnail-preview">
           <v-img
-            :src="imageUrl"
+            :src="inputValue"
             width="100"
             height="100"
             cover
@@ -114,7 +109,7 @@ const options = computed<readonly string[]>(() => {
         variant="outlined"
         style="width: 8rem"
         :label="label"
-        v-model="textValue"
+        v-model="inputValue"
       />
     </template>
   </div>

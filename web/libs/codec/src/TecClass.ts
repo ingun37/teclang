@@ -6,7 +6,7 @@ export type TecClassIndex = typeof TecClassIndex.Type;
 
 export const TecSignature = S.Struct({
   attributeTypeSet: S.NonEmptyArray(TecClassAttribute),
-  indexTypeSet: S.Array(TecClassIndex),
+  indexTypeSet: S.NonEmptyArray(TecClassIndex),
 });
 export type TecSignature = typeof TecSignature.Type;
 export const TecClassName = S.String.pipe(S.brand("TecClassName"));
