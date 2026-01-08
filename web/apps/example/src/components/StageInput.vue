@@ -29,11 +29,22 @@ function createInitialHaskellCode() {
               (at) => {
                 switch (at) {
                   case "Number":
-                    return "42";
+                    return (Math.random() * 30 + 10).toFixed(1);
                   case "String":
-                    return "Nina";
+                    return [
+                      "Lion",
+                      "Tiger",
+                      "Bear",
+                      "Elephant",
+                      "Giraffe",
+                      "Zebra",
+                      "Panda",
+                      "Koala",
+                      "Kangaroo",
+                      "Penguin",
+                    ][Math.floor(Math.random() * 10)];
                   case "Image":
-                    return "";
+                    return `/${c.tecClassName}/${comb.map((x) => x.toLowerCase()).join("-")}.png`;
                 }
               },
             );
