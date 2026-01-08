@@ -16,7 +16,7 @@
       </v-col>
 
       <v-col cols="12">
-        <div :class="['text-h2']">Stage 2. Data Input</div>
+        <div :class="['text-h2']">Stage 3. Data Input</div>
       </v-col>
       <v-col v-if="tecEnumAst && tecClassAst" cols="12">
         <StageInput :tec-class-ast="tecClassAst" :tec-enum-ast="tecEnumAst" />
