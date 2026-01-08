@@ -23,11 +23,25 @@ function createInitialHaskellCode() {
       E.Array.map((c) =>
         E.Either.gen(function* () {
           const combs = yield* combinations(c);
-          const each = combs.map(
-            (comb) =>
+
+          const each = combs.map((comb) => {
+            const sampleAttributes = c.tecSignature.attributeTypeSet.map(
+              (at) => {
+                switch (at) {
+                  case "Number":
+                    return "42";
+                  case "String":
+                    return "Nina";
+                  case "Image":
+                    return "";
+                }
+              },
+            );
+            return (
               comb.map((v) => `${v}`).join(" : ") +
-              c.tecSignature.attributeTypeSet.map(() => ' "A"').join(""),
-          );
+              sampleAttributes.map((x) => ` "${x}"`).join("")
+            );
+          });
           return `${c.tecClassName} = [\n${each.map((x) => "  " + x).join(",\n")}]`;
         }),
       ),

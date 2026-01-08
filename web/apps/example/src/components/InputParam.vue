@@ -1,21 +1,14 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import * as C from "codec";
 import * as E from "effect";
 
-const emits = defineEmits<{
-  (e: "update", value: string): void;
-}>();
 const props = defineProps<{
-  indexCombo: string[];
+  indexCombo: C.TecNode.IndexCombination;
   paramType: string;
   allEnums: C.TecEnum.TecEnumAST;
 }>();
 
-const inputValue = ref("");
-watch(inputValue, (v) => {
-  if (v) emits("update", v);
-});
+const inputValue = defineModel<string>({ required: true });
 
 const onFileChange = (e: Event) => {
   const target = e.target as HTMLInputElement;
@@ -59,7 +52,7 @@ const options = computed<readonly string[]>(() => {
 
     <template v-else-if="paramType === 'Number'">
       <v-text-field
-        v-model.number="inputValue"
+        v-model="inputValue"
         type="number"
         :label="label"
         variant="outlined"

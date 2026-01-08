@@ -2,10 +2,9 @@
 import * as C from "codec";
 import type { Axis } from "@/Axis.ts";
 import * as E from "effect";
-import InputParam from "@/components/InputParam.vue";
+import TecNode from "@/components/TecNode.vue";
 
 type RNE<T> = E.Array.NonEmptyReadonlyArray<T>;
-type IC = C.TecNode.IndexCombination;
 type TN = C.TecNode.TecNode;
 const model = defineModel<RNE<TN>>({ required: true });
 
@@ -31,7 +30,7 @@ const dynamicSlices = computed(() => {
   );
 
   return E.Array.map(groups, (group, gi) => {
-    return computed({
+    return computed<RNE<TN>>({
       get: (): RNE<TN> => group,
       set(chunk: RNE<TN>) {
         const left = E.Array.take(model.value, groupLens[gi]!);
@@ -41,49 +40,28 @@ const dynamicSlices = computed(() => {
     });
   });
 });
-defineEmits<{
-  (
-    e: "update",
-    indexCombo: C.TecEnum.TecEnumValue[],
-    paramTypeIndex: number,
-    value: any,
-  ): void;
-}>();
-const iter = computed<C.TecEnum.TecEnum | null>(() => {
-  return E.pipe(
-    props.tecEnums.tecEnums,
-    E.Array.findFirst(
-      (tecEnum) =>
-        (tecEnum.tecEnumName as string) ===
-        (props.tecIndexedClass.tecSignature.indexTypeSet[
-          props.paramIndex
-        ] as string),
-    ),
-    E.Option.getOrNull,
-  );
-});
 </script>
 
 <template>
-  <div :class="['d-flex', axis === 'x' ? 'flex-row' : 'flex-column']">
-    <InputRecurse
+  <div
+    v-if="1 < model.length"
+    :class="['d-flex', axis === 'x' ? 'flex-row' : 'flex-column']"
+  >
+    <TecNodesRecurse
       v-for="(slice, idx) in dynamicSlices"
       :key="idx"
-      :index-combo="[]"
+      v-model="slice.value"
       :axis="axis === 'x' ? 'y' : 'x'"
       :paramIndex="paramIndex + 1"
       :tecIndexedClass="tecIndexedClass"
       :tecEnums="tecEnums"
-      @update="(x, y, z) => $emit('update', x, y, z)"
     />
   </div>
   <div v-else class="d-flex flex-column ga-1">
-    <InputParam
-      v-for="(_, i) in tecIndexedClass.tecSignature.attributeTypeSet"
-      :index-combo="indexCombo"
-      :param-type="tecIndexedClass.tecSignature.attributeTypeSet[i]!"
+    <TecNode
+      v-model="model[0]"
+      :tec-indexed-class="tecIndexedClass"
       :all-enums="tecEnums"
-      @update="$emit('update', indexCombo, i, $event)"
     />
   </div>
 </template>

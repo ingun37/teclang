@@ -12,7 +12,7 @@ export type TecNode = typeof TecNode.Type;
 
 export const TecNodeSet = S.Struct({
   tecNodeClass: TecClass.TecClassName,
-  tecNodeSet: S.Array(TecNode),
+  tecNodeSet: S.NonEmptyArray(TecNode),
 });
 export type TecNodeSet = typeof TecNodeSet.Type;
 
