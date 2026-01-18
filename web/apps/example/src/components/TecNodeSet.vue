@@ -37,16 +37,27 @@ const dimension = computed(() => {
   const names = enums.map((x) => x.tecEnumName + `(${x.tecEnumValues.length})`);
   return `${names.join(" x ")}`;
 });
+const isUnique = ref(true);
 </script>
 
 <template>
   <v-card>
-    <v-card-subtitle
-      >Input {{ model.tecNodeClass }} class data for each
-      {{ dimension }}</v-card-subtitle
-    >
+    <v-card-subtitle>
+      <span>
+        Input {{ model.tecNodeClass }} class data for each {{ dimension }}
+      </span>
+
+      <v-spacer />
+      <v-checkbox
+        v-model="isUnique"
+        label="Grid"
+        hide-details
+        density="compact"
+      />
+    </v-card-subtitle>
     <v-card-text>
       <TecNodesRecurse
+        v-if="isUnique"
         v-model="model.tecNodeSet"
         :index-combo="[]"
         axis="x"
@@ -54,6 +65,15 @@ const dimension = computed(() => {
         :tec-indexed-class="tecClass"
         :tec-enums="tecEnums"
       />
+      <div v-else class="d-flex flex-column ga-1">
+        <TecNode
+          v-for="(_, i) in model.tecNodeSet"
+          v-model="model.tecNodeSet[i]!"
+          :enable-index-list-editing="true"
+          :tec-indexed-class="tecClass"
+          :all-enums="tecEnums"
+        ></TecNode>
+      </div>
     </v-card-text>
   </v-card>
 </template>

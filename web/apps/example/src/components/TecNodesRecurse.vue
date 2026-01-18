@@ -60,6 +60,7 @@ const dynamicSlices = computed(() => {
   <div v-else class="d-flex flex-column ga-1">
     <TecNode
       v-model="model[0]"
+      :enable-index-list-editing="false"
       :tec-indexed-class="tecIndexedClass"
       :all-enums="tecEnums"
     />
