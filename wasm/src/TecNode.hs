@@ -11,26 +11,28 @@ import Data.Aeson
 import GHC.Generics (Generic)
 import Optics.Core
 
-newtype TecNodeIndex = TecNodeIndex String deriving (Show, Generic)
+data TecNodeAttribute
+  = TecNodeConAttribute String
+  | TecNodeTextAttribute String
+  | TecNodeIntAttribute Integer
+  | TecNodeFracAttribute Rational
+  deriving (Show, Generic)
 
-instance ToJSON TecNodeIndex where
+instance ToJSON TecNodeAttribute where
   toEncoding = genericToEncoding defaultOptions
 
-instance FromJSON TecNodeIndex
-
-_tecNodeIndex :: Iso' TecNodeIndex String
-_tecNodeIndex = iso (\(TecNodeIndex s) -> s) TecNodeIndex
+instance FromJSON TecNodeAttribute
 
 data TecNode = TecNode
-  { indexCombination :: [TecNodeIndex],
-    tecNodeAttributes :: [String]
+  { indexCombination :: [String],
+    tecNodeAttributes :: [TecNodeAttribute]
   }
   deriving (Show, Generic)
 
-_indexCombination :: Lens' TecNode [TecNodeIndex]
+_indexCombination :: Lens' TecNode [String]
 _indexCombination = lens indexCombination (\(TecNode _ ys) xs' -> TecNode xs' ys)
 
-_tecNodeAttributes :: Lens' TecNode [String]
+_tecNodeAttributes :: Lens' TecNode [TecNodeAttribute]
 _tecNodeAttributes = lens tecNodeAttributes (\(TecNode xs _) ys' -> TecNode xs ys')
 
 instance ToJSON TecNode where

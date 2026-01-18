@@ -131,7 +131,12 @@ testClass =
 
 testNode :: [String]
 testNode =
-  [ "someClass = [I : J : K \"X\" \"Y\"]"
+  [ """
+    foo A B = Foo 0 \"t\"
+    foo A C = Foo 0 \"c\"
+    bar A = Bar A
+    bar B = Bar B
+    """
   ]
 
 testFormatUnit :: IO.Handle -> String -> IO ()

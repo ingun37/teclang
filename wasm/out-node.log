@@ -1,21 +1,48 @@
 ---- Original Code ----
-someClass = [I : J : K "X" "Y"]
+foo A B = Foo 0 "t"
+foo A C = Foo 0 "c"
+bar A = Bar A
+bar B = Bar B
 ---- Raw AST ----
 TecNodeAST
     { tecNodeSets =
         [ TecNodeSet
-            { tecNodeClass = "someClass"
+            { tecNodeClass = "Foo"
             , tecNodeSet =
                 [ TecNode
                     { indexCombination =
-                        [ TecNodeIndex "I"
-                        , TecNodeIndex "J"
-                        , TecNodeIndex "K"
+                        [ "A"
+                        , "B"
                         ]
                     , tecNodeAttributes =
-                        [ "X"
-                        , "Y"
+                        [ TecNodeIntAttribute 0
+                        , TecNodeTextAttribute "t"
                         ]
+                    }
+                , TecNode
+                    { indexCombination =
+                        [ "A"
+                        , "C"
+                        ]
+                    , tecNodeAttributes =
+                        [ TecNodeIntAttribute 0
+                        , TecNodeTextAttribute "c"
+                        ]
+                    }
+                ]
+            }
+        , TecNodeSet
+            { tecNodeClass = "Bar"
+            , tecNodeSet =
+                [ TecNode
+                    { indexCombination = [ "A" ]
+                    , tecNodeAttributes =
+                        [ TecNodeConAttribute "A" ]
+                    }
+                , TecNode
+                    { indexCombination = [ "B" ]
+                    , tecNodeAttributes =
+                        [ TecNodeConAttribute "B" ]
                     }
                 ]
             }
@@ -25,17 +52,65 @@ TecNodeAST
 {
     "tecNodeSets": [
         {
-            "tecNodeClass": "someClass",
+            "tecNodeClass": "Foo",
             "tecNodeSet": [
                 {
                     "indexCombination": [
-                        "I",
-                        "J",
-                        "K"
+                        "A",
+                        "B"
                     ],
                     "tecNodeAttributes": [
-                        "X",
-                        "Y"
+                        {
+                            "contents": 0,
+                            "tag": "TecNodeIntAttribute"
+                        },
+                        {
+                            "contents": "t",
+                            "tag": "TecNodeTextAttribute"
+                        }
+                    ]
+                },
+                {
+                    "indexCombination": [
+                        "A",
+                        "C"
+                    ],
+                    "tecNodeAttributes": [
+                        {
+                            "contents": 0,
+                            "tag": "TecNodeIntAttribute"
+                        },
+                        {
+                            "contents": "c",
+                            "tag": "TecNodeTextAttribute"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "tecNodeClass": "Bar",
+            "tecNodeSet": [
+                {
+                    "indexCombination": [
+                        "A"
+                    ],
+                    "tecNodeAttributes": [
+                        {
+                            "contents": "A",
+                            "tag": "TecNodeConAttribute"
+                        }
+                    ]
+                },
+                {
+                    "indexCombination": [
+                        "B"
+                    ],
+                    "tecNodeAttributes": [
+                        {
+                            "contents": "B",
+                            "tag": "TecNodeConAttribute"
+                        }
                     ]
                 }
             ]

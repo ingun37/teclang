@@ -68,5 +68,5 @@ instance TecAST TecClassAST where
   encodeCodeToTec = getDecls >=> encodeTecClassAST
 
 instance TecAST TecNodeAST where
-  decodeTecToCode = fmap setDecls . decodeTecNodeAST
+  decodeTecToCode = return . setDecls . decodeTecNodeAST
   encodeCodeToTec = getDecls >=> encodeTecNodeAST

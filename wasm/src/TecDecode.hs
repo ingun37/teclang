@@ -7,6 +7,7 @@ module TecDecode
 where
 
 import Control.Monad (foldM)
+import Data.Char (toLower)
 import Data.Functor ((<&>))
 import Data.List (unsnoc)
 import Data.Map qualified as Map
@@ -18,8 +19,15 @@ import TecEnum
 import TecError
 import TecNode
 
+lowerFirst :: String -> String
+lowerFirst [] = [] -- Handle empty string case
+lowerFirst (x : xs) = toLower x : xs
+
 getIdent :: String -> E.Name ()
 getIdent = E.Ident ()
+
+getUnqual :: String -> E.QName ()
+getUnqual x = E.UnQual () (getIdent x)
 
 getTyCon :: String -> E.Type ()
 getTyCon name = E.TyCon () (E.UnQual () (getIdent name))
@@ -35,6 +43,14 @@ getLit str = E.Lit () (E.String () str str)
 
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))
+
+
+decodeNodeAttribute :: TecNodeAttribute -> E.Exp ()
+decodeNodeAttribute (TecNodeTextAttribute s) = E.Lit () $ E.String () s s
+decodeNodeAttribute (TecNodeIntAttribute i) = E.Lit () $ E.Int () i (show i)
+decodeNodeAttribute (TecNodeFracAttribute r) = E.Lit () $ E.Frac () r (show r)
+decodeNodeAttribute (TecNodeConAttribute r) = E.Con () (getUnqual r)
+
 
 decodeDecl :: (String, E.Exp ()) -> Either TecError (E.Decl ())
 decodeDecl (varName, varExp) =
@@ -106,24 +122,21 @@ decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
 trivialOp :: E.QOp ()
 trivialOp = E.QConOp () (E.Special () (E.Cons ()))
 
-unsnocIdxs :: [TecNodeIndex] -> Either TecError ([TecNodeIndex], TecNodeIndex)
-unsnocIdxs idxs = maybe (Left $ TecError "TecNodeIndexs are empty") Right (Data.List.unsnoc idxs)
+decodeTecNodeIndex :: String -> E.Pat ()
+decodeTecNodeIndex t = E.PApp () (getUnqual t) []
 
-decodeTecNode :: TecNode -> Either TecError (E.Exp ())
-decodeTecNode (TecNode idxs (att : atts)) = do
-  (idxs',idx) <- unsnocIdxs idxs
-  let initial = E.App () (getCon (view _tecNodeIndex idx)) (getLit att)
-  let bab b a = E.App () b (getLit a)
-  let attribs = foldl bab initial atts
-  let abb a = E.InfixApp () (getCon (view _tecNodeIndex a)) trivialOp
-  let indexs = foldr abb attribs idxs'
-  return indexs
-decodeTecNode s = Left $ TecErrorUnknownExp (show s)
+decodeTecNodeAttributes :: String -> [TecNodeAttribute] -> E.Rhs ()
+decodeTecNodeAttributes className strs =
+  let bab b a = E.App () b (decodeNodeAttribute a)
+   in E.UnGuardedRhs () (foldl bab (getCon className) strs)
 
-decodeTecNodeSet :: TecNodeSet -> Either TecError (E.Decl ())
-decodeTecNodeSet (TecNodeSet tecNodeClass tecNodes) = do
-  nodes <- traverse decodeTecNode tecNodes
-  return $ E.PatBind () (getPVar tecNodeClass) (E.UnGuardedRhs () (E.List () nodes)) Nothing
+decodeTecNode :: String -> TecNode -> E.Match ()
+decodeTecNode className (TecNode indexCombs attribs) =
+  let
+   in E.Match () (getIdent (lowerFirst className)) (map decodeTecNodeIndex indexCombs) (decodeTecNodeAttributes className attribs) Nothing
 
-decodeTecNodeAST :: TecNodeAST -> Either TecError [E.Decl ()]
-decodeTecNodeAST t = traverse decodeTecNodeSet (tecNodeSets t)
+decodeTecNodeSet :: TecNodeSet -> E.Decl ()
+decodeTecNodeSet (TecNodeSet name nodes) = E.FunBind () (map (decodeTecNode name) nodes)
+
+decodeTecNodeAST :: TecNodeAST -> [E.Decl ()]
+decodeTecNodeAST (TecNodeAST nodeSets) = map decodeTecNodeSet nodeSets
