@@ -41,7 +41,7 @@ getLiteral e = Left $ TecErrorUnknownExp (show e)
 
 encodeTecNodeAttribute :: (Show l) => E.Exp l -> Either TecError TecNodeAttribute
 encodeTecNodeAttribute (E.Lit _ l) = getLiteral l
--- encodeTecNodeAttribute (E.Con _ unqual) = TecNodeConAttribute <$> getUnQual unqual
+encodeTecNodeAttribute (E.Con _ unqual) = TecNodeConAttribute <$> getUnQual unqual
 encodeTecNodeAttribute (E.Paren _ p) = encodeTecNodeAttribute p
 encodeTecNodeAttribute (E.NegApp _ (E.Lit _ (E.Int _ i _))) = return $ TecNodeIntAttribute (-i)
 encodeTecNodeAttribute (E.NegApp _ (E.Lit _ (E.Frac _ f _))) = return $ TecNodeFracAttribute (-f)
@@ -131,7 +131,7 @@ encodeTecClass :: (Show l) => E.Decl l -> Either TecError TecClass
 encodeTecClass (E.TypeSig _ [ident] sig) = do
   s <- encodeTecSignature sig
   tecClassName <- getIdent ident
-  return $ TecClass tecClassName s
+  return $ TecClass (upperFirst tecClassName) s
 encodeTecClass decl = Left $ TecErrorUnknownExp (show decl)
 
 encodeTecClassAST :: (Show l) => [E.Decl l] -> Either TecError TecClassAST

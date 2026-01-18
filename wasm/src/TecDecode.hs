@@ -54,7 +54,7 @@ decodeNodeAttribute (TecNodeFracAttribute r) =
   let wrap = if r < 0 then E.Paren () . E.NegApp () else id
       a = abs r
    in wrap (E.Lit () $ E.Frac () a (show a))
--- decodeNodeAttribute (TecNodeConAttribute r) = E.Con () (getUnqual r)
+decodeNodeAttribute (TecNodeConAttribute r) = E.Con () (getUnqual r)
 
 decodeDecl :: (String, E.Exp ()) -> Either TecError (E.Decl ())
 decodeDecl (varName, varExp) =
@@ -118,7 +118,7 @@ decodeTecSignature (TecSignature idxs attribs) = do
 decodeTecClass :: TecClass -> Either TecError (E.Decl ())
 decodeTecClass (TecClass tecClassName sig) = do
   s <- decodeTecSignature sig
-  return (E.TypeSig () [getIdent tecClassName] s)
+  return (E.TypeSig () [getIdent (lowerFirst tecClassName)] s)
 
 decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
 decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
