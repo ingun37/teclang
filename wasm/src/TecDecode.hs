@@ -44,13 +44,17 @@ getLit str = E.Lit () (E.String () str str)
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))
 
-
 decodeNodeAttribute :: TecNodeAttribute -> E.Exp ()
 decodeNodeAttribute (TecNodeTextAttribute s) = E.Lit () $ E.String () s s
-decodeNodeAttribute (TecNodeIntAttribute i) = E.Lit () $ E.Int () i (show i)
-decodeNodeAttribute (TecNodeFracAttribute r) = E.Lit () $ E.Frac () r (show r)
+decodeNodeAttribute (TecNodeIntAttribute i) =
+  let wrap = if i < 0 then E.Paren () . E.NegApp () else id
+      a = abs i
+   in wrap (E.Lit () $ E.Int () a (show a))
+decodeNodeAttribute (TecNodeFracAttribute r) =
+  let wrap = if r < 0 then E.Paren () . E.NegApp () else id
+      a = abs r
+   in wrap (E.Lit () $ E.Frac () a (show a))
 decodeNodeAttribute (TecNodeConAttribute r) = E.Con () (getUnqual r)
-
 
 decodeDecl :: (String, E.Exp ()) -> Either TecError (E.Decl ())
 decodeDecl (varName, varExp) =

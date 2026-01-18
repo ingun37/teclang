@@ -6,8 +6,8 @@ module TecEncode
   )
 where
 
-import Data.List.NonEmpty qualified as NE
 import Data.Char (toUpper)
+import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
 import Optics.Core
@@ -33,11 +33,19 @@ getTyCon :: (Show l) => E.Type l -> Either TecError String
 getTyCon (E.TyCon _ (E.UnQual _ (E.Ident _ name))) = return name
 getTyCon x = Left $ TecErrorUnknownExp (show x)
 
-getLiteral :: (Show l) => E.Literal l -> TecNodeAttribute
-getLiteral (E.String _ s _) = TecNodeTextAttribute s
-getLiteral (E.Int _ i _) = TecNodeIntAttribute i
-getLiteral (E.Frac _ r _) = TecNodeFracAttribute r
-getLiteral _ = undefined
+getLiteral :: (Show l) => E.Literal l -> Either TecError TecNodeAttribute
+getLiteral (E.String _ s _) = return $ TecNodeTextAttribute s
+getLiteral (E.Int _ i _) = return $ TecNodeIntAttribute i
+getLiteral (E.Frac _ r _) = return $ TecNodeFracAttribute r
+getLiteral e = Left $ TecErrorUnknownExp (show e)
+
+encodeTecNodeAttribute :: (Show l) => E.Exp l -> Either TecError TecNodeAttribute
+encodeTecNodeAttribute (E.Lit _ l) = getLiteral l
+encodeTecNodeAttribute (E.Con _ unqual) = TecNodeConAttribute <$> getUnQual unqual
+encodeTecNodeAttribute (E.Paren _ p) = encodeTecNodeAttribute p
+encodeTecNodeAttribute (E.NegApp _ (E.Lit _ (E.Int _ i _))) = return $ TecNodeIntAttribute (-i)
+encodeTecNodeAttribute (E.NegApp _ (E.Lit _ (E.Frac _ f _))) = return $ TecNodeFracAttribute (-f)
+encodeTecNodeAttribute e = Left $ TecErrorUnknownExp (show e)
 
 encodeDecl :: (Show l) => E.Decl l -> Either TecError (String, E.Exp l)
 encodeDecl (E.PatBind _ (E.PVar _ (E.Ident _ name)) (E.UnGuardedRhs _ expr) _) = Right $ (name, expr)
@@ -144,10 +152,9 @@ encodeTecNodeAttributes :: (Show l) => E.Rhs l -> Either TecError [TecNodeAttrib
 encodeTecNodeAttributes (E.UnGuardedRhs _ apps) = do
   let b_ab b = case b of
         (E.Con _ (E.UnQual _ (E.Ident _ _))) -> Right Nothing
-        (E.App _ l (E.Lit _ literal)) -> Right $ Just (getLiteral literal, l)
-        (E.App _ l (E.Con _ unqual)) -> do
-          con <- getUnQual unqual
-          Right $ Just (TecNodeConAttribute con, l)
+        (E.App _ l r) -> do
+          a <- encodeTecNodeAttribute r
+          Right $ Just (a, l)
         e -> Left $ TecErrorUnknownExp (show e)
   reverse <$> unfoldrM b_ab apps
 encodeTecNodeAttributes rhs = Left $ TecErrorUnknownExp (show rhs)

@@ -1,8 +1,8 @@
 ---- Original Code ----
 foo A B = Foo 0 "t"
 foo A C = Foo 0 "c"
-bar A = Bar A
-bar B = Bar B
+bar A = Bar A 0.1
+bar B = Bar B (-0.1)
 ---- Raw AST ----
 TecNodeAST
     { tecNodeSets =
@@ -37,12 +37,20 @@ TecNodeAST
                 [ TecNode
                     { indexCombination = [ "A" ]
                     , tecNodeAttributes =
-                        [ TecNodeConAttribute "A" ]
+                        [ TecNodeConAttribute "A"
+                        , TecNodeFracAttribute
+                            ( 1 % 10 )
+                        ]
                     }
                 , TecNode
                     { indexCombination = [ "B" ]
                     , tecNodeAttributes =
-                        [ TecNodeConAttribute "B" ]
+                        [ TecNodeConAttribute "B"
+                        , TecNodeFracAttribute
+                            (
+                                ( -1 ) % 10
+                            )
+                        ]
                     }
                 ]
             }
@@ -99,6 +107,13 @@ TecNodeAST
                         {
                             "contents": "A",
                             "tag": "TecNodeConAttribute"
+                        },
+                        {
+                            "contents": {
+                                "denominator": 10,
+                                "numerator": 1
+                            },
+                            "tag": "TecNodeFracAttribute"
                         }
                     ]
                 },
@@ -110,6 +125,13 @@ TecNodeAST
                         {
                             "contents": "B",
                             "tag": "TecNodeConAttribute"
+                        },
+                        {
+                            "contents": {
+                                "denominator": 10,
+                                "numerator": -1
+                            },
+                            "tag": "TecNodeFracAttribute"
                         }
                     ]
                 }
