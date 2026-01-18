@@ -47,10 +47,6 @@ function addValue() {
         >
           Add Value
         </v-btn>
-
-        <v-divider class="my-2" />
-
-        <div class="text-caption mb-2">Representation Attributes</div>
       </div>
     </v-card-text>
   </v-card>
