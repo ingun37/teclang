@@ -20,10 +20,10 @@ function recur(enums: RNE<TE.TecEnum>): RNE<C> {
 
 export function iterateIndexSet(enumAST: TE.TecEnumAST) {
   return function (
-    tc: TC.TecClass,
+    indexTypeSet: RNE<TC.TecClassIndex>,
   ): E.Either.Either<RNE<TN.IndexCombination>, Error> {
     return E.pipe(
-      tc.tecSignature.indexTypeSet,
+      indexTypeSet,
       E.Array.map((t) =>
         E.Either.fromOption(
           E.Array.findFirst(

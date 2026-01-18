@@ -32,8 +32,18 @@ function createInitialHaskellCode() {
       props.tecClassAst.tecClasses,
       E.Array.map((c) =>
         E.Either.gen(function* () {
-          const combs = yield* combinations(c);
+          const useWildCard = c.tecSignature.indexTypeSet.length > 2;
+          const indexTypeSet = useWildCard
+            ? E.Array.dropRight(c.tecSignature.indexTypeSet, 1)
+            : c.tecSignature.indexTypeSet;
 
+          if (!E.Array.isNonEmptyReadonlyArray(indexTypeSet))
+            throw new Error("");
+
+          const _combs = yield* combinations(indexTypeSet);
+          const combs = useWildCard
+            ? E.Array.map(_combs, E.Array.append("_"))
+            : _combs;
           const each = combs.map((comb) => {
             const sampleAttributes = c.tecSignature.attributeTypeSet.map(
               (at) => {

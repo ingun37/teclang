@@ -98,15 +98,7 @@ test("helper", () => {
   const iter = (idxTypes: E.Array.NonEmptyReadonlyArray<string>) =>
     E.Effect.runSync(
       lib.help.iterateIndexSet(enumAST)(
-        lib.TecClass.TecClass.make({
-          tecClassName: lib.TecClass.TecClassName.make("Foo"),
-          tecSignature: lib.TecClass.TecSignature.make({
-            attributeTypeSet: [lib.TecClass.TecClassAttribute.make("Attrib")],
-            indexTypeSet: E.Array.map(idxTypes, (it) =>
-              lib.TecClass.TecClassIndex.make(it),
-            ),
-          }),
-        }),
+        E.Array.map(idxTypes, (it) => lib.TecClass.TecClassIndex.make(it)),
       ),
     );
   expect(iter(["Letter"])).toStrictEqual([["a"], ["b"]]);

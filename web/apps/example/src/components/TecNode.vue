@@ -11,11 +11,10 @@ const props = defineProps<{
 }>();
 
 const items = computed(() => {
-  return props.tecIndexedClass.tecSignature.indexTypeSet.map(
-    (typeName) =>
-      props.allEnums.tecEnums.find(
-        (enums) => (enums.tecEnumName as string) === (typeName as string),
-      )!.tecEnumValues,
+  return props.tecIndexedClass.tecSignature.indexTypeSet.map((typeName) =>
+    props.allEnums.tecEnums
+      .find((enums) => (enums.tecEnumName as string) === (typeName as string))!
+      .tecEnumValues.concat([C.TecEnum.TecEnumValue.make("_")]),
   );
 });
 </script>
