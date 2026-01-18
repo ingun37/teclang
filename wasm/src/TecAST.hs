@@ -1,5 +1,6 @@
 module TecAST where
 
+import Control.Monad ((>=>))
 import Data.Aeson
   ( FromJSON,
     ToJSON,
@@ -13,6 +14,7 @@ import TecEncode
 import TecEnum
 import TecError
 import TecNode
+import Data.List(uncons)
 
 class (Show a, Generic a, ToJSON a, FromJSON a) => TecAST a where
   decodeTecToCode :: a -> Either TecError String
@@ -43,51 +45,28 @@ instance TecAST TecDataAST where
           E.ParseFailed _ str ->
             tecError $ "Initial parsing failed:\n" ++ str
 
+getDecls :: String -> Either TecError [E.Decl E.SrcSpanInfo]
+getDecls code =
+  let result = E.parseModule code
+   in case result of
+        E.ParseOk (E.Module _ Nothing [] [] decls) -> do
+          Right decls
+        E.ParseOk x -> do
+          Left $ TecErrorUnknownExp (show x)
+        E.ParseFailed _ str ->
+          tecError $ "Initial parsing failed:\n" ++ str
+
+setDecls :: [E.Decl ()] -> String
+setDecls decls = let m = E.Module () Nothing [] [] decls in E.prettyPrint m
+
 instance TecAST TecEnumAST where
-  decodeTecToCode ast = do
-    decls <- decodeTecEnumAST ast
-    let m = E.Module () Nothing [] [] decls
-    return $ E.prettyPrint m
-  encodeCodeToTec code =
-    let result = E.parseModule code
-     in case result of
-          E.ParseOk (E.Module _ Nothing [] [] decls) -> do
-            ast <- encodeTecEnumAST decls
-            Right ast
-          E.ParseOk x -> do
-            Left $ TecErrorUnknownExp (show x)
-          E.ParseFailed _ str ->
-            tecError $ "Initial parsing failed:\n" ++ str
+  decodeTecToCode = fmap setDecls . decodeTecEnumAST
+  encodeCodeToTec = getDecls >=> encodeTecEnumAST
 
 instance TecAST TecClassAST where
-  decodeTecToCode ast = do
-    decls <- decodeTecClassAST ast
-    let m = E.Module () Nothing [] [] decls
-    return $ E.prettyPrint m
-  encodeCodeToTec code =
-    let result = E.parseModule code
-     in case result of
-          E.ParseOk (E.Module _ Nothing [] [] decls) -> do
-            ast <- encodeTecClassAST decls
-            Right ast
-          E.ParseOk x -> do
-            Left $ TecErrorUnknownExp (show x)
-          E.ParseFailed _ str ->
-            tecError $ "Initial parsing failed:\n" ++ str
+  decodeTecToCode = fmap setDecls . decodeTecClassAST
+  encodeCodeToTec = getDecls >=> encodeTecClassAST
 
 instance TecAST TecNodeAST where
-  decodeTecToCode ast = do
-    e <- decodeTecNodeAST ast
-    let m = E.Module () Nothing [] [] e
-    return $ E.prettyPrint m
-  encodeCodeToTec code =
-    let result = E.parseModule code
-     in case result of
-          E.ParseOk (E.Module _ _ _ _ decls) -> do
-            -- tecError (show rhs)
-            ast <- mapWholeExpShow decls $ encodeTecNodeAST decls
-            Right ast
-          E.ParseOk x -> do
-            Left $ TecErrorUnknownExp (show x)
-          E.ParseFailed _ str ->
-            tecError $ "Initial parsing failed:\n" ++ str
+  decodeTecToCode = fmap setDecls . decodeTecNodeAST
+  encodeCodeToTec = getDecls >=> encodeTecNodeAST
