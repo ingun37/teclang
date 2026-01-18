@@ -14,6 +14,16 @@ const tecNodeAST = ref<C.TecNode.TecNodeAST>(
   C.TecNode.TecNodeAST.make({ tecNodeSets: [] }),
 );
 
+function capitalizeFirst(str: string): string {
+  if (str.length === 0) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function lowerFirst(str: string): string {
+  if (str.length === 0) return str;
+  return str.charAt(0).toLowerCase() + str.slice(1);
+}
+
 const haskellCode = ref("");
 function createInitialHaskellCode() {
   const combinations = C.help.iterateIndexSet(props.tecEnumAst);
@@ -31,7 +41,7 @@ function createInitialHaskellCode() {
                   case "Number":
                     return (Math.random() * 30 + 10).toFixed(1);
                   case "String":
-                    return [
+                    const randomName = [
                       "Lion",
                       "Tiger",
                       "Bear",
@@ -42,9 +52,10 @@ function createInitialHaskellCode() {
                       "Koala",
                       "Kangaroo",
                       "Penguin",
-                    ][Math.floor(Math.random() * 10)];
+                    ][Math.floor(Math.random() * 10)]!;
+                    return `"${randomName!}"`;
                   case "Image":
-                    return `/${c.tecClassName}/${comb.map((x) => x.toLowerCase()).join("-")}.png`;
+                    return `"/${c.tecClassName}/${comb.map((x) => x.toLowerCase()).join("-")}.png"`;
                   default:
                     return E.pipe(
                       props.tecEnumAst.tecEnums,
@@ -62,12 +73,9 @@ function createInitialHaskellCode() {
                 }
               },
             );
-            return (
-              comb.map((v) => `${v}`).join(" : ") +
-              sampleAttributes.map((x) => ` "${x}"`).join("")
-            );
+            return `${lowerFirst(c.tecClassName)} ${comb.map((v) => `${v}`).join(" ")} = ${capitalizeFirst(c.tecClassName)} ${sampleAttributes.join(" ")}`;
           });
-          return `${c.tecClassName} = [\n${each.map((x) => "  " + x).join(",\n")}]`;
+          return each.join("\n");
         }),
       ),
       E.Either.all,

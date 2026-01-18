@@ -2,11 +2,42 @@ import { Schema as S } from "effect";
 import * as TecClass from "./TecClass.js";
 import * as TecEnum from "./TecEnum.js";
 
+export const TecNodeIntAttribute = S.Struct({
+  tag: S.tag("TecNodeIntAttribute"),
+  contents: S.Number.pipe(S.int()),
+});
+
+export const TecNodeFracAttribute = S.Struct({
+  tag: S.tag("TecNodeFracAttribute"),
+  contents: S.Struct({
+    numerator: S.Number.pipe(S.int()),
+    denominator: S.Number.pipe(S.int()),
+  }),
+});
+
+export const TecNodeTextAttribute = S.Struct({
+  tag: S.tag("TecNodeTextAttribute"),
+  contents: S.String,
+});
+
+export const TecNodeConAttribute = S.Struct({
+  tag: S.tag("TecNodeConAttribute"),
+  contents: S.String,
+});
+
+const TecNodeAttribute = S.Union(
+  TecNodeIntAttribute,
+  TecNodeFracAttribute,
+  TecNodeTextAttribute,
+  TecNodeConAttribute,
+);
+
+export type TecNodeAttribute = typeof TecNodeAttribute.Type;
 const IndexCombination = S.NonEmptyArray(TecEnum.TecEnumValue);
 export type IndexCombination = typeof IndexCombination.Type;
 export const TecNode = S.Struct({
   indexCombination: IndexCombination,
-  tecNodeAttributes: S.Array(S.Any),
+  tecNodeAttributes: S.Array(TecNodeAttribute),
 });
 export type TecNode = typeof TecNode.Type;
 
