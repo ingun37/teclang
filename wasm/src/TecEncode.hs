@@ -161,6 +161,7 @@ encodeTecNodeAttributes rhs = Left $ TecErrorUnknownExp (show rhs)
 
 encodeTecNodeIndex :: (Show l) => E.Pat l -> Either TecError String
 encodeTecNodeIndex (E.PApp _ unqual []) = getUnQual unqual
+encodeTecNodeIndex (E.PWildCard _) = return "_"
 encodeTecNodeIndex pat = Left $ TecErrorUnknownExp (show pat)
 
 encodeTecNodeClassName :: (Show l) => E.Match l -> Either TecError String

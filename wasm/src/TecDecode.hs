@@ -35,12 +35,6 @@ getTyCon name = E.TyCon () (E.UnQual () (getIdent name))
 getCon :: String -> E.Exp ()
 getCon name = E.Con () (E.UnQual () (getIdent name))
 
-getPVar :: String -> E.Pat ()
-getPVar s = E.PVar () (getIdent s)
-
-getLit :: String -> E.Exp ()
-getLit str = E.Lit () (E.String () str str)
-
 intE :: (Integral a, Show a) => a -> E.Exp ()
 intE i = E.Lit () (E.Int () (toInteger i) (show i))
 
@@ -123,10 +117,8 @@ decodeTecClass (TecClass tecClassName sig) = do
 decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
 decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
 
-trivialOp :: E.QOp ()
-trivialOp = E.QConOp () (E.Special () (E.Cons ()))
-
 decodeTecNodeIndex :: String -> E.Pat ()
+decodeTecNodeIndex "_" = E.PWildCard ()
 decodeTecNodeIndex t = E.PApp () (getUnqual t) []
 
 decodeTecNodeAttributes :: String -> [TecNodeAttribute] -> E.Rhs ()

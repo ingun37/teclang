@@ -132,6 +132,7 @@ testNode =
     foo A C = Foo 0 \"c\"
     bar A = Bar A 0.1
     bar B = Bar B (-0.1)
+    quux _ = Quux
     """
   ]
 

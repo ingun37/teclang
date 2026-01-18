@@ -3,6 +3,7 @@ foo A B = Foo 0 "t"
 foo A C = Foo 0 "c"
 bar A = Bar A 0.1
 bar B = Bar B (-0.1)
+quux _ = Quux
 ---- Raw AST ----
 TecNodeAST
     { tecNodeSets =
@@ -51,6 +52,15 @@ TecNodeAST
                                 ( -1 ) % 10
                             )
                         ]
+                    }
+                ]
+            }
+        , TecNodeSet
+            { tecNodeClass = "Quux"
+            , tecNodeSet =
+                [ TecNode
+                    { indexCombination = [ "_" ]
+                    , tecNodeAttributes = []
                     }
                 ]
             }
@@ -134,6 +144,17 @@ TecNodeAST
                             "tag": "TecNodeFracAttribute"
                         }
                     ]
+                }
+            ]
+        },
+        {
+            "tecNodeClass": "Quux",
+            "tecNodeSet": [
+                {
+                    "indexCombination": [
+                        "_"
+                    ],
+                    "tecNodeAttributes": []
                 }
             ]
         }
