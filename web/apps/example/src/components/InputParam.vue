@@ -7,8 +7,64 @@ const props = defineProps<{
   paramType: string;
   allEnums: C.TecEnum.TecEnumAST;
 }>();
-
-const inputValue = defineModel<string>({ required: true });
+const model = defineModel<C.TecNode.TecNodeAttribute>({ required: true });
+const inputValue = computed({
+  get() {
+    switch (model.value.tag) {
+      case "TecNodeTextAttribute":
+      case "TecNodeConAttribute":
+        return model.value.contents;
+      case "TecNodeIntAttribute":
+        return model.value.contents.toString();
+      case "TecNodeFracAttribute":
+        return (
+          model.value.contents.numerator / model.value.contents.denominator
+        ).toString();
+      default:
+        return "";
+    }
+  },
+  set(newValue: string) {
+    function factory() {
+      switch (props.paramType) {
+        case "String":
+        case "Image":
+          return C.TecNode.TecNodeTextAttribute.make({
+            contents: newValue,
+          });
+        case "Number":
+          const numValue = parseFloat(newValue);
+          if (Number.isInteger(numValue)) {
+            return C.TecNode.TecNodeIntAttribute.make({
+              contents: numValue,
+            });
+          } else {
+            // Handle float: extract numerator and denominator
+            function gcd(a: number, b: number): number {
+              return b === 0 ? a : gcd(b, a % b);
+            }
+            const decimalPart = newValue.split(".")[1] || "";
+            let denominator = Math.pow(10, decimalPart.length);
+            let numerator = Math.round(numValue * denominator);
+            const divisor = gcd(Math.abs(numerator), Math.abs(denominator));
+            numerator = numerator / divisor;
+            denominator = denominator / divisor;
+            return C.TecNode.TecNodeFracAttribute.make({
+              contents: {
+                denominator,
+                numerator,
+              },
+            });
+          }
+        default:
+          return C.TecNode.TecNodeConAttribute.make({
+            contents: newValue,
+          });
+      }
+    }
+    model.value = factory();
+  },
+});
 
 const onFileChange = (e: Event) => {
   const target = e.target as HTMLInputElement;

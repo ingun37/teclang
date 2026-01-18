@@ -6,6 +6,8 @@ module TecEncode
   )
 where
 
+import Data.Char (toUpper)
+import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
 import Optics.Core
@@ -14,6 +16,10 @@ import TecData
 import TecEnum
 import TecError
 import TecNode
+
+upperFirst :: String -> String
+upperFirst [] = [] -- Handle empty string case
+upperFirst (x : xs) = toUpper x : xs
 
 getIdent :: (Show l) => E.Name l -> Either TecError String
 getIdent (E.Ident _ name) = return name
@@ -27,16 +33,19 @@ getTyCon :: (Show l) => E.Type l -> Either TecError String
 getTyCon (E.TyCon _ (E.UnQual _ (E.Ident _ name))) = return name
 getTyCon x = Left $ TecErrorUnknownExp (show x)
 
-getCon :: (Show l) => E.Exp l -> Either TecError String
-getCon (E.Con _ (E.UnQual _ (E.Ident _ name))) = return name
-getCon x = Left $ TecErrorUnknownExp (show x)
+getLiteral :: (Show l) => E.Literal l -> Either TecError TecNodeAttribute
+getLiteral (E.String _ s _) = return $ TecNodeTextAttribute s
+getLiteral (E.Int _ i _) = return $ TecNodeIntAttribute i
+getLiteral (E.Frac _ r _) = return $ TecNodeFracAttribute r
+getLiteral e = Left $ TecErrorUnknownExp (show e)
 
-getPVar :: (Show l) => E.Pat l -> Either TecError String
-getPVar (E.PVar _ ident) = getIdent ident
-
-getLit :: (Show l) => E.Exp l -> Either TecError String
-getLit (E.Lit _ (E.String _ x y)) = return y
-getLit x = Left $ TecErrorUnknownExp (show x)
+encodeTecNodeAttribute :: (Show l) => E.Exp l -> Either TecError TecNodeAttribute
+encodeTecNodeAttribute (E.Lit _ l) = getLiteral l
+encodeTecNodeAttribute (E.Con _ unqual) = TecNodeConAttribute <$> getUnQual unqual
+encodeTecNodeAttribute (E.Paren _ p) = encodeTecNodeAttribute p
+encodeTecNodeAttribute (E.NegApp _ (E.Lit _ (E.Int _ i _))) = return $ TecNodeIntAttribute (-i)
+encodeTecNodeAttribute (E.NegApp _ (E.Lit _ (E.Frac _ f _))) = return $ TecNodeFracAttribute (-f)
+encodeTecNodeAttribute e = Left $ TecErrorUnknownExp (show e)
 
 encodeDecl :: (Show l) => E.Decl l -> Either TecError (String, E.Exp l)
 encodeDecl (E.PatBind _ (E.PVar _ (E.Ident _ name)) (E.UnGuardedRhs _ expr) _) = Right $ (name, expr)
@@ -86,7 +95,6 @@ encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ ident _)) = do
   return $ TecValue name
 encodeQualConDecl x = Left $ TecErrorUnknownExp (show x)
 
-
 safeLast :: [a] -> Maybe a
 safeLast = foldl (\_ x -> Just x) Nothing
 
@@ -123,7 +131,7 @@ encodeTecClass :: (Show l) => E.Decl l -> Either TecError TecClass
 encodeTecClass (E.TypeSig _ [ident] sig) = do
   s <- encodeTecSignature sig
   tecClassName <- getIdent ident
-  return $ TecClass tecClassName s
+  return $ TecClass (upperFirst tecClassName) s
 encodeTecClass decl = Left $ TecErrorUnknownExp (show decl)
 
 encodeTecClassAST :: (Show l) => [E.Decl l] -> Either TecError TecClassAST
@@ -131,27 +139,50 @@ encodeTecClassAST decls = do
   tecClasses <- traverse encodeTecClass decls
   return $ TecClassAST tecClasses
 
-encodeTecNode :: (Show l) => E.Exp l -> Either TecError TecNode
-encodeTecNode (E.InfixApp _ (E.Con _ luq) (E.QConOp _ (E.Special _ (E.Cons _))) right) = do
-  r <- encodeTecNode right
-  i <- getUnQual luq
-  return $ over _indexCombination (TecNodeIndex i :) r
-encodeTecNode (E.Con _ uq) = do
-  a <- getUnQual uq
-  return $ TecNode [TecNodeIndex a] []
-encodeTecNode (E.App _ left lit) = do
-  l <- encodeTecNode left
-  r <- getLit lit
-  return $ over _tecNodeAttributes (++ [r]) l
-encodeTecNode exp = do
-  Left $ TecErrorUnknownExp (show exp)
+unfoldrM :: (Monad m) => (a -> m (Maybe (b, a))) -> a -> m [b]
+unfoldrM f seed = do
+  res <- f seed
+  case res of
+    Nothing -> return []
+    Just (val, next) -> do
+      rest <- unfoldrM f next
+      return (val : rest)
+
+encodeTecNodeAttributes :: (Show l) => E.Rhs l -> Either TecError [TecNodeAttribute]
+encodeTecNodeAttributes (E.UnGuardedRhs _ apps) = do
+  let b_ab b = case b of
+        (E.Con _ (E.UnQual _ (E.Ident _ _))) -> Right Nothing
+        (E.App _ l r) -> do
+          a <- encodeTecNodeAttribute r
+          Right $ Just (a, l)
+        e -> Left $ TecErrorUnknownExp (show e)
+  reverse <$> unfoldrM b_ab apps
+encodeTecNodeAttributes rhs = Left $ TecErrorUnknownExp (show rhs)
+
+encodeTecNodeIndex :: (Show l) => E.Pat l -> Either TecError String
+encodeTecNodeIndex (E.PApp _ unqual []) = getUnQual unqual
+encodeTecNodeIndex pat = Left $ TecErrorUnknownExp (show pat)
+
+encodeTecNodeClassName :: (Show l) => E.Match l -> Either TecError String
+encodeTecNodeClassName (E.Match _ ident _ _ _) = getIdent ident
+encodeTecNodeClassName m = Left $ TecErrorFormatFail (show m)
+
+encodeTecNode :: (Show l) => E.Match l -> Either TecError TecNode
+encodeTecNode (E.Match _ _ apps rhs Nothing) = do
+  indexCombs <- traverse encodeTecNodeIndex apps
+  attribs <- encodeTecNodeAttributes rhs
+  return $ TecNode indexCombs attribs
+encodeTecNode m = Left $ TecErrorUnknownExp (show m)
 
 encodeTecNodeSet :: (Show l) => E.Decl l -> Either TecError TecNodeSet
-encodeTecNodeSet (E.PatBind _ pvar (E.UnGuardedRhs _ (E.List _ lst)) Nothing) = do
-  tecNodeClass <- getPVar pvar
-  tecNodeSet <- traverse encodeTecNode lst
-  return $ TecNodeSet tecNodeClass tecNodeSet
-encodeTecNodeSet d = Left $ TecErrorUnknownExp (show d)
+encodeTecNodeSet (E.FunBind _ matches') = do
+  matches <- maybe (Left $ TecError "matches are empty") return (NE.nonEmpty matches')
+  nodes <- traverse encodeTecNode matches
+  name <- encodeTecNodeClassName (NE.head matches)
+  return $ TecNodeSet (upperFirst name) (NE.toList nodes)
+encodeTecNodeSet m = Left $ TecErrorUnknownExp (show m)
 
 encodeTecNodeAST :: (Show l) => [E.Decl l] -> Either TecError TecNodeAST
-encodeTecNodeAST decls = TecNodeAST <$> traverse encodeTecNodeSet decls
+encodeTecNodeAST decls = do
+  nodeSets <- traverse encodeTecNodeSet decls
+  return $ TecNodeAST nodeSets

@@ -12,7 +12,7 @@ defineProps<{
 <template>
   <InputParam
     v-for="(_, i) in model.tecNodeAttributes"
-    v-model="model.tecNodeAttributes[i]"
+    v-model="model.tecNodeAttributes[i]!"
     :index-combo="model.indexCombination"
     :param-type="tecIndexedClass.tecSignature.attributeTypeSet[i]!"
     :all-enums="allEnums"

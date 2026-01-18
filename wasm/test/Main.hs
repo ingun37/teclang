@@ -121,17 +121,18 @@ testEnum =
 
 testClass :: [String]
 testClass =
-  [ "f :: A B C",
-    "f :: A B",
-    "f :: A",
-    "f :: A -> B -> C",
-    "f :: A -> B -> C D",
+  [ "f :: A -> B -> C D",
     "f :: A -> B -> C -> D E F"
   ]
 
 testNode :: [String]
 testNode =
-  [ "someClass = [I : J : K \"X\" \"Y\"]"
+  [ """
+    foo A B = Foo 0 \"t\"
+    foo A C = Foo 0 \"c\"
+    bar A = Bar A 0.1
+    bar B = Bar B (-0.1)
+    """
   ]
 
 testFormatUnit :: IO.Handle -> String -> IO ()
