@@ -1,3 +1,5 @@
+#! /bin/bash
+
 set -xe
 
 UPDATE_REQUIRED=false
