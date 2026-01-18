@@ -29,6 +29,7 @@ const inputValue = computed({
       switch (props.paramType) {
         case "String":
         case "Image":
+        case "Color":
           return C.TecNode.TecNodeTextAttribute.make({
             contents: newValue,
           });
@@ -105,7 +106,23 @@ const options = computed<readonly string[]>(() => {
         density="compact"
       />
     </template>
-
+    <template v-else-if="paramType === 'Color'">
+      <v-menu :close-on-content-click="false">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            :color="inputValue"
+            variant="flat"
+            class="rounded border"
+            size="small"
+            width="100%"
+          >
+            {{ label }}
+          </v-btn>
+        </template>
+        <v-color-picker v-model="inputValue" hide-inputs show-swatches />
+      </v-menu>
+    </template>
     <template v-else-if="paramType === 'Number'">
       <v-text-field
         v-model="inputValue"

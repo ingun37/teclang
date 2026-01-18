@@ -15,7 +15,11 @@ function addClass() {
         tecClassName: C.TecClass.TecClassName.make("newClass"),
         tecSignature: C.TecClass.TecSignature.make({
           attributeTypeSet: [C.TecClass.TecClassAttribute.make("String")],
-          indexTypeSet: [],
+          indexTypeSet: [
+            C.TecClass.TecClassIndex.make(
+              props.tecEnumAst.tecEnums[0]!.tecEnumName,
+            ),
+          ],
         }),
       }),
     ),

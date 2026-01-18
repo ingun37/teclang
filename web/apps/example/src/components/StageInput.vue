@@ -38,6 +38,15 @@ function createInitialHaskellCode() {
             const sampleAttributes = c.tecSignature.attributeTypeSet.map(
               (at) => {
                 switch (at) {
+                  case "Color":
+                    const colors = [
+                      '"#FF5733"',
+                      '"#33FF57"',
+                      '"#3357FF"',
+                      '"#F333FF"',
+                      '"#FFD700"',
+                    ];
+                    return colors[Math.floor(Math.random() * colors.length)]!;
                   case "Number":
                     return (Math.random() * 30 + 10).toFixed(1);
                   case "String":

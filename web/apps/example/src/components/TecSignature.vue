@@ -37,7 +37,7 @@ const options = computed<string[]>(() => {
       v-for="(_, i) in model.attributeTypeSet"
       :key="i"
       v-model="model.attributeTypeSet[i]"
-      :items="['String', 'Number', 'Image']"
+      :items="['String', 'Number', 'Image', 'Color']"
       density="compact"
       hide-details
       variant="outlined"
