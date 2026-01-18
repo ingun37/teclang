@@ -1,8 +1,8 @@
 ---- Original Code ----
 foo A B = Foo 0 "t"
 foo A C = Foo 0 "c"
-bar A = Bar A 0.1
-bar B = Bar B (-0.1)
+bar A = Bar 0.1
+bar B = Bar (-0.1)
 ---- Raw AST ----
 TecNodeAST
     { tecNodeSets =
@@ -37,16 +37,14 @@ TecNodeAST
                 [ TecNode
                     { indexCombination = [ "A" ]
                     , tecNodeAttributes =
-                        [ TecNodeConAttribute "A"
-                        , TecNodeFracAttribute
+                        [ TecNodeFracAttribute
                             ( 1 % 10 )
                         ]
                     }
                 , TecNode
                     { indexCombination = [ "B" ]
                     , tecNodeAttributes =
-                        [ TecNodeConAttribute "B"
-                        , TecNodeFracAttribute
+                        [ TecNodeFracAttribute
                             (
                                 ( -1 ) % 10
                             )
@@ -105,10 +103,6 @@ TecNodeAST
                     ],
                     "tecNodeAttributes": [
                         {
-                            "contents": "A",
-                            "tag": "TecNodeConAttribute"
-                        },
-                        {
                             "contents": {
                                 "denominator": 10,
                                 "numerator": 1
@@ -122,10 +116,6 @@ TecNodeAST
                         "B"
                     ],
                     "tecNodeAttributes": [
-                        {
-                            "contents": "B",
-                            "tag": "TecNodeConAttribute"
-                        },
                         {
                             "contents": {
                                 "denominator": 10,

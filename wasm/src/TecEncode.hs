@@ -41,7 +41,7 @@ getLiteral e = Left $ TecErrorUnknownExp (show e)
 
 encodeTecNodeAttribute :: (Show l) => E.Exp l -> Either TecError TecNodeAttribute
 encodeTecNodeAttribute (E.Lit _ l) = getLiteral l
-encodeTecNodeAttribute (E.Con _ unqual) = TecNodeConAttribute <$> getUnQual unqual
+-- encodeTecNodeAttribute (E.Con _ unqual) = TecNodeConAttribute <$> getUnQual unqual
 encodeTecNodeAttribute (E.Paren _ p) = encodeTecNodeAttribute p
 encodeTecNodeAttribute (E.NegApp _ (E.Lit _ (E.Int _ i _))) = return $ TecNodeIntAttribute (-i)
 encodeTecNodeAttribute (E.NegApp _ (E.Lit _ (E.Frac _ f _))) = return $ TecNodeFracAttribute (-f)

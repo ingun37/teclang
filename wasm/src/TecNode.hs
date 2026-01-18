@@ -12,8 +12,7 @@ import GHC.Generics (Generic)
 import Optics.Core
 
 data TecNodeAttribute
-  = TecNodeConAttribute String
-  | TecNodeTextAttribute String
+  = TecNodeTextAttribute String
   | TecNodeIntAttribute Integer
   | TecNodeFracAttribute Rational
   deriving (Show, Generic)

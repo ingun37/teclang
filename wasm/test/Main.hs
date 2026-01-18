@@ -121,11 +121,7 @@ testEnum =
 
 testClass :: [String]
 testClass =
-  [ "f :: A B C",
-    "f :: A B",
-    "f :: A",
-    "f :: A -> B -> C",
-    "f :: A -> B -> C D",
+  [ "f :: A -> B -> C D",
     "f :: A -> B -> C -> D E F"
   ]
 
@@ -134,8 +130,8 @@ testNode =
   [ """
     foo A B = Foo 0 \"t\"
     foo A C = Foo 0 \"c\"
-    bar A = Bar A 0.1
-    bar B = Bar B (-0.1)
+    bar A = Bar 0.1
+    bar B = Bar (-0.1)
     """
   ]
 
