@@ -13,7 +13,7 @@ const haskellCode = ref("");
 const sampleHaskellCode = `\
 line :: Line -> Pattern
 render :: Side -> Article -> Image
-pom :: Side -> Line -> Number
+pom :: Size -> Line -> Number
 schematic :: Side -> Image
 `;
 

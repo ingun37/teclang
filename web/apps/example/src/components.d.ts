@@ -26,5 +26,6 @@ declare module 'vue' {
     TecNodeAST: typeof import('./components/TecNodeAST.vue')['default']
     TecNodeSet: typeof import('./components/TecNodeSet.vue')['default']
     TecNodesRecurse: typeof import('./components/TecNodesRecurse.vue')['default']
+    TecSignature: typeof import('./components/TecSignature.vue')['default']
   }
 }
