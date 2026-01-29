@@ -16,6 +16,11 @@ function addEnum() {
     ),
   });
 }
+function removeEnum(index: number) {
+  model.value = C.TecEnum.TecEnumAST.make({
+    tecEnums: E.Array.remove(model.value.tecEnums, index),
+  });
+}
 const possibleRepAttribTypes = computed<string[]>(() => {
   return model.value.tecEnums
     .map((x) => x.tecEnumName as string)
@@ -30,6 +35,7 @@ const possibleRepAttribTypes = computed<string[]>(() => {
         <TecEnum
           v-model="model.tecEnums[i]!"
           :possible-options="possibleRepAttribTypes"
+          @remove="removeEnum(i)"
         />
       </v-col>
       <v-col cols="auto">

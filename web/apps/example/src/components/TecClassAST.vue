@@ -25,6 +25,11 @@ function addClass() {
     ),
   });
 }
+function removeClass(index: number) {
+  model.value = C.TecClass.TecClassAST.make({
+    tecClasses: E.Array.remove(model.value.tecClasses, index),
+  });
+}
 </script>
 
 <template>
@@ -34,6 +39,7 @@ function addClass() {
         <TecClass
           v-model="model.tecClasses[i]!"
           :tec-enum-ast="props.tecEnumAst"
+          @remove="removeClass(i)"
         />
       </v-col>
       <v-col cols="auto">

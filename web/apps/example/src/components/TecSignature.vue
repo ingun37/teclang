@@ -29,6 +29,26 @@ function addAtt() {
 const options = computed<string[]>(() => {
   return props.tecEnumAst.tecEnums.map((e) => e.tecEnumName);
 });
+function removeAttributeType(i: number) {
+  const attributeTypeSet = E.Array.remove(model.value.attributeTypeSet, i);
+  if (!E.Array.isNonEmptyReadonlyArray(attributeTypeSet)) {
+    throw new Error("Cannot remove attribute type from empty set");
+  }
+  model.value = C.TecClass.TecSignature.make({
+    attributeTypeSet,
+    indexTypeSet: model.value.indexTypeSet,
+  });
+}
+function removeIndexType(i: number) {
+  const indexTypeSet = E.Array.remove(model.value.indexTypeSet, i);
+  if (!E.Array.isNonEmptyReadonlyArray(indexTypeSet)) {
+    throw new Error("Cannot remove index type from empty set");
+  }
+  model.value = C.TecClass.TecSignature.make({
+    attributeTypeSet: model.value.attributeTypeSet,
+    indexTypeSet,
+  });
+}
 </script>
 
 <template>
@@ -41,6 +61,8 @@ const options = computed<string[]>(() => {
       density="compact"
       hide-details
       variant="outlined"
+      append-icon="mdi-delete"
+      @click:append="removeAttributeType(i)"
     />
     <v-btn prepend-icon="mdi-plus" variant="plain" size="small" @click="addAtt">
       Add Attribute
@@ -56,6 +78,8 @@ const options = computed<string[]>(() => {
       hide-details
       variant="outlined"
       class="mb-2"
+      append-icon="mdi-delete"
+      @click:append="removeIndexType(i)"
     />
 
     <v-btn

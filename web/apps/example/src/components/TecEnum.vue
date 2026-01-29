@@ -5,6 +5,9 @@ const model = defineModel<C.TecEnum.TecEnum>({ required: true });
 defineProps<{
   possibleOptions: string[];
 }>();
+const emit = defineEmits<{
+  (e: "remove"): void;
+}>();
 function addValue() {
   model.value = C.TecEnum.TecEnum.make({
     tecEnumName: model.value.tecEnumName,
@@ -12,6 +15,16 @@ function addValue() {
       model.value.tecEnumValues,
       C.TecEnum.TecEnumValue.make("Foo"),
     ),
+  });
+}
+function removeEnumValue(i: number) {
+  const tecEnumValues = E.Array.remove(model.value.tecEnumValues, i);
+  if (!E.Array.isNonEmptyReadonlyArray(tecEnumValues)) {
+    throw new Error("Cannot remove enum value from empty set");
+  }
+  model.value = C.TecEnum.TecEnum.make({
+    tecEnumName: model.value.tecEnumName,
+    tecEnumValues,
   });
 }
 </script>
@@ -36,8 +49,10 @@ function addValue() {
           v-model="model.tecEnumValues[index]"
           density="compact"
           hide-details
-          style="width: 6rem"
+          style="width: 10rem"
           variant="outlined"
+          append-icon="mdi-delete"
+          @click:append="removeEnumValue(index)"
         />
         <v-btn
           prepend-icon="mdi-plus"
@@ -46,6 +61,15 @@ function addValue() {
           @click="addValue"
         >
           Add Value
+        </v-btn>
+        <v-btn
+          prepend-icon="mdi-delete"
+          variant="plain"
+          size="small"
+          color="error"
+          @click="emit('remove')"
+        >
+          Remove
         </v-btn>
       </div>
     </v-card-text>
