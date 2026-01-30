@@ -113,8 +113,10 @@ encodeTecAttributes :: (Show l) => E.Type l -> Either TecError TecAttributes
 encodeTecAttributes (E.TyTuple _ E.Boxed tyCons) = do
   xs <- traverse getTyCon tyCons
   return $ TecAttributes xs
-encodeTecAttributes unknown = do
-  Left $ TecErrorUnknownExp (show unknown)
+encodeTecAttributes tyCon = do
+  x <- getTyCon tyCon
+  return $ TecAttributes [x]
+
 
 encodeTecSignature :: (Show l) => E.Type l -> Either TecError TecSignature
 encodeTecSignature (E.TyFun _ tyCon right) = do
