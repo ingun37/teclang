@@ -92,7 +92,11 @@ function createInitialHaskellCode() {
                 }
               },
             );
-            return `${lowerFirst(c.tecClassName)} ${comb.map((v) => `${v}`).join(" ")} = ${capitalizeFirst(c.tecClassName)} ${sampleAttributes.join(" ")}`;
+            const xxx =
+              sampleAttributes.length == 1
+                ? sampleAttributes[0]
+                : `(${sampleAttributes.join(", ")})`;
+            return `${lowerFirst(c.tecClassName)} ${comb.map((v) => `${v}`).join(" ")} = ${xxx}`;
           });
           return each.join("\n");
         }),
