@@ -117,7 +117,6 @@ encodeTecAttributes tyCon = do
   x <- getTyCon tyCon
   return $ TecAttributes [x]
 
-
 encodeTecSignature :: (Show l) => E.Type l -> Either TecError TecSignature
 encodeTecSignature (E.TyFun _ tyCon right) = do
   (TecSignature idxs attribs) <- encodeTecSignature right
@@ -149,14 +148,10 @@ unfoldrM f seed = do
       return (val : rest)
 
 encodeTecNodeAttributes :: (Show l) => E.Rhs l -> Either TecError [TecNodeAttribute]
-encodeTecNodeAttributes (E.UnGuardedRhs _ apps) = do
-  let b_ab b = case b of
-        (E.Con _ (E.UnQual _ (E.Ident _ _))) -> Right Nothing
-        (E.App _ l r) -> do
-          a <- encodeTecNodeAttribute r
-          Right $ Just (a, l)
-        e -> Left $ TecErrorUnknownExp (show e)
-  reverse <$> unfoldrM b_ab apps
+encodeTecNodeAttributes (E.UnGuardedRhs _ (E.Tuple _ E.Boxed attribs)) = traverse encodeTecNodeAttribute attribs
+encodeTecNodeAttributes (E.UnGuardedRhs _ con) = do
+  a <- encodeTecNodeAttribute con
+  return [a]
 encodeTecNodeAttributes rhs = Left $ TecErrorUnknownExp (show rhs)
 
 encodeTecNodeIndex :: (Show l) => E.Pat l -> Either TecError String

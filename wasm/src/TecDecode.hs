@@ -123,15 +123,14 @@ decodeTecNodeIndex :: String -> E.Pat ()
 decodeTecNodeIndex "_" = E.PWildCard ()
 decodeTecNodeIndex t = E.PApp () (getUnqual t) []
 
-decodeTecNodeAttributes :: String -> [TecNodeAttribute] -> E.Rhs ()
-decodeTecNodeAttributes className strs =
-  let bab b a = E.App () b (decodeNodeAttribute a)
-   in E.UnGuardedRhs () (foldl bab (getCon className) strs)
+decodeTecNodeAttributes :: [TecNodeAttribute] -> E.Rhs ()
+decodeTecNodeAttributes [str] = E.UnGuardedRhs () (decodeNodeAttribute str)
+decodeTecNodeAttributes strs = E.UnGuardedRhs () (E.Tuple () E.Boxed (map decodeNodeAttribute strs))
 
 decodeTecNode :: String -> TecNode -> E.Match ()
 decodeTecNode className (TecNode indexCombs attribs) =
   let
-   in E.Match () (getIdent (lowerFirst className)) (map decodeTecNodeIndex indexCombs) (decodeTecNodeAttributes className attribs) Nothing
+   in E.Match () (getIdent (lowerFirst className)) (map decodeTecNodeIndex indexCombs) (decodeTecNodeAttributes attribs) Nothing
 
 decodeTecNodeSet :: TecNodeSet -> E.Decl ()
 decodeTecNodeSet (TecNodeSet name nodes) = E.FunBind () (map (decodeTecNode name) nodes)
