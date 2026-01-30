@@ -1,5 +1,5 @@
 ---- Original Code ----
-f :: A -> B -> C D
+f :: A -> B -> (C, D)
 ---- Raw AST ----
 TecClassAST
     { tecClasses =
@@ -37,7 +37,7 @@ TecClassAST
     ]
 }
 ---- Original Code ----
-f :: A -> B -> C -> D E F
+f :: A -> B -> C -> (D, E, F)
 ---- Raw AST ----
 TecClassAST
     { tecClasses =

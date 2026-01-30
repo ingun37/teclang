@@ -121,8 +121,8 @@ testEnum =
 
 testClass :: [String]
 testClass =
-  [ "f :: A -> B -> C D",
-    "f :: A -> B -> C -> D E F"
+  [ "f :: A -> B -> (C, D)",
+    "f :: A -> B -> C -> (D, E, F)"
   ]
 
 testNode :: [String]

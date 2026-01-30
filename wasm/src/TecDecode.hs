@@ -99,9 +99,9 @@ decodeTecEnumAST (TecEnumAST tecEnums) = traverse decodeTecEnum tecEnums
 decodeTecAttributes :: TecAttributes -> Either TecError (E.Type ())
 decodeTecAttributes (TecAttributes []) = do
   Left $ TecError "TecAttributes are empty"
-decodeTecAttributes (TecAttributes (attrib : attribs)) = do
-  let bab b a = E.TyApp () b (getTyCon a)
-  return $ foldl bab (getTyCon attrib) attribs
+decodeTecAttributes (TecAttributes attribs) = do
+  let xs = map getTyCon attribs
+  return $ E.TyTuple () E.Boxed xs
 
 decodeTecSignature :: TecSignature -> Either TecError (E.Type ())
 decodeTecSignature (TecSignature idxs attribs) = do

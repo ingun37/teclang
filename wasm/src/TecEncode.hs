@@ -110,13 +110,11 @@ encodeTecEnumAST decls = do
   return $ TecEnumAST tecEnums
 
 encodeTecAttributes :: (Show l) => E.Type l -> Either TecError TecAttributes
-encodeTecAttributes (E.TyApp _ left right) = do
-  l <- encodeTecAttributes left
-  r <- encodeTecAttributes right
-  return $ l <> r
-encodeTecAttributes tyCon = do
-  y <- getTyCon tyCon
-  return $ TecAttributes [y]
+encodeTecAttributes (E.TyTuple _ E.Boxed tyCons) = do
+  xs <- traverse getTyCon tyCons
+  return $ TecAttributes xs
+encodeTecAttributes unknown = do
+  Left $ TecErrorUnknownExp (show unknown)
 
 encodeTecSignature :: (Show l) => E.Type l -> Either TecError TecSignature
 encodeTecSignature (E.TyFun _ tyCon right) = do
