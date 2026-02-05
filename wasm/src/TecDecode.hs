@@ -119,9 +119,9 @@ decodeTecClass (TecClass tecClassName sig) = do
 decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
 decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
 
-decodeTecNodeIndex :: String -> E.Pat ()
-decodeTecNodeIndex "_" = E.PWildCard ()
-decodeTecNodeIndex t = E.PApp () (getUnqual t) []
+decodeTecNodeIndex :: TecNodeIndex -> E.Pat ()
+decodeTecNodeIndex TecNodeIndexWildcard = E.PWildCard ()
+decodeTecNodeIndex (TecNodeIndexInst t) = E.PApp () (getUnqual t) []
 
 decodeTecNodeAttributes :: [TecNodeAttribute] -> E.Rhs ()
 decodeTecNodeAttributes [str] = E.UnGuardedRhs () (decodeNodeAttribute str)

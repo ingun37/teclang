@@ -12,8 +12,8 @@ TecNodeAST
             , tecNodeSet =
                 [ TecNode
                     { indexCombination =
-                        [ "A"
-                        , "B"
+                        [ TecNodeIndexInst "A"
+                        , TecNodeIndexInst "B"
                         ]
                     , tecNodeAttributes =
                         [ TecNodeIntAttribute 0
@@ -22,8 +22,8 @@ TecNodeAST
                     }
                 , TecNode
                     { indexCombination =
-                        [ "A"
-                        , "C"
+                        [ TecNodeIndexInst "A"
+                        , TecNodeIndexInst "C"
                         ]
                     , tecNodeAttributes =
                         [ TecNodeIntAttribute 0
@@ -36,7 +36,8 @@ TecNodeAST
             { tecNodeClass = "Bar"
             , tecNodeSet =
                 [ TecNode
-                    { indexCombination = [ "A" ]
+                    { indexCombination =
+                        [ TecNodeIndexInst "A" ]
                     , tecNodeAttributes =
                         [ TecNodeConAttribute "A"
                         , TecNodeFracAttribute
@@ -44,7 +45,8 @@ TecNodeAST
                         ]
                     }
                 , TecNode
-                    { indexCombination = [ "B" ]
+                    { indexCombination =
+                        [ TecNodeIndexInst "B" ]
                     , tecNodeAttributes =
                         [ TecNodeConAttribute "B"
                         , TecNodeFracAttribute
@@ -59,7 +61,7 @@ TecNodeAST
             { tecNodeClass = "Quux"
             , tecNodeSet =
                 [ TecNode
-                    { indexCombination = [ "_" ]
+                    { indexCombination = [ TecNodeIndexWildcard ]
                     , tecNodeAttributes =
                         [ TecNodeConAttribute "Quux" ]
                     }
@@ -75,8 +77,14 @@ TecNodeAST
             "tecNodeSet": [
                 {
                     "indexCombination": [
-                        "A",
-                        "B"
+                        {
+                            "contents": "A",
+                            "tag": "TecNodeIndexInst"
+                        },
+                        {
+                            "contents": "B",
+                            "tag": "TecNodeIndexInst"
+                        }
                     ],
                     "tecNodeAttributes": [
                         {
@@ -91,8 +99,14 @@ TecNodeAST
                 },
                 {
                     "indexCombination": [
-                        "A",
-                        "C"
+                        {
+                            "contents": "A",
+                            "tag": "TecNodeIndexInst"
+                        },
+                        {
+                            "contents": "C",
+                            "tag": "TecNodeIndexInst"
+                        }
                     ],
                     "tecNodeAttributes": [
                         {
@@ -112,7 +126,10 @@ TecNodeAST
             "tecNodeSet": [
                 {
                     "indexCombination": [
-                        "A"
+                        {
+                            "contents": "A",
+                            "tag": "TecNodeIndexInst"
+                        }
                     ],
                     "tecNodeAttributes": [
                         {
@@ -130,7 +147,10 @@ TecNodeAST
                 },
                 {
                     "indexCombination": [
-                        "B"
+                        {
+                            "contents": "B",
+                            "tag": "TecNodeIndexInst"
+                        }
                     ],
                     "tecNodeAttributes": [
                         {
@@ -153,7 +173,9 @@ TecNodeAST
             "tecNodeSet": [
                 {
                     "indexCombination": [
-                        "_"
+                        {
+                            "tag": "TecNodeIndexWildcard"
+                        }
                     ],
                     "tecNodeAttributes": [
                         {
