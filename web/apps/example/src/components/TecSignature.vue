@@ -26,9 +26,6 @@ function addAtt() {
     indexTypeSet: model.value.indexTypeSet,
   });
 }
-const options = computed<string[]>(() => {
-  return props.tecEnumAst.tecEnums.map((e) => e.tecEnumName);
-});
 function removeAttributeType(i: number) {
   const attributeTypeSet = E.Array.remove(model.value.attributeTypeSet, i);
   if (!E.Array.isNonEmptyReadonlyArray(attributeTypeSet)) {
@@ -53,33 +50,24 @@ function removeIndexType(i: number) {
 
 <template>
   <div class="d-flex flex-column ga-1">
-    <v-select
+    <SelectAttributeType
       v-for="(_, i) in model.attributeTypeSet"
       :key="i"
-      v-model="model.attributeTypeSet[i]"
-      :items="['String', 'Number', 'Image', 'Color']"
-      density="compact"
-      hide-details
-      variant="outlined"
-      append-icon="mdi-delete"
-      @click:append="removeAttributeType(i)"
+      :tec-enum-ast="tecEnumAst"
+      v-model="model.attributeTypeSet[i]!"
+      @delete="removeAttributeType(i)"
     />
     <v-btn prepend-icon="mdi-plus" variant="plain" size="small" @click="addAtt">
       Add Attribute
     </v-btn>
     <div class="text-caption mb-2">Index set</div>
 
-    <v-select
+    <SelectIndexType
       v-for="(_, i) in model.indexTypeSet"
-      v-model="model.indexTypeSet[i]!"
       :key="i"
-      :items="options"
-      density="compact"
-      hide-details
-      variant="outlined"
-      class="mb-2"
-      append-icon="mdi-delete"
-      @click:append="removeIndexType(i)"
+      :tec-enum-ast="tecEnumAst"
+      v-model="model.indexTypeSet[i]!"
+      @delete="removeIndexType(i)"
     />
 
     <v-btn

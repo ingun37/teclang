@@ -15,7 +15,7 @@ const props = defineProps<{
   tecEnums: C.TecEnum.TecEnumAST;
 }>();
 const dynamicSlices = computed(() => {
-  const eq = C.TecEnum.TecEnumValueEquivalence;
+  const eq = C.TecNode.tecNodeIndexEquivalence;
   const i = props.paramIndex;
   const groups: RNE<RNE<TN>> = E.pipe(
     model.value,

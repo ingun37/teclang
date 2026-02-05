@@ -14,19 +14,18 @@ const tecNodeAST = ref<C.TecNode.TecNodeAST>(
   C.TecNode.TecNodeAST.make({ tecNodeSets: [] }),
 );
 
-function capitalizeFirst(str: string): string {
-  if (str.length === 0) return str;
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
 function lowerFirst(str: string): string {
   if (str.length === 0) return str;
   return str.charAt(0).toLowerCase() + str.slice(1);
 }
 
 const haskellCode = ref("");
+function tecNodeIndexToStr(x: C.TecNode.TecNodeIndex): string {
+  return x.tag === "TecNodeIndexWildcard" ? "_" : x.contents;
+}
 function createInitialHaskellCode() {
   const combinations = C.help.iterateIndexSet(props.tecEnumAst);
+
   const a = E.Effect.runSync(
     E.pipe(
       props.tecClassAst.tecClasses,
@@ -38,11 +37,14 @@ function createInitialHaskellCode() {
             : c.tecSignature.indexTypeSet;
 
           if (!E.Array.isNonEmptyReadonlyArray(indexTypeSet))
-            throw new Error("");
+            throw new Error("Unknown error 0x0fe8a2");
 
           const _combs = yield* combinations(indexTypeSet);
           const combs = useWildCard
-            ? E.Array.map(_combs, E.Array.append("_"))
+            ? E.Array.map(
+                _combs,
+                E.Array.append(C.TecNode.TecNodeIndexWildcard.make({})),
+              )
             : _combs;
           const each = combs.map((comb) => {
             const sampleAttributes = c.tecSignature.attributeTypeSet.map(
@@ -74,7 +76,10 @@ function createInitialHaskellCode() {
                     ][Math.floor(Math.random() * 10)]!;
                     return `"${randomName!}"`;
                   case "Image":
-                    return `"/${c.tecClassName}/${comb.map((x) => x.toLowerCase()).join("-")}.png"`;
+                    return `"/${c.tecClassName}/${comb
+                      .map(tecNodeIndexToStr)
+                      .map((x) => x.toLowerCase())
+                      .join("-")}.png"`;
                   default:
                     return E.pipe(
                       props.tecEnumAst.tecEnums,
@@ -96,7 +101,7 @@ function createInitialHaskellCode() {
               sampleAttributes.length == 1
                 ? sampleAttributes[0]
                 : `(${sampleAttributes.join(", ")})`;
-            return `${lowerFirst(c.tecClassName)} ${comb.map((v) => `${v}`).join(" ")} = ${xxx}`;
+            return `${lowerFirst(c.tecClassName)} ${comb.map(tecNodeIndexToStr).join(" ")} = ${xxx}`;
           });
           return each.join("\n");
         }),
