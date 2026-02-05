@@ -26,9 +26,6 @@ function addAtt() {
     indexTypeSet: model.value.indexTypeSet,
   });
 }
-const options = computed<string[]>(() => {
-  return props.tecEnumAst.tecEnums.map((e) => e.tecEnumName);
-});
 function removeAttributeType(i: number) {
   const attributeTypeSet = E.Array.remove(model.value.attributeTypeSet, i);
   if (!E.Array.isNonEmptyReadonlyArray(attributeTypeSet)) {
@@ -65,18 +62,12 @@ function removeIndexType(i: number) {
     </v-btn>
     <div class="text-caption mb-2">Index set</div>
 
-    <v-select
+    <SelectIndexType
       v-for="(_, i) in model.indexTypeSet"
-      v-model="model.indexTypeSet[i]!"
       :key="i"
-      :items="options"
-      density="compact"
-      hide-details
-      variant="outlined"
-      class="mb-2"
-      append-icon="mdi-delete"
-      @click:append="removeIndexType(i)"
-      type="error"
+      :tec-enum-ast="tecEnumAst"
+      v-model="model.indexTypeSet[i]!"
+      @delete="removeIndexType(i)"
     />
 
     <v-btn
