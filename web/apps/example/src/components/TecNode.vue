@@ -9,14 +9,6 @@ const props = defineProps<{
   allEnums: C.TecEnum.TecEnumAST;
   enableIndexListEditing: boolean;
 }>();
-
-const items = computed(() => {
-  return props.tecIndexedClass.tecSignature.indexTypeSet.map((typeName) =>
-    props.allEnums.tecEnums
-      .find((enums) => (enums.tecEnumName as string) === (typeName as string))!
-      .tecEnumValues.concat([C.TecEnum.TecEnumValue.make("_")]),
-  );
-});
 </script>
 <template>
   <div class="d-flex flex-row ga-2">
@@ -26,12 +18,13 @@ const items = computed(() => {
       :key="j"
       style="width: 12rem"
     >
-      <v-select
+      <TecNodeIndex
         v-model="model.indexCombination[j]!"
-        :items="items[j]"
-        density="compact"
-        hide-details
-      />
+        :tec-indexed-class="tecIndexedClass"
+        :tec-class-index="props.tecIndexedClass.tecSignature.indexTypeSet[j]!"
+        :all-enums="allEnums"
+        :enable-index-list-editing="enableIndexListEditing"
+      ></TecNodeIndex>
     </div>
     <InputParam
       v-for="(_, i) in model.tecNodeAttributes"

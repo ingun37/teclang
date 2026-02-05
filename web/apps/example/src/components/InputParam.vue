@@ -78,9 +78,13 @@ const onFileChange = (e: Event) => {
 const clearImage = () => {
   inputValue.value = "";
 };
-
+function tecNodeIndexToStr(x: C.TecNode.TecNodeIndex): string {
+  return x.tag === "TecNodeIndexWildcard" ? "_" : x.contents;
+}
 const label = computed(() => {
-  return props.indexCombo.join(", ") + " - " + props.paramType;
+  return (
+    props.indexCombo.map(tecNodeIndexToStr).join(", ") + " - " + props.paramType
+  );
 });
 
 const options = computed<readonly string[]>(() => {

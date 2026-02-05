@@ -33,7 +33,19 @@ const TecNodeAttribute = S.Union(
 );
 
 export type TecNodeAttribute = typeof TecNodeAttribute.Type;
-const IndexCombination = S.NonEmptyArray(TecEnum.TecEnumValue);
+export const TecNodeIndexWildcard = S.Struct({
+  tag: S.tag("TecNodeIndexWildcard"),
+});
+export const TecNodeIndexInst = S.Struct({
+  tag: S.tag("TecNodeIndexInst"),
+  contents: TecEnum.TecEnumValue,
+});
+export type TecNodeIndexWildcard = typeof TecNodeIndexWildcard.Type;
+export type TecNodeIndexInst = typeof TecNodeIndexInst.Type;
+const TecNodeIndex = S.Union(TecNodeIndexWildcard, TecNodeIndexInst);
+export const tecNodeIndexEquivalence = S.equivalence(TecNodeIndex);
+export type TecNodeIndex = typeof TecNodeIndex.Type;
+const IndexCombination = S.NonEmptyArray(TecNodeIndex);
 export type IndexCombination = typeof IndexCombination.Type;
 export const TecNode = S.Struct({
   indexCombination: IndexCombination,
