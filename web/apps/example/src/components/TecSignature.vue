@@ -56,6 +56,7 @@ function removeIndexType(i: number) {
     <SelectAttributeType
       v-for="(_, i) in model.attributeTypeSet"
       :key="i"
+      :tec-enum-ast="tecEnumAst"
       v-model="model.attributeTypeSet[i]!"
       @delete="removeAttributeType(i)"
     />
