@@ -10,14 +10,18 @@ const primitiveTypes = ["String", "Number", "Image", "Color"];
 const enumTypes = computed(() =>
   props.tecEnumAst.tecEnums.map((e) => e.tecEnumName),
 );
+const options = computed(() => primitiveTypes.concat(enumTypes.value));
+const rules = [
+  (v: string) => options.value.includes(v) || `Enum ${v} not exist`,
+];
 </script>
 
 <template>
   <v-select
     v-model="model"
-    :items="primitiveTypes.concat(enumTypes)"
+    :items="options"
+    :rules="rules"
     density="compact"
-    hide-details
     variant="outlined"
     append-icon="mdi-delete"
     @click:append="$emit('delete')"
