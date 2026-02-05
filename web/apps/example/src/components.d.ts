@@ -15,6 +15,7 @@ declare module 'vue' {
     InputParam: typeof import('./components/InputParam.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SelectAttributeType: typeof import('./components/SelectAttributeType.vue')['default']
     StageClass: typeof import('./components/StageClass.vue')['default']
     StageEnum: typeof import('./components/StageEnum.vue')['default']
     StageInput: typeof import('./components/StageInput.vue')['default']

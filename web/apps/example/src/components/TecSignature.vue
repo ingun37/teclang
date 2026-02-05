@@ -53,16 +53,11 @@ function removeIndexType(i: number) {
 
 <template>
   <div class="d-flex flex-column ga-1">
-    <v-select
+    <SelectAttributeType
       v-for="(_, i) in model.attributeTypeSet"
       :key="i"
-      v-model="model.attributeTypeSet[i]"
-      :items="['String', 'Number', 'Image', 'Color']"
-      density="compact"
-      hide-details
-      variant="outlined"
-      append-icon="mdi-delete"
-      @click:append="removeAttributeType(i)"
+      v-model="model.attributeTypeSet[i]!"
+      @delete="removeAttributeType(i)"
     />
     <v-btn prepend-icon="mdi-plus" variant="plain" size="small" @click="addAtt">
       Add Attribute
@@ -80,6 +75,7 @@ function removeIndexType(i: number) {
       class="mb-2"
       append-icon="mdi-delete"
       @click:append="removeIndexType(i)"
+      type="error"
     />
 
     <v-btn
