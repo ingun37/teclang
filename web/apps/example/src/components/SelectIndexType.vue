@@ -9,14 +9,18 @@ defineEmits<{
 const options = computed<string[]>(() => {
   return props.tecEnumAst.tecEnums.map((e) => e.tecEnumName);
 });
+const rules = [
+  (v: string) =>
+    options.value.includes(v) || "Please select a valid index type",
+];
 </script>
 
 <template>
   <v-select
     v-model="model"
     :items="options"
+    :rules="rules"
     density="compact"
-    hide-details
     variant="outlined"
     class="mb-2"
     append-icon="mdi-delete"
