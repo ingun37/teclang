@@ -22,7 +22,6 @@ const rules = [
     :rules="rules"
     density="compact"
     variant="outlined"
-    class="mb-2"
     append-icon="mdi-delete"
     @click:append="$emit('delete')"
   />
