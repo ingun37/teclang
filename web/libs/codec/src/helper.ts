@@ -23,6 +23,15 @@ function recur(enums: RNE<TE.TecEnum>): RNE<C> {
   }
 }
 
+export function findEnumOfIndexType(enumAST: TE.TecEnumAST) {
+  return function (indexType: TC.TecClassIndex) {
+    return E.pipe(
+      enumAST.tecEnums,
+      E.Array.findFirst((e) => (e.tecEnumName as string) === indexType),
+    );
+  };
+}
+
 export function iterateIndexSet(enumAST: TE.TecEnumAST) {
   return function (
     indexTypeSet: RNE<TC.TecClassIndex>,

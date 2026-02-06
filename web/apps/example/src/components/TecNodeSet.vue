@@ -119,15 +119,13 @@ function remove(i: number) {
       <v-container fluid>
         <v-row dense>
           <v-col cols="8">
-            <TecNodesRecurse
+            <GridView
               v-if="isUnique"
+              :tec-class="evaluation.right.tecClass"
+              :enum-ast="tecEnums"
               v-model="model.tecNodeSet"
-              :index-combo="[]"
-              axis="x"
-              :param-index="0"
-              :tec-indexed-class="evaluation.right.tecClass"
-              :tec-enums="tecEnums"
-            />
+            ></GridView>
+
             <div v-else class="d-flex flex-column ga-1">
               <TecNode
                 v-for="(_, i) in model.tecNodeSet"
