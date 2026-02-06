@@ -4,7 +4,11 @@ import * as TE from "./TecEnum.js";
 import * as TN from "./TecNode.js";
 type RNE<T> = E.Array.NonEmptyReadonlyArray<T>;
 type EV = TE.TecEnumValue;
-type C = RNE<TE.TecEnumValue>;
+type C = RNE<EV>;
+
+export type IndexEnumValueCombo = C;
+export const indexEnumValueComboEq: E.Equivalence.Equivalence<IndexEnumValueCombo> =
+  E.Array.getEquivalence(E.Equivalence.string);
 function recur(enums: RNE<TE.TecEnum>): RNE<C> {
   const [x, xs] = E.Array.unprepend(enums);
   if (E.Array.isNonEmptyReadonlyArray(xs)) {
@@ -17,6 +21,15 @@ function recur(enums: RNE<TE.TecEnum>): RNE<C> {
   } else {
     return E.Array.map(x.tecEnumValues, (ev: EV): C => [ev]);
   }
+}
+
+export function findEnumOfIndexType(enumAST: TE.TecEnumAST) {
+  return function (indexType: TC.TecClassIndex) {
+    return E.pipe(
+      enumAST.tecEnums,
+      E.Array.findFirst((e) => (e.tecEnumName as string) === indexType),
+    );
+  };
 }
 
 export function iterateIndexSet(enumAST: TE.TecEnumAST) {
@@ -53,9 +66,7 @@ export function iterateIndexCombo(
   enumAST: TE.TecEnumAST,
   indexTypeSet: RNE<TC.TecClassIndex>,
 ) {
-  return function (
-    combo: TN.IndexCombination,
-  ): E.Either.Either<RNE<RNE<TE.TecEnumValue>>, Error> {
+  return function (combo: TN.IndexCombination): E.Either.Either<RNE<C>, Error> {
     return E.Either.gen(function* () {
       const seed = yield* E.pipe(
         combo,

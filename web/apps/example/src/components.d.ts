@@ -12,6 +12,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
+    GridView: typeof import('./components/GridView.vue')['default']
+    GridView1D: typeof import('./components/GridView1D.vue')['default']
+    GridView2D: typeof import('./components/GridView2D.vue')['default']
+    GridView3D: typeof import('./components/GridView3D.vue')['default']
     InputParam: typeof import('./components/InputParam.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
@@ -27,6 +31,7 @@ declare module 'vue' {
     TecNode: typeof import('./components/TecNode.vue')['default']
     TecNodeAST: typeof import('./components/TecNodeAST.vue')['default']
     TecNodeIndex: typeof import('./components/TecNodeIndex.vue')['default']
+    TecNodeNullable: typeof import('./components/TecNodeNullable.vue')['default']
     TecNodeSet: typeof import('./components/TecNodeSet.vue')['default']
     TecNodesRecurse: typeof import('./components/TecNodesRecurse.vue')['default']
     TecSignature: typeof import('./components/TecSignature.vue')['default']
