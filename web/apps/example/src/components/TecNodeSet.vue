@@ -130,7 +130,20 @@ const isUnique = ref(true);
               ></TecNode>
             </div>
           </v-col>
-          <v-col cols="4"> {{ evaluation.right.missingCombos }} </v-col>
+          <v-col cols="4">
+            <v-alert
+              title="Following combinations are missing"
+              v-if="0 < evaluation.right.missingCombos.length"
+              :text="
+                evaluation.right.missingCombos
+                  .map((combo) => `(${combo.join(',')})`)
+                  .join('   ')
+              "
+              type="error"
+              variant="outlined"
+            >
+            </v-alert>
+          </v-col>
         </v-row>
       </v-container>
     </v-card-text>
