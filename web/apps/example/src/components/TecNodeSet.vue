@@ -17,8 +17,13 @@ const enumOf = (
     E.Array.findFirst((te) => (te.tecEnumName as string) === (pt as string)),
     E.Either.fromOption(() => new Error("Enum not found: " + pt)),
   );
-
-type Eval = { dimension: string; tecClass: C.TecClass.TecClass };
+type RNE<T> = E.Array.NonEmptyReadonlyArray<T>;
+type EV = C.TecEnum.TecEnumValue;
+type Eval = {
+  dimension: string;
+  tecClass: C.TecClass.TecClass;
+  missingCombos: readonly (readonly string[])[];
+};
 const iterateClass = C.help.iterateIndexSet(props.tecEnums);
 
 const evaluation = computed<E.Either.Either<Eval, Error>>(() =>
@@ -46,12 +51,10 @@ const evaluation = computed<E.Either.Either<Eval, Error>>(() =>
     );
     type RNE<T> = E.Array.NonEmptyReadonlyArray<T>;
     type EV = C.TecEnum.TecEnumValue;
+    const eq = E.Array.getEquivalence(E.Equivalence.string);
+    const ord = E.Array.getOrder(E.Order.string);
     const allCombos: RNE<RNE<EV>> = yield* iterateClass(
       tecClass.tecSignature.indexTypeSet,
-    );
-    const allComboSet = E.SortedSet.fromIterable(
-      allCombos,
-      E.Array.getOrder(E.Order.string),
     );
 
     const currentCombos: RNE<RNE<EV>> = yield* E.pipe(
@@ -60,12 +63,16 @@ const evaluation = computed<E.Either.Either<Eval, Error>>(() =>
       E.Either.all,
       E.Either.map(E.Array.flatten),
     );
-    const currentComboSet = E.SortedSet.fromIterable(
-      currentCombos,
-      E.Array.getOrder(E.Order.string),
-    );
 
-    const missingCombos = E.SortedSet.difference(allComboSet, currentComboSet);
+    const currentCombos_ = E.pipe(
+      currentCombos,
+      E.Array.sort(ord),
+      E.Array.dedupeAdjacentWith(eq),
+    );
+    const missingCombos = E.Array.differenceWith(eq)(
+      E.pipe(allCombos, E.Array.sort(ord)),
+      currentCombos_,
+    );
 
     return {
       dimension,
@@ -101,24 +108,31 @@ const isUnique = ref(true);
       />
     </v-card-subtitle>
     <v-card-text>
-      <TecNodesRecurse
-        v-if="isUnique"
-        v-model="model.tecNodeSet"
-        :index-combo="[]"
-        axis="x"
-        :param-index="0"
-        :tec-indexed-class="evaluation.right.tecClass"
-        :tec-enums="tecEnums"
-      />
-      <div v-else class="d-flex flex-column ga-1">
-        <TecNode
-          v-for="(_, i) in model.tecNodeSet"
-          v-model="model.tecNodeSet[i]!"
-          :enable-index-list-editing="true"
-          :tec-indexed-class="evaluation.right.tecClass"
-          :all-enums="tecEnums"
-        ></TecNode>
-      </div>
+      <v-container fluid>
+        <v-row dense>
+          <v-col cols="8">
+            <TecNodesRecurse
+              v-if="isUnique"
+              v-model="model.tecNodeSet"
+              :index-combo="[]"
+              axis="x"
+              :param-index="0"
+              :tec-indexed-class="evaluation.right.tecClass"
+              :tec-enums="tecEnums"
+            />
+            <div v-else class="d-flex flex-column ga-1">
+              <TecNode
+                v-for="(_, i) in model.tecNodeSet"
+                v-model="model.tecNodeSet[i]!"
+                :enable-index-list-editing="true"
+                :tec-indexed-class="evaluation.right.tecClass"
+                :all-enums="tecEnums"
+              ></TecNode>
+            </div>
+          </v-col>
+          <v-col cols="4"> {{ evaluation.right.missingCombos }} </v-col>
+        </v-row>
+      </v-container>
     </v-card-text>
   </v-card>
 </template>
