@@ -27,6 +27,12 @@ const props = defineProps<{
     :enum-ast="enumAst"
     v-model="model"
   />
+  <GridView3D
+    v-else-if="tecClass.tecSignature.indexTypeSet.length === 3"
+    :tec-class="tecClass"
+    :enum-ast="enumAst"
+    v-model="model"
+  />
 
   <div v-else>aoeuaouaoeuaeu</div>
 </template>

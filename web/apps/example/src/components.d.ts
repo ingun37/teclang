@@ -15,6 +15,7 @@ declare module 'vue' {
     GridView: typeof import('./components/GridView.vue')['default']
     GridView1D: typeof import('./components/GridView1D.vue')['default']
     GridView2D: typeof import('./components/GridView2D.vue')['default']
+    GridView3D: typeof import('./components/GridView3D.vue')['default']
     InputParam: typeof import('./components/InputParam.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

@@ -14,13 +14,7 @@ export function createRandomAttributeValue(
   ): C.TecNode.TecNodeAttribute {
     switch (at) {
       case "Color":
-        const colors = [
-          '"#FF5733"',
-          '"#33FF57"',
-          '"#3357FF"',
-          '"#F333FF"',
-          '"#FFD700"',
-        ];
+        const colors = ["#FF5733", "#33FF57", "#3357FF", "#F333FF", "#FFD700"];
         return C.TecNode.TecNodeTextAttribute.make({
           contents: colors[Math.floor(Math.random() * colors.length)]!,
         });
