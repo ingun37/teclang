@@ -58,7 +58,6 @@ const options = computed((): E.Either.Either<IndexOption[], Error> => {
     :items="options.right"
     item-title="label"
     item-value="value"
-    return-object
     density="compact"
     hide-details
   />

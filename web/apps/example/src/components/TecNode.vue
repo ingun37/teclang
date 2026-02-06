@@ -9,9 +9,13 @@ const props = defineProps<{
   allEnums: C.TecEnum.TecEnumAST;
   enableIndexListEditing: boolean;
 }>();
+
+const emit = defineEmits<{
+  (e: "delete"): void;
+}>();
 </script>
 <template>
-  <div class="d-flex flex-row ga-2">
+  <div class="flex-grow-1 d-flex flex-row ga-2">
     <div
       v-if="enableIndexListEditing"
       v-for="(_, j) in model.indexCombination"
@@ -32,7 +36,17 @@ const props = defineProps<{
       :index-combo="model.indexCombination"
       :param-type="tecIndexedClass.tecSignature.attributeTypeSet[i]!"
       :all-enums="allEnums"
+      class="flex-grow-1"
     />
+    <v-btn
+      v-if="enableIndexListEditing"
+      icon="mdi-delete"
+      variant="text"
+      density="compact"
+      color="error"
+      @click="emit('delete')"
+      class="mt-1"
+    ></v-btn>
   </div>
 </template>
 

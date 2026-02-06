@@ -3,10 +3,12 @@ export const TecClassAttribute = S.String.pipe(S.brand("TecClassAttribute"));
 export type TecClassAttribute = typeof TecClassAttribute.Type;
 export const TecClassIndex = S.String.pipe(S.brand("TecClassIndex"));
 export type TecClassIndex = typeof TecClassIndex.Type;
+export const TecClassIndexTypeSet = S.NonEmptyArray(TecClassIndex);
 
+export type TecClassIndexTypeSet = typeof TecClassIndexTypeSet.Type;
 export const TecSignature = S.Struct({
   attributeTypeSet: S.NonEmptyArray(TecClassAttribute),
-  indexTypeSet: S.NonEmptyArray(TecClassIndex),
+  indexTypeSet: TecClassIndexTypeSet,
 });
 export type TecSignature = typeof TecSignature.Type;
 export const TecClassName = S.String.pipe(S.brand("TecClassName"));
