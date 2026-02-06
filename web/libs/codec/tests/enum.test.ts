@@ -70,31 +70,30 @@ test("parse TecNode haskell test log", () => {
     expect(encoded).toStrictEqual(jsonObject);
   }
 });
+const enumAST: lib.TecEnum.TecEnumAST = lib.TecEnum.TecEnumAST.make({
+  tecEnums: [
+    lib.TecEnum.TecEnum.make({
+      tecEnumName: lib.TecEnum.TecEnumName.make("Letter"),
+      tecEnumValues: "ab"
+        .split("")
+        .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
+    }),
+    lib.TecEnum.TecEnum.make({
+      tecEnumName: lib.TecEnum.TecEnumName.make("Number"),
+      tecEnumValues: "12"
+        .split("")
+        .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
+    }),
+    lib.TecEnum.TecEnum.make({
+      tecEnumName: lib.TecEnum.TecEnumName.make("Index"),
+      tecEnumValues: "ij"
+        .split("")
+        .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
+    }),
+  ],
+});
 
 test("helper", () => {
-  const enumAST = lib.TecEnum.TecEnumAST.make({
-    tecEnums: [
-      lib.TecEnum.TecEnum.make({
-        tecEnumName: lib.TecEnum.TecEnumName.make("Letter"),
-        tecEnumValues: "ab"
-          .split("")
-          .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
-      }),
-      lib.TecEnum.TecEnum.make({
-        tecEnumName: lib.TecEnum.TecEnumName.make("Number"),
-        tecEnumValues: "12"
-          .split("")
-          .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
-      }),
-      lib.TecEnum.TecEnum.make({
-        tecEnumName: lib.TecEnum.TecEnumName.make("Index"),
-        tecEnumValues: "ij"
-          .split("")
-          .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
-      }),
-    ],
-  });
-
   const iter = (idxTypes: E.Array.NonEmptyReadonlyArray<string>) =>
     E.Effect.runSync(
       lib.help.iterateIndexSet(enumAST)(
@@ -113,5 +112,89 @@ test("helper", () => {
     ["b", "1", "j"],
     ["b", "2", "i"],
     ["b", "2", "j"],
+  ]);
+});
+
+test("everycombination", () => {
+  expect(lib.help.everyCombination([[1], [2]])).toStrictEqual([[1, 2]]);
+  expect(
+    lib.help.everyCombination([
+      [1, 2],
+      [-1, -2],
+    ]),
+  ).toStrictEqual([
+    [1, -1],
+    [1, -2],
+    [2, -1],
+    [2, -2],
+  ]);
+});
+
+const indexSet: lib.TecClass.TecClassIndexTypeSet = E.Array.map(
+  enumAST.tecEnums as E.Array.NonEmptyReadonlyArray<lib.TecEnum.TecEnum>,
+  (edef) => lib.TecClass.TecClassIndex.make(edef.tecEnumName),
+);
+
+test("iterateIndexCombo", () => {
+  const run = (x) =>
+    E.Effect.runSync(lib.help.iterateIndexCombo(enumAST, indexSet)(x));
+  expect(
+    run([
+      lib.TecNode.TecNodeIndexInst.make({
+        contents: enumAST.tecEnums[0].tecEnumValues[0],
+      }),
+      lib.TecNode.TecNodeIndexInst.make({
+        contents: enumAST.tecEnums[1].tecEnumValues[0],
+      }),
+      lib.TecNode.TecNodeIndexInst.make({
+        contents: enumAST.tecEnums[2].tecEnumValues[0],
+      }),
+    ]),
+  ).toStrictEqual([["a", "1", "i"]]);
+  expect(
+    run([
+      lib.TecNode.TecNodeIndexWildcard.make({}),
+      lib.TecNode.TecNodeIndexWildcard.make({}),
+      lib.TecNode.TecNodeIndexWildcard.make({}),
+    ]),
+  ).toStrictEqual([
+    ["a", "1", "i"],
+    ["a", "1", "j"],
+    ["a", "2", "i"],
+    ["a", "2", "j"],
+    ["b", "1", "i"],
+    ["b", "1", "j"],
+    ["b", "2", "i"],
+    ["b", "2", "j"],
+  ]);
+
+  expect(
+    run([
+      lib.TecNode.TecNodeIndexInst.make({
+        contents: enumAST.tecEnums[0].tecEnumValues[0],
+      }),
+      lib.TecNode.TecNodeIndexInst.make({
+        contents: enumAST.tecEnums[1].tecEnumValues[0],
+      }),
+      lib.TecNode.TecNodeIndexWildcard.make({}),
+    ]),
+  ).toStrictEqual([
+    ["a", "1", "i"],
+    ["a", "1", "j"],
+  ]);
+
+  expect(
+    run([
+      lib.TecNode.TecNodeIndexInst.make({
+        contents: enumAST.tecEnums[0].tecEnumValues[0],
+      }),
+      lib.TecNode.TecNodeIndexWildcard.make({}),
+      lib.TecNode.TecNodeIndexInst.make({
+        contents: enumAST.tecEnums[2].tecEnumValues[0],
+      }),
+    ]),
+  ).toStrictEqual([
+    ["a", "1", "i"],
+    ["a", "2", "i"],
   ]);
 });
