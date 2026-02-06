@@ -83,6 +83,7 @@ function toNodeIndex(ev: C.TecEnum.TecEnumValue) {
     <v-table>
       <thead>
         <tr>
+          <th></th>
           <th class="text-left" v-for="col in indexEnumValueCombos.right.cols">
             {{ col }}
           </th>
@@ -90,6 +91,9 @@ function toNodeIndex(ev: C.TecEnum.TecEnumValue) {
       </thead>
       <tbody>
         <tr v-for="row in indexEnumValueCombos.right.rows" :key="row">
+          <td>
+            {{ row }}
+          </td>
           <td v-for="col in indexEnumValueCombos.right.cols" :key="col">
             <TecNodeNullable
               :tec-class="tecClass"
