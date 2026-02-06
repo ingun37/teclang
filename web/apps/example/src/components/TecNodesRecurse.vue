@@ -40,6 +40,10 @@ const dynamicSlices = computed(() => {
     });
   });
 });
+
+function remove() {
+  throw new Error("Remove shouldn't be called in recursive view");
+}
 </script>
 
 <template>
@@ -63,6 +67,7 @@ const dynamicSlices = computed(() => {
       :enable-index-list-editing="false"
       :tec-indexed-class="tecIndexedClass"
       :all-enums="tecEnums"
+      @delete="remove"
     />
   </div>
 </template>

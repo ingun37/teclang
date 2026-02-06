@@ -17,8 +17,6 @@ const enumOf = (
     E.Array.findFirst((te) => (te.tecEnumName as string) === (pt as string)),
     E.Either.fromOption(() => new Error("Enum not found: " + pt)),
   );
-type RNE<T> = E.Array.NonEmptyReadonlyArray<T>;
-type EV = C.TecEnum.TecEnumValue;
 type Eval = {
   dimension: string;
   tecClass: C.TecClass.TecClass;
@@ -83,6 +81,16 @@ const evaluation = computed<E.Either.Either<Eval, Error>>(() =>
 );
 
 const isUnique = ref(true);
+function remove(i: number) {
+  const tecNodeSet = E.Array.remove(model.value.tecNodeSet, i);
+  if (E.Array.isNonEmptyArray(tecNodeSet)) {
+    model.value = C.TecNode.TecNodeSet.make({
+      tecNodeClass: model.value.tecNodeClass,
+      tecNodeSet,
+    });
+  } else {
+  }
+}
 </script>
 
 <template>
@@ -127,6 +135,7 @@ const isUnique = ref(true);
                 :enable-index-list-editing="true"
                 :tec-indexed-class="evaluation.right.tecClass"
                 :all-enums="tecEnums"
+                @delete="remove(i)"
               ></TecNode>
             </div>
           </v-col>
