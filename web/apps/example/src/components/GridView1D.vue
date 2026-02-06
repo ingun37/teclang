@@ -70,6 +70,12 @@ const indexEnumValues = computed(() => {
       v-model="makeDynamicModel(ev.contents).value"
     />
   </div>
+  <v-alert
+    v-else
+    :text="`${indexEnumValues.left}`"
+    title="Error"
+    type="error"
+  />
 </template>
 
 <style scoped lang="sass"></style>
