@@ -99,8 +99,6 @@ test("helper", () => {
       lib.help.iterateIndexSet(enumAST)(
         E.Array.map(idxTypes, (it) => lib.TecClass.TecClassIndex.make(it)),
       ),
-    ).map(
-      E.Array.map((x) => (x.tag === "TecNodeIndexInst" ? x.contents : "_")),
     );
   expect(iter(["Letter"])).toStrictEqual([["a"], ["b"]]);
   expect(iter(["Letter", "Number", "Index"])).toStrictEqual([

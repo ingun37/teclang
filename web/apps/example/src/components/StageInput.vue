@@ -24,7 +24,15 @@ function tecNodeIndexToStr(x: C.TecNode.TecNodeIndex): string {
   return x.tag === "TecNodeIndexWildcard" ? "_" : x.contents;
 }
 function createInitialHaskellCode() {
-  const combinations = C.help.iterateIndexSet(props.tecEnumAst);
+  const combinations = (x: C.TecClass.TecClassIndexTypeSet) =>
+    E.pipe(
+      C.help.iterateIndexSet(props.tecEnumAst)(x),
+      E.Either.map(
+        E.Array.map(
+          E.Array.map((x) => C.TecNode.TecNodeIndexInst.make({ contents: x })),
+        ),
+      ),
+    );
 
   const a = E.Effect.runSync(
     E.pipe(

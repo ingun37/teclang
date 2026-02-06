@@ -19,26 +19,60 @@ const enumOf = (
   );
 
 type Eval = { dimension: string; tecClass: C.TecClass.TecClass };
+const iterateClass = C.help.iterateIndexSet(props.tecEnums);
+
 const evaluation = computed<E.Either.Either<Eval, Error>>(() =>
-  E.pipe(
-    props.tecClasses.tecClasses,
-    E.Array.findFirst((c) => c.tecClassName === model.value.tecNodeClass),
-    E.Either.fromOption(
-      () => new Error("Class not found: " + model.value.tecNodeClass),
-    ),
-    E.Either.andThen((tecClass: C.TecClass.TecClass) =>
-      E.pipe(
-        tecClass.tecSignature.indexTypeSet,
-        E.Array.map(enumOf),
-        E.Either.all,
-        E.Either.map(
-          (enums) =>
-            `${enums.map((x) => x.tecEnumName + `(${x.tecEnumValues.length})`).join(" x ")}`,
-        ),
-        E.Either.map((dimension): Eval => ({ dimension, tecClass })),
+  E.Either.gen(function* () {
+    const tecClass: C.TecClass.TecClass = yield* E.pipe(
+      props.tecClasses.tecClasses,
+      E.Array.findFirst((c) => c.tecClassName === model.value.tecNodeClass),
+      E.Either.fromOption(
+        () => new Error("Class not found: " + model.value.tecNodeClass),
       ),
-    ),
-  ),
+    );
+    const dimension = yield* E.pipe(
+      tecClass.tecSignature.indexTypeSet,
+      E.Array.map(enumOf),
+      E.Either.all,
+      E.Either.map(
+        (enums) =>
+          `${enums.map((x) => x.tecEnumName + `(${x.tecEnumValues.length})`).join(" x ")}`,
+      ),
+    );
+
+    const iterateCombo = C.help.iterateIndexCombo(
+      props.tecEnums,
+      tecClass.tecSignature.indexTypeSet,
+    );
+    type RNE<T> = E.Array.NonEmptyReadonlyArray<T>;
+    type EV = C.TecEnum.TecEnumValue;
+    const allCombos: RNE<RNE<EV>> = yield* iterateClass(
+      tecClass.tecSignature.indexTypeSet,
+    );
+    const allComboSet = E.SortedSet.fromIterable(
+      allCombos,
+      E.Array.getOrder(E.Order.string),
+    );
+
+    const currentCombos: RNE<RNE<EV>> = yield* E.pipe(
+      model.value.tecNodeSet,
+      E.Array.map((tn) => iterateCombo(tn.indexCombination)),
+      E.Either.all,
+      E.Either.map(E.Array.flatten),
+    );
+    const currentComboSet = E.SortedSet.fromIterable(
+      currentCombos,
+      E.Array.getOrder(E.Order.string),
+    );
+
+    const missingCombos = E.SortedSet.difference(allComboSet, currentComboSet);
+
+    return {
+      dimension,
+      tecClass,
+      missingCombos,
+    };
+  }),
 );
 
 const isUnique = ref(true);
