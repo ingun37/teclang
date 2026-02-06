@@ -84,7 +84,7 @@ function toNodeIndex(ev: C.TecEnum.TecEnumValue) {
       <thead>
         <tr>
           <th></th>
-          <th class="text-left" v-for="col in indexEnumValueCombos.right.cols">
+          <th v-for="col in indexEnumValueCombos.right.cols">
             {{ col }}
           </th>
         </tr>

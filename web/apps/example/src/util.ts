@@ -46,10 +46,10 @@ export function createRandomAttributeValue(
         });
       case "Image":
         return C.TecNode.TecNodeTextAttribute.make({
-          contents: `"/${tecClass.tecClassName}/${comb
+          contents: `/${tecClass.tecClassName}/${comb
             .map(tecNodeIndexToStr)
             .map((x) => x.toLowerCase())
-            .join("-")}.png"`,
+            .join("-")}.png`,
         });
       default:
         return E.pipe(
