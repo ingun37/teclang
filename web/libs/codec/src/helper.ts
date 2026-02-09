@@ -117,39 +117,51 @@ function classToSql(enumAst: TE.TecEnumAST) {
     const attributeName = (at: TC.TecClassAttribute) =>
       `a_${tc.tecSignature.attributeTypeSet.indexOf(at)}_${at.toLowerCase()}`;
 
-    const enumAttributeStatements = enumAttributes
-      .map((a) => `${attributeName(a)} TEXT NOT NULL`)
-      .join(",\n");
-
-    const enumAttributeChecks = enumAttributes
-      .map((it) => `FOREIGN KEY (${attributeName(it)}) REFERENCES ${it}(id)`)
-      .join(",\n");
-    const primitiveAttributeStatements = primitiveAttributes
-      .map((a) => `${attributeName(a)} ${attributeTypeToSqlType(a)} NOT NULL`)
-      .join(",\n");
+    const enumAttributeStatements = enumAttributes.map(
+      (a) => `${attributeName(a)} TEXT NOT NULL`,
+    );
+    const enumAttributeChecks = enumAttributes.map(
+      (it) => `FOREIGN KEY (${attributeName(it)}) REFERENCES ${it}(id)`,
+    );
+    const primitiveAttributeStatements = primitiveAttributes.map(
+      (a) => `${attributeName(a)} ${attributeTypeToSqlType(a)} NOT NULL`,
+    );
 
     if (tc.tecSignature.indexTypeSet.length === 1) {
       const te = enumAst.tecEnums.find(
         (e) => (e.tecEnumName as string) === tc.tecSignature.indexTypeSet[0],
       )!;
+      const idDecl = `id TEXT PRIMARY KEY CHECK (id IN (${te.tecEnumValues.map((v) => `'${v}'`).join(", ")}))`;
+
+      const statements = [idDecl].concat(
+        enumAttributeStatements,
+        primitiveAttributeStatements,
+        enumAttributeChecks,
+      );
       return `
 CREATE TABLE ${tc.tecClassName} (
-id TEXT PRIMARY KEY CHECK (id IN (${te.tecEnumValues.map((v) => `'${v}'`).join(", ")})),
-${[enumAttributeStatements, primitiveAttributeStatements, enumAttributeChecks].filter((x) => x !== "").join(",\n")}
+${statements.filter((x) => x !== "").join(",\n")}
 );`;
     } else {
-      const compositeKeyStatements = tc.tecSignature.indexTypeSet
-        .map((it) => `${it.toLowerCase()} TEXT NOT NULL`)
-        .join(",\n");
-      const foreignKeyStatements = tc.tecSignature.indexTypeSet
-        .map((it) => `FOREIGN KEY (${it.toLowerCase()}) REFERENCES ${it}(id)`)
-        .join(",\n");
+      const primaryDecl = `PRIMARY KEY (${tc.tecSignature.indexTypeSet.map((x) => x.toLowerCase()).join(", ")})`;
+      const compositeKeyStatements = tc.tecSignature.indexTypeSet.map(
+        (it) => `${it.toLowerCase()} TEXT NOT NULL`,
+      );
+      const foreignKeyStatements = tc.tecSignature.indexTypeSet.map(
+        (it) => `FOREIGN KEY (${it.toLowerCase()}) REFERENCES ${it}(id)`,
+      );
 
+      const statements = [
+        compositeKeyStatements,
+        enumAttributeStatements,
+        primitiveAttributeStatements,
+        [primaryDecl],
+        foreignKeyStatements,
+        enumAttributeChecks,
+      ].flat();
       return `
 CREATE TABLE ${tc.tecClassName} (
-${[compositeKeyStatements, enumAttributeStatements, primitiveAttributeStatements].filter((x) => x !== "").join(",\n")},
-PRIMARY KEY (${tc.tecSignature.indexTypeSet.map((x) => x.toLowerCase()).join(", ")}),
-${[foreignKeyStatements, enumAttributeChecks].filter((x) => x !== "").join(",\n")}
+${statements.filter((x) => x !== "").join(",\n")}
 );`;
     }
   };
