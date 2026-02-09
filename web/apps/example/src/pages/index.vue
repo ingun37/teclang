@@ -19,7 +19,17 @@
         <div :class="['text-h2']">Stage 3. Data Input</div>
       </v-col>
       <v-col v-if="tecEnumAst && tecClassAst" cols="12">
-        <StageInput :tec-class-ast="tecClassAst" :tec-enum-ast="tecEnumAst" />
+        <StageInput
+          :tec-class-ast="tecClassAst"
+          :tec-enum-ast="tecEnumAst"
+          @update="tecNodeAst = $event"
+        />
+      </v-col>
+      <v-col cols="12">
+        <div :class="['text-h2']">Stage 4. Sql</div>
+      </v-col>
+      <v-col v-if="tecEnumAst && tecClassAst && tecNodeAst">
+        <StageSql :tec-class-ast="tecClassAst" :tec-enum-ast="tecEnumAst" />
       </v-col>
     </v-row>
   </v-container>
@@ -32,4 +42,5 @@ import StageEnum from "@/components/StageEnum.vue";
 import StageClass from "@/components/StageClass.vue";
 const tecEnumAst = ref<C.TecEnum.TecEnumAST | null>(null);
 const tecClassAst = ref<C.TecClass.TecClassAST | null>(null);
+const tecNodeAst = ref<C.TecNode.TecNodeAST | null>(null);
 </script>

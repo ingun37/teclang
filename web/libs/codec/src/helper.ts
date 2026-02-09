@@ -95,3 +95,62 @@ export function iterateIndexCombo(
     });
   };
 }
+function tecEnumToSql(enumDef: TE.TecEnum) {
+  return `
+  CREATE TABLE ${enumDef.tecEnumName} (
+    id TEXT PRIMARY KEY CHECK (id IN (${enumDef.tecEnumValues.map((v) => `'${v}'`).join(", ")}))
+  );`;
+}
+type ECPair = [TE.TecEnum, TC.TecClass];
+
+function enumClassToSql([te, tc]: ECPair) {
+  return `
+  CREATE TABLE ${te.tecEnumName} (
+    id TEXT PRIMARY KEY CHECK (id IN (${te.tecEnumValues.map((v) => `'${v}'`).join(", ")})),
+    ${tc.tecSignature.attributeTypeSet.map((a) => ` ${a.toLowerCase()} TEXT NOT NULL`).join(",\n")}
+  );`;
+}
+function classToSql(tc: TC.TecClass) {
+  return `
+  CREATE TABLE ${tc.tecClassName} (
+    ${tc.tecSignature.indexTypeSet.map((it) => `${it.toLowerCase()} TEXT NOT NULL`)},
+    ${tc.tecSignature.attributeTypeSet.map((a) => ` ${a.toLowerCase()} TEXT NOT NULL`).join(",\n")},
+    PRIMARY KEY (${tc.tecSignature.indexTypeSet.map((x) => x.toLowerCase()).join(", ")}),
+    ${tc.tecSignature.indexTypeSet.map((it) => `    FOREIGN KEY (${it.toLowerCase()}) REFERENCES ${it}(id)`).join(",\n")}
+  );`;
+}
+export function generateSqlSchema(
+  enumAst: TE.TecEnumAST,
+  classAst: TC.TecClassAST,
+) {
+  function pairIf(te: TE.TecEnum) {
+    return function (tc: TC.TecClass): E.Option.Option<ECPair> {
+      if (
+        tc.tecSignature.indexTypeSet.length === 1 &&
+        (tc.tecSignature.indexTypeSet[0] as string) === te.tecEnumName
+      )
+        return E.Option.some([te, tc] as ECPair);
+      return E.Option.none();
+    };
+  }
+  const [enums, enumClasses] = E.pipe(
+    enumAst.tecEnums,
+    E.Array.partitionMap((enumDef: TE.TecEnum) =>
+      E.Either.fromOption(
+        E.Array.findFirst(classAst.tecClasses, pairIf(enumDef)),
+        () => enumDef,
+      ),
+    ),
+  );
+  const classes = classAst.tecClasses.filter((classDef) => {
+    for (const [, c] of enumClasses) {
+      if (c.tecClassName === classDef.tecClassName) return false;
+    }
+    return true;
+  });
+  return `
+  ${enums.map(tecEnumToSql).join("\n")}
+  ${enumClasses.map(enumClassToSql).join("\n")}
+  ${classes.map(classToSql).join("\n")}
+  `;
+}
