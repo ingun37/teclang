@@ -97,60 +97,80 @@ export function iterateIndexCombo(
 }
 function tecEnumToSql(enumDef: TE.TecEnum) {
   return `
-  CREATE TABLE ${enumDef.tecEnumName} (
-    id TEXT PRIMARY KEY CHECK (id IN (${enumDef.tecEnumValues.map((v) => `'${v}'`).join(", ")}))
-  );`;
+CREATE TABLE ${enumDef.tecEnumName} (
+  id TEXT PRIMARY KEY CHECK (id IN (${enumDef.tecEnumValues.map((v) => `'${v}'`).join(", ")}))
+);`;
 }
-type ECPair = [TE.TecEnum, TC.TecClass];
 
-function enumClassToSql([te, tc]: ECPair) {
-  return `
-  CREATE TABLE ${te.tecEnumName} (
-    id TEXT PRIMARY KEY CHECK (id IN (${te.tecEnumValues.map((v) => `'${v}'`).join(", ")})),
-    ${tc.tecSignature.attributeTypeSet.map((a) => ` ${a.toLowerCase()} TEXT NOT NULL`).join(",\n")}
-  );`;
+function attributeTypeToSqlType(at: TC.TecClassAttribute) {
+  // if (at === "String") return "TEXT";
+  // if (at === "number") return "INTEGER";
+  // if (at === "boolean") return "BOOLEAN";
+  return "TEXT";
 }
-function classToSql(tc: TC.TecClass) {
-  return `
-  CREATE TABLE ${tc.tecClassName} (
-    ${tc.tecSignature.indexTypeSet.map((it) => `${it.toLowerCase()} TEXT NOT NULL`)},
-    ${tc.tecSignature.attributeTypeSet.map((a) => ` ${a.toLowerCase()} TEXT NOT NULL`).join(",\n")},
-    PRIMARY KEY (${tc.tecSignature.indexTypeSet.map((x) => x.toLowerCase()).join(", ")}),
-    ${tc.tecSignature.indexTypeSet.map((it) => `    FOREIGN KEY (${it.toLowerCase()}) REFERENCES ${it}(id)`).join(",\n")}
-  );`;
+function classToSql(enumAst: TE.TecEnumAST) {
+  return function (tc: TC.TecClass) {
+    const [primitiveAttributes, enumAttributes] = E.Array.partition(
+      tc.tecSignature.attributeTypeSet,
+      (at) => enumAst.tecEnums.some((e) => (e.tecEnumName as string) === at),
+    );
+    const attributeName = (at: TC.TecClassAttribute) =>
+      `a_${tc.tecSignature.attributeTypeSet.indexOf(at)}_${at.toLowerCase()}`;
+
+    const enumAttributeStatements = enumAttributes
+      .map((a) => `${attributeName(a)} TEXT NOT NULL`)
+      .join(",\n");
+
+    const enumAttributeChecks = enumAttributes
+      .map((it) => `FOREIGN KEY (${attributeName(it)}) REFERENCES ${it}(id)`)
+      .join(",\n");
+    const primitiveAttributeStatements = primitiveAttributes
+      .map((a) => `${attributeName(a)} ${attributeTypeToSqlType(a)} NOT NULL`)
+      .join(",\n");
+
+    if (tc.tecSignature.indexTypeSet.length === 1) {
+      const te = enumAst.tecEnums.find(
+        (e) => (e.tecEnumName as string) === tc.tecSignature.indexTypeSet[0],
+      )!;
+      return `
+CREATE TABLE ${tc.tecClassName} (
+id TEXT PRIMARY KEY CHECK (id IN (${te.tecEnumValues.map((v) => `'${v}'`).join(", ")})),
+${[enumAttributeStatements, primitiveAttributeStatements, enumAttributeChecks].filter((x) => x !== "").join(",\n")}
+);`;
+    } else {
+      const compositeKeyStatements = tc.tecSignature.indexTypeSet
+        .map((it) => `${it.toLowerCase()} TEXT NOT NULL`)
+        .join(",\n");
+      const foreignKeyStatements = tc.tecSignature.indexTypeSet
+        .map((it) => `FOREIGN KEY (${it.toLowerCase()}) REFERENCES ${it}(id)`)
+        .join(",\n");
+
+      return `
+CREATE TABLE ${tc.tecClassName} (
+${[compositeKeyStatements, enumAttributeStatements, primitiveAttributeStatements].filter((x) => x !== "").join(",\n")},
+PRIMARY KEY (${tc.tecSignature.indexTypeSet.map((x) => x.toLowerCase()).join(", ")}),
+${[foreignKeyStatements, enumAttributeChecks].filter((x) => x !== "").join(",\n")}
+);`;
+    }
+  };
 }
+
+function nodeToSql(tn: TN.TecNodeSet) {}
+
 export function generateSqlSchema(
   enumAst: TE.TecEnumAST,
   classAst: TC.TecClassAST,
+  nodeAst: TN.TecNodeAST,
 ) {
-  function pairIf(te: TE.TecEnum) {
-    return function (tc: TC.TecClass): E.Option.Option<ECPair> {
-      if (
-        tc.tecSignature.indexTypeSet.length === 1 &&
-        (tc.tecSignature.indexTypeSet[0] as string) === te.tecEnumName
-      )
-        return E.Option.some([te, tc] as ECPair);
-      return E.Option.none();
-    };
-  }
-  const [enums, enumClasses] = E.pipe(
-    enumAst.tecEnums,
-    E.Array.partitionMap((enumDef: TE.TecEnum) =>
-      E.Either.fromOption(
-        E.Array.findFirst(classAst.tecClasses, pairIf(enumDef)),
-        () => enumDef,
-      ),
+  const realEnums = enumAst.tecEnums.filter((te) =>
+    classAst.tecClasses.every(
+      (tc) =>
+        tc.tecSignature.indexTypeSet.length > 1 ||
+        (tc.tecSignature.indexTypeSet[0] as string) !==
+          (te.tecEnumName as string),
     ),
   );
-  const classes = classAst.tecClasses.filter((classDef) => {
-    for (const [, c] of enumClasses) {
-      if (c.tecClassName === classDef.tecClassName) return false;
-    }
-    return true;
-  });
   return `
-  ${enums.map(tecEnumToSql).join("\n")}
-  ${enumClasses.map(enumClassToSql).join("\n")}
-  ${classes.map(classToSql).join("\n")}
-  `;
+${realEnums.map(tecEnumToSql).join("\n")}
+${classAst.tecClasses.map(classToSql(enumAst)).join("\n")}`;
 }

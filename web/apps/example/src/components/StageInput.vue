@@ -170,8 +170,13 @@ async function updateCode() {
         :tec-enums="props.tecEnumAst"
         :tec-classes="props.tecClassAst"
       />
-      <v-col cols="12" v-if="tecNodeAST">
-        <v-btn color="primary" @click="$emit('update', tecNodeAST)">GO!</v-btn>/
+      <v-col cols="12" v-if="tecNodeAST.tecNodeSets">
+        <v-btn
+          color="primary"
+          @click="$emit('update', tecNodeAST)"
+          style="width: 100%"
+          >GO!</v-btn
+        >
       </v-col>
     </v-row>
   </v-container>
