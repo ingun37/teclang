@@ -5,10 +5,15 @@ import { useAppStore } from "@/stores/app.ts";
 const props = defineProps<{
   tecClassAst: C.TecClass.TecClassAST;
   tecEnumAst: C.TecEnum.TecEnumAST;
+  tecNodeAst: C.TecNode.TecNodeAST;
 }>();
 const sqlCode = ref("");
 function generateSql() {
-  sqlCode.value = C.help.generateSqlSchema(props.tecEnumAst, props.tecClassAst);
+  sqlCode.value = C.help.generateSqlSchema(
+    props.tecEnumAst,
+    props.tecClassAst,
+    props.tecNodeAst,
+  );
 }
 async function runSql() {
   if (sqlCode) {

@@ -42,15 +42,10 @@ function makeDynamicModel(ev: C.TecEnum.TecEnumValue) {
 }
 
 const indexEnumValues = computed(() => {
+  const find = C.help.makeFindEnum(props.enumAst).either;
   return E.Either.gen(function* () {
-    const enumDef: C.TecEnum.TecEnum = yield* E.Either.fromOption(
-      C.help.findEnumOfIndexType(props.enumAst)(
-        props.tecClass.tecSignature.indexTypeSet[0]!,
-      ),
-      () =>
-        new Error(
-          "Failed to find enum:" + props.tecClass.tecSignature.indexTypeSet[0],
-        ),
+    const enumDef: C.TecEnum.TecEnum = yield* find(
+      props.tecClass.tecSignature.indexTypeSet[0]!,
     );
 
     return E.Array.map(enumDef.tecEnumValues, (ev) =>

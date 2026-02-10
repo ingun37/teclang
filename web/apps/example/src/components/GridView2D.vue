@@ -46,22 +46,14 @@ const indexEnumValueCombos = computed<
     Error
   >
 >(() => {
+  const find = C.help.makeFindEnum(props.enumAst).either;
   return E.Either.gen(function* () {
-    const find = C.help.findEnumOfIndexType(props.enumAst);
-    const rows: C.TecEnum.TecEnum = yield* E.Either.fromOption(
-      find(props.tecClass.tecSignature.indexTypeSet[0]!),
-      () =>
-        new Error(
-          "Failed to find enum:" + props.tecClass.tecSignature.indexTypeSet[0],
-        ),
+    const rows: C.TecEnum.TecEnum = yield* find(
+      props.tecClass.tecSignature.indexTypeSet[0]!,
     );
 
-    const cols: C.TecEnum.TecEnum = yield* E.Either.fromOption(
-      find(props.tecClass.tecSignature.indexTypeSet[1]!),
-      () =>
-        new Error(
-          "Failed to find enum:" + props.tecClass.tecSignature.indexTypeSet[0],
-        ),
+    const cols: C.TecEnum.TecEnum = yield* find(
+      props.tecClass.tecSignature.indexTypeSet[1]!,
     );
 
     return {

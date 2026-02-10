@@ -5,7 +5,28 @@ import * as TN from "./TecNode.js";
 type RNE<T> = E.Array.NonEmptyReadonlyArray<T>;
 type EV = TE.TecEnumValue;
 type C = RNE<EV>;
-
+export function makeFindEnum(enumAst: TE.TecEnumAST) {
+  function option(name: string): E.Option.Option<TE.TecEnum> {
+    return E.Array.findFirst(
+      enumAst.tecEnums,
+      (e) => (e.tecEnumName as string) === name,
+    );
+  }
+  function either(name: string): E.Either.Either<TE.TecEnum, Error> {
+    return E.pipe(
+      option(name),
+      E.Either.fromOption(() => new Error("Failed to find: " + name)),
+    );
+  }
+  function force(name: string): TE.TecEnum {
+    return E.Effect.runSync(either(name));
+  }
+  return {
+    option,
+    either,
+    force,
+  };
+}
 export type IndexEnumValueCombo = C;
 export const indexEnumValueComboEq: E.Equivalence.Equivalence<IndexEnumValueCombo> =
   E.Array.getEquivalence(E.Equivalence.string);
@@ -21,15 +42,6 @@ function recur(enums: RNE<TE.TecEnum>): RNE<C> {
   } else {
     return E.Array.map(x.tecEnumValues, (ev: EV): C => [ev]);
   }
-}
-
-export function findEnumOfIndexType(enumAST: TE.TecEnumAST) {
-  return function (indexType: TC.TecClassIndex) {
-    return E.pipe(
-      enumAST.tecEnums,
-      E.Array.findFirst((e) => (e.tecEnumName as string) === indexType),
-    );
-  };
 }
 
 export function iterateIndexSet(enumAST: TE.TecEnumAST) {
@@ -52,6 +64,7 @@ export function iterateIndexSet(enumAST: TE.TecEnumAST) {
     );
   };
 }
+
 export function everyCombination<T>(ts: RNE<RNE<T>>): RNE<RNE<T>> {
   const [head, tail] = E.Array.unprepend(ts);
   if (E.Array.isNonEmptyReadonlyArray(tail)) {
@@ -66,6 +79,7 @@ export function iterateIndexCombo(
   enumAST: TE.TecEnumAST,
   indexTypeSet: RNE<TC.TecClassIndex>,
 ) {
+  const findEnum = makeFindEnum(enumAST);
   return function (combo: TN.IndexCombination): E.Either.Either<RNE<C>, Error> {
     return E.Either.gen(function* () {
       const seed = yield* E.pipe(
@@ -73,16 +87,7 @@ export function iterateIndexCombo(
         E.Array.map((x, idx): E.Either.Either<RNE<TE.TecEnumValue>, Error> => {
           if (x.tag === "TecNodeIndexWildcard") {
             return E.Either.gen(function* () {
-              const indexType = indexTypeSet[idx];
-              const enumDef = yield* E.pipe(
-                enumAST.tecEnums,
-                E.Array.findFirst(
-                  (e) => (e.tecEnumName as string) === indexType,
-                ),
-                E.Either.fromOption(
-                  () => new Error("Failed to find enum: " + indexType),
-                ),
-              );
+              const enumDef = yield* findEnum.either(indexTypeSet[idx]);
               return enumDef.tecEnumValues;
             });
           } else {
@@ -108,11 +113,13 @@ function attributeTypeToSqlType(at: TC.TecClassAttribute) {
   // if (at === "boolean") return "BOOLEAN";
   return "TEXT";
 }
+
 function classToSql(enumAst: TE.TecEnumAST) {
+  const findEnum = makeFindEnum(enumAst);
   return function (tc: TC.TecClass) {
     const [primitiveAttributes, enumAttributes] = E.Array.partition(
       tc.tecSignature.attributeTypeSet,
-      (at) => enumAst.tecEnums.some((e) => (e.tecEnumName as string) === at),
+      (at) => E.Option.isSome(findEnum.option(at)),
     );
     const attributeName = (at: TC.TecClassAttribute) =>
       `a_${tc.tecSignature.attributeTypeSet.indexOf(at)}_${at.toLowerCase()}`;
@@ -128,9 +135,7 @@ function classToSql(enumAst: TE.TecEnumAST) {
     );
 
     if (tc.tecSignature.indexTypeSet.length === 1) {
-      const te = enumAst.tecEnums.find(
-        (e) => (e.tecEnumName as string) === tc.tecSignature.indexTypeSet[0],
-      )!;
+      const te = findEnum.force(tc.tecSignature.indexTypeSet[0]);
       const idDecl = `id TEXT PRIMARY KEY CHECK (id IN (${te.tecEnumValues.map((v) => `'${v}'`).join(", ")}))`;
 
       const statements = [idDecl].concat(
