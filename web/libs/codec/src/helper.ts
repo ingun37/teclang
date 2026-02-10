@@ -27,6 +27,28 @@ export function makeFindEnum(enumAst: TE.TecEnumAST) {
     force,
   };
 }
+export function makeFindClass(enumAst: TC.TecClassAST) {
+  function option(name: string): E.Option.Option<TC.TecClass> {
+    return E.Array.findFirst(
+      enumAst.tecClasses,
+      (e) => (e.tecClassName as string) === name,
+    );
+  }
+  function either(name: string): E.Either.Either<TC.TecClass, Error> {
+    return E.pipe(
+      option(name),
+      E.Either.fromOption(() => new Error("Failed to find: " + name)),
+    );
+  }
+  function force(name: string): TC.TecClass {
+    return E.Effect.runSync(either(name));
+  }
+  return {
+    option,
+    either,
+    force,
+  };
+}
 export type IndexEnumValueCombo = C;
 export const indexEnumValueComboEq: E.Equivalence.Equivalence<IndexEnumValueCombo> =
   E.Array.getEquivalence(E.Equivalence.string);
@@ -111,9 +133,14 @@ function attributeTypeToSqlType(at: TC.TecClassAttribute) {
   // if (at === "String") return "TEXT";
   // if (at === "number") return "INTEGER";
   // if (at === "boolean") return "BOOLEAN";
+  if (at === "Number") return "REAL";
   return "TEXT";
 }
-
+function makeAttributeName(sig: TC.TecSignature) {
+  return function (at: TC.TecClassAttribute) {
+    return `a_${sig.attributeTypeSet.indexOf(at)}_${at.toLowerCase()}`;
+  };
+}
 function classToSql(enumAst: TE.TecEnumAST) {
   const findEnum = makeFindEnum(enumAst);
   return function (tc: TC.TecClass) {
@@ -121,8 +148,7 @@ function classToSql(enumAst: TE.TecEnumAST) {
       tc.tecSignature.attributeTypeSet,
       (at) => E.Option.isSome(findEnum.option(at)),
     );
-    const attributeName = (at: TC.TecClassAttribute) =>
-      `a_${tc.tecSignature.attributeTypeSet.indexOf(at)}_${at.toLowerCase()}`;
+    const attributeName = makeAttributeName(tc.tecSignature);
 
     const enumAttributeStatements = enumAttributes.map(
       (a) => `${attributeName(a)} TEXT NOT NULL`,
@@ -171,8 +197,57 @@ ${statements.filter((x) => x !== "").join(",\n")}
     }
   };
 }
+function tecNodeAttributeToSql() {
+  return function (tecNodeAttribute: TN.TecNodeAttribute) {
+    switch (tecNodeAttribute.tag) {
+      case "TecNodeConAttribute":
+        return `'${tecNodeAttribute.contents}'`;
+      case "TecNodeFracAttribute":
+        return `${tecNodeAttribute.contents.numerator / tecNodeAttribute.contents.denominator}`;
+      case "TecNodeIntAttribute":
+        return tecNodeAttribute.contents.toString();
+      case "TecNodeTextAttribute":
+        return `'${tecNodeAttribute.contents}'`;
+    }
+  };
+}
+function tecNodeToSql(enumAst: TE.TecEnumAST, tecClass: TC.TecClass) {
+  const iterator = iterateIndexCombo(
+    enumAst,
+    tecClass.tecSignature.indexTypeSet,
+  );
+  return function (tecNode: TN.TecNode) {
+    return E.Effect.runSync(
+      E.Either.gen(function* () {
+        const combos_ = yield* iterator(tecNode.indexCombination);
+        const combos = combos_.map((xs) =>
+          xs
+            .map((x) => `'${x}'`)
+            .concat(tecNode.tecNodeAttributes.map(tecNodeAttributeToSql())),
+        );
+        return combos.map((combo) => `(${combo.join(", ")})`).join(",\n");
+      }),
+    );
+  };
+}
+function nodeSetToSql(enumAst: TE.TecEnumAST, classAst: TC.TecClassAST) {
+  const findClass = makeFindClass(classAst).force;
+  return function (tn: TN.TecNodeSet) {
+    const tc = findClass(tn.tecNodeClass);
+    const attributeName = makeAttributeName(tc.tecSignature);
+    const orderedIndexTypes =
+      tc.tecSignature.indexTypeSet.length === 1
+        ? ["id"]
+        : tc.tecSignature.indexTypeSet.map((x) => x.toLowerCase());
+    const orderedAttributeTypes =
+      tc.tecSignature.attributeTypeSet.map(attributeName);
+    const orderedTypes = orderedIndexTypes.concat(orderedAttributeTypes);
 
-function nodeToSql(tn: TN.TecNodeSet) {}
+    const values = tn.tecNodeSet.map(tecNodeToSql(enumAst, tc)).join(",\n");
+
+    return `INSERT INTO ${tn.tecNodeClass} (${orderedTypes.join(", ")}) VALUES ${values};`;
+  };
+}
 
 export function generateSqlSchema(
   enumAst: TE.TecEnumAST,
@@ -189,5 +264,7 @@ export function generateSqlSchema(
   );
   return `
 ${realEnums.map(tecEnumToSql).join("\n")}
-${classAst.tecClasses.map(classToSql(enumAst)).join("\n")}`;
+${classAst.tecClasses.map(classToSql(enumAst)).join("\n")}
+${nodeAst.tecNodeSets.map(nodeSetToSql(enumAst, classAst)).join("\n")}
+`;
 }

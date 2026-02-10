@@ -29,7 +29,11 @@
         <div :class="['text-h2']">Stage 4. Sql</div>
       </v-col>
       <v-col v-if="tecEnumAst && tecClassAst && tecNodeAst">
-        <StageSql :tec-class-ast="tecClassAst" :tec-enum-ast="tecEnumAst" />
+        <StageSql
+          :tec-class-ast="tecClassAst"
+          :tec-enum-ast="tecEnumAst"
+          :tec-node-ast="tecNodeAst"
+        />
       </v-col>
     </v-row>
   </v-container>
