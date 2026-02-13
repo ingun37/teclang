@@ -20,7 +20,9 @@
     "vuetify": "^3.10.1",
     "@bjorn3/browser_wasi_shim": "~0.4.2",
     "codec": "workspace:*",
-    "@fontsource/roboto-mono": "~5.2.8"
+    "@fontsource/roboto-mono": "~5.2.8",
+    "sql.js": "~1.13.0",
+    "@types/sql.js": "~1.4.9"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",

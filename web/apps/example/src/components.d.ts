@@ -24,6 +24,7 @@ declare module 'vue' {
     StageClass: typeof import('./components/StageClass.vue')['default']
     StageEnum: typeof import('./components/StageEnum.vue')['default']
     StageInput: typeof import('./components/StageInput.vue')['default']
+    StageSql: typeof import('./components/StageSql.vue')['default']
     TecClass: typeof import('./components/TecClass.vue')['default']
     TecClassAST: typeof import('./components/TecClassAST.vue')['default']
     TecEnum: typeof import('./components/TecEnum.vue')['default']
