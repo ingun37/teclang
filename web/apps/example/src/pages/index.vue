@@ -26,7 +26,7 @@
         />
       </v-col>
       <v-col cols="12">
-        <div :class="['text-h2']">Stage 4. Sql</div>
+        <div :class="['text-h2']">(Optional) Stage 4. Sql</div>
       </v-col>
       <v-col v-if="tecEnumAst && tecClassAst && tecNodeAst">
         <StageSql
