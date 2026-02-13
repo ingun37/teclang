@@ -15,10 +15,37 @@ function generateSql() {
     props.tecNodeAst,
   );
 }
+const sqlIsSuccessful = ref(false);
 async function runSql() {
   if (sqlCode) {
-    useAppStore().db!.run(sqlCode.value);
+    try {
+      useAppStore().db!.run(sqlCode.value);
+      sqlIsSuccessful.value = true;
+    } catch (e) {
+      console.error(e);
+      sqlIsSuccessful.value = false;
+    }
   }
+}
+
+function downloadDbFile(filename = "database.sqlite") {
+  const db = useAppStore().db;
+  if (!db) return;
+
+  // sql.js returns the SQLite file bytes
+  const bytes: Uint8Array = db.export(); // Uint8Array
+  const copy = new Uint8Array(bytes);
+
+  const blob = new Blob([copy], { type: "application/x-sqlite3" });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+
+  // cleanup
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 </script>
 
@@ -29,6 +56,9 @@ async function runSql() {
         <div class="d-flex flex-row ga-2 mb-4">
           <v-btn @click="generateSql">Generate Sql</v-btn>
           <v-btn v-if="sqlCode" @click="runSql">Run Sql</v-btn>
+          <v-btn v-if="sqlIsSuccessful" @click="downloadDbFile()"
+            >Download DB</v-btn
+          >
         </div>
       </v-col>
       <v-col cols="12">

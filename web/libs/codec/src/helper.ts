@@ -126,7 +126,9 @@ function tecEnumToSql(enumDef: TE.TecEnum) {
   return `
 CREATE TABLE ${enumDef.tecEnumName} (
   id TEXT PRIMARY KEY CHECK (id IN (${enumDef.tecEnumValues.map((v) => `'${v}'`).join(", ")}))
-);`;
+);
+INSERT INTO ${enumDef.tecEnumName} (id) VALUES ${enumDef.tecEnumValues.map((v) => `('${v}')`).join(", ")};
+`;
 }
 
 function attributeTypeToSqlType(at: TC.TecClassAttribute) {
