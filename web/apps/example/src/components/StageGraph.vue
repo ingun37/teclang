@@ -99,12 +99,13 @@ const renderer = shallowRef<Sigma<MyNA> | null>(null);
 function visualize() {
   if (sigmaContainer.value === null) throw new Error("sigmaContainer is null");
   if (renderer.value === null) {
-    renderer.value = new Sigma(graph.value, sigmaContainer.value);
-    renderer.value.setSetting("nodeReducer", () => {
-      const res: Partial<NodeDisplayData> = {};
-      res.x = Math.random();
-      res.y = Math.random();
-      return res;
+    renderer.value = new Sigma(graph.value, sigmaContainer.value, {
+      nodeReducer() {
+        const res: Partial<NodeDisplayData> = {};
+        res.x = Math.random();
+        res.y = Math.random();
+        return res;
+      },
     });
   } else {
     renderer.value.refresh();
