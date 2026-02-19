@@ -35,6 +35,16 @@
           :tec-node-ast="tecNodeAst"
         />
       </v-col>
+      <v-col cols="12">
+        <div :class="['text-h2']">Stage 4. Graph</div>
+      </v-col>
+      <v-col v-if="tecEnumAst && tecClassAst && tecNodeAst">
+        <StageGraph
+          :tec-class-ast="tecClassAst"
+          :tec-enum-ast="tecEnumAst"
+          :tec-node-ast="tecNodeAst"
+        />
+      </v-col>
     </v-row>
   </v-container>
 </template>

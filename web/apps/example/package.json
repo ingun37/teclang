@@ -22,7 +22,13 @@
     "codec": "workspace:*",
     "@fontsource/roboto-mono": "~5.2.8",
     "sql.js": "~1.13.0",
-    "@types/sql.js": "~1.4.9"
+    "@types/sql.js": "~1.4.9",
+    "graphology": "~0.26.0",
+    "graphology-types": "~0.24.8",
+    "sigma": "~3.0.2",
+    "color-parse": "~2.0.2",
+    "@sigma/node-border": "~3.0.0",
+    "graphology-layout": "~0.6.1"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",
