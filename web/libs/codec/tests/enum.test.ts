@@ -229,11 +229,13 @@ test("iterate node set", () => {
     ["X", "12"],
     ["Y", "ij"],
   ]);
-  const classAst = createSampleClassAst([["C", ["A"], ["X", "Y"]]]);
-  const iterator = lib.help.iterateNodesInNodeSet(enumAst, classAst);
+  const sampleClass = createSampleClass(["C", ["A"], ["X", "Y"]]);
+  const iterator = lib.help.iterateNodesInNodeSet(enumAst, sampleClass);
 
   expect(
-    iterator.force(createSampleNodeSet("C", [pair(["_", "_"], ["a"])])),
+    iterator.force(
+      createSampleNodeSet("C", [pair(["_", "_"], ["a"])]).tecNodeSet,
+    ),
   ).toStrictEqual(
     [["1i", "1j", "2i", "2j"]].map(E.Array.map(createIndexEnumValueCombo)),
   );
@@ -243,7 +245,7 @@ test("iterate node set", () => {
       createSampleNodeSet("C", [
         pair(["1", "_"], ["a"]),
         pair(["_", "_"], ["a"]),
-      ]),
+      ]).tecNodeSet,
     ),
   ).toStrictEqual(
     [
@@ -257,7 +259,7 @@ test("iterate node set", () => {
       createSampleNodeSet("C", [
         pair(["_", "_"], ["a"]),
         pair(["1", "_"], ["a"]),
-      ]),
+      ]).tecNodeSet,
     ),
   ).toStrictEqual(
     [["1i", "1j", "2i", "2j"], []].map(E.Array.map(createIndexEnumValueCombo)),
@@ -269,7 +271,7 @@ test("iterate node set", () => {
         pair(["2", "j"], ["a"]),
         pair(["1", "_"], ["a"]),
         pair(["2", "i"], ["a"]),
-      ]),
+      ]).tecNodeSet,
     ),
   ).toStrictEqual(
     [["2j"], ["1i", "1j"], ["2i"]].map(E.Array.map(createIndexEnumValueCombo)),

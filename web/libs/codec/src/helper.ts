@@ -288,20 +288,18 @@ function toForce<A, B>(f: (a: A) => E.Either.Either<B, Error>) {
 }
 export function iterateNodesInNodeSet(
   enumAST: TE.TecEnumAST,
-  classAst: TC.TecClassAST,
+  tecClass: TC.TecClass,
 ) {
-  const findClass = makeFindClass(classAst);
   function either(
-    nodeSet: TN.TecNodeSet,
+    nodeSet: RNE<TN.TecNode>,
   ): E.Either.Either<RNE<IndexEnumValueCombo[]>, Error> {
-    const tc = findClass.force(nodeSet.tecNodeClass);
-    const iter = iterateIndexCombo(enumAST, tc.tecSignature.indexTypeSet);
+    const iter = iterateIndexCombo(enumAST, tecClass.tecSignature.indexTypeSet);
     let combos: IndexEnumValueCombo[] = [];
     function notOccurred(combo: IndexEnumValueCombo) {
       return !E.Array.containsWith(indexEnumValueComboEq)(combos, combo);
     }
     return E.pipe(
-      nodeSet.tecNodeSet,
+      nodeSet,
       E.Array.map((tecNode: TN.TecNode) => {
         return E.pipe(
           iter.either(tecNode.indexCombination),
