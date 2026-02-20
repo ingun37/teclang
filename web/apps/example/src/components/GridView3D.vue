@@ -19,7 +19,9 @@ function makeDynamicModel(oneComb: C.help.IndexEnumValueCombo) {
 
   for (let i = 0; i < model.value.length; i++) {
     const tn = model.value[i]!;
-    if (contains(E.Effect.runSync(iterCombo(tn.indexCombination)), oneComb)) {
+    if (
+      contains(E.Effect.runSync(iterCombo.either(tn.indexCombination)), oneComb)
+    ) {
       return computed<TN | null>({
         get: () => tn,
         set(newTN: TN | null) {

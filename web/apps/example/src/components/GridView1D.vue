@@ -19,7 +19,9 @@ function makeDynamicModel(ev: C.TecEnum.TecEnumValue) {
 
   for (let i = 0; i < model.value.length; i++) {
     const tn = model.value[i]!;
-    if (contains(E.Effect.runSync(iterCombo(tn.indexCombination)), [ev])) {
+    if (
+      contains(E.Effect.runSync(iterCombo.either(tn.indexCombination)), [ev])
+    ) {
       return computed<TN | null>({
         get: () => tn,
         set(newTN: TN | null) {

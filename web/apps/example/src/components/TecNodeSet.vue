@@ -57,7 +57,7 @@ const evaluation = computed<E.Either.Either<Eval, Error>>(() =>
 
     const currentCombos: RNE<RNE<EV>> = yield* E.pipe(
       model.value.tecNodeSet,
-      E.Array.map((tn) => iterateCombo(tn.indexCombination)),
+      E.Array.map((tn) => iterateCombo.either(tn.indexCombination)),
       E.Either.all,
       E.Either.map(E.Array.flatten),
     );

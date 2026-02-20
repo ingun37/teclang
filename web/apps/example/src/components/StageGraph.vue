@@ -60,7 +60,7 @@ function createMyGraph(): MyGraph {
       tc.tecSignature.indexTypeSet,
     );
     tecNodeSet.tecNodeSet.forEach((tecNode) => {
-      const idxCombos = iter(tecNode.indexCombination);
+      const idxCombos = iter.either(tecNode.indexCombination);
       if (idxCombos._tag === "Left")
         throw new Error(
           `Failed to iterate index combo for tecNode: ${JSON.stringify(idxCombos.left)}`,
