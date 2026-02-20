@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import * as C from "codec";
 import * as E from "effect";
-import TecNodesRecurse from "@/components/TecNodesRecurse.vue";
 
 const model = defineModel<C.TecNode.TecNodeSet>({ required: true });
 
