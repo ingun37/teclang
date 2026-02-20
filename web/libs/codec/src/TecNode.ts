@@ -1,4 +1,5 @@
 import { Schema as S } from "effect";
+import * as E from "effect";
 import * as TecClass from "./TecClass.js";
 import * as TecEnum from "./TecEnum.js";
 
@@ -45,6 +46,7 @@ export type TecNodeIndexInst = typeof TecNodeIndexInst.Type;
 const TecNodeIndex = S.Union(TecNodeIndexWildcard, TecNodeIndexInst);
 export const tecNodeIndexEquivalence = S.equivalence(TecNodeIndex);
 export type TecNodeIndex = typeof TecNodeIndex.Type;
+export type TecNodeIndexSet = E.Array.NonEmptyReadonlyArray<TecNodeIndex>;
 const IndexCombination = S.NonEmptyArray(TecNodeIndex);
 export type IndexCombination = typeof IndexCombination.Type;
 export const TecNode = S.Struct({

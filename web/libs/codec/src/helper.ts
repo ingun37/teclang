@@ -52,6 +52,8 @@ export function makeFindClass(enumAst: TC.TecClassAST) {
 export type IndexEnumValueCombo = C;
 export const indexEnumValueComboEq: E.Equivalence.Equivalence<IndexEnumValueCombo> =
   E.Array.getEquivalence(E.Equivalence.string);
+export const indexEnumValueComboOrd: E.Order.Order<IndexEnumValueCombo> =
+  E.Array.getOrder(E.Order.string);
 function recur(enums: RNE<TE.TecEnum>): RNE<C> {
   const [x, xs] = E.Array.unprepend(enums);
   if (E.Array.isNonEmptyReadonlyArray(xs)) {
@@ -102,7 +104,7 @@ export function iterateIndexCombo(
   indexTypeSet: RNE<TC.TecClassIndex>,
 ) {
   const findEnum = makeFindEnum(enumAST);
-  return function (combo: TN.IndexCombination): E.Either.Either<RNE<C>, Error> {
+  function either(combo: TN.IndexCombination): E.Either.Either<RNE<C>, Error> {
     return E.Either.gen(function* () {
       const seed = yield* E.pipe(
         combo,
@@ -120,6 +122,14 @@ export function iterateIndexCombo(
       );
       return everyCombination(seed);
     });
+  }
+  return {
+    either,
+    force(combo: TN.IndexCombination) {
+      const e = either(combo);
+      if (e._tag === "Right") return e.right;
+      else throw e.left;
+    },
   };
 }
 function tecEnumToSql(enumDef: TE.TecEnum) {
@@ -217,7 +227,7 @@ function tecNodeToSql(enumAst: TE.TecEnumAST, tecClass: TC.TecClass) {
   const iterator = iterateIndexCombo(
     enumAst,
     tecClass.tecSignature.indexTypeSet,
-  );
+  ).either;
   return function (tecNode: TN.TecNode) {
     return E.Effect.runSync(
       E.Either.gen(function* () {
@@ -269,4 +279,44 @@ ${realEnums.map(tecEnumToSql).join("\n")}
 ${classAst.tecClasses.map(classToSql(enumAst)).join("\n")}
 ${nodeAst.tecNodeSets.map(nodeSetToSql(enumAst, classAst)).join("\n")}
 `;
+}
+function pair<A, B>(a: A, b: B): [A, B] {
+  return [a, b];
+}
+function toForce<A, B>(f: (a: A) => E.Either.Either<B, Error>) {
+  return (a: A) => E.Effect.runSync(f(a));
+}
+export function iterateNodesInNodeSet(
+  enumAST: TE.TecEnumAST,
+  classAst: TC.TecClassAST,
+) {
+  const findClass = makeFindClass(classAst);
+  function either(
+    nodeSet: TN.TecNodeSet,
+  ): E.Either.Either<RNE<IndexEnumValueCombo[]>, Error> {
+    const tc = findClass.force(nodeSet.tecNodeClass);
+    const iter = iterateIndexCombo(enumAST, tc.tecSignature.indexTypeSet);
+    let combos: IndexEnumValueCombo[] = [];
+    function notOccurred(combo: IndexEnumValueCombo) {
+      return !E.Array.containsWith(indexEnumValueComboEq)(combos, combo);
+    }
+    return E.pipe(
+      nodeSet.tecNodeSet,
+      E.Array.map((tecNode: TN.TecNode) => {
+        return E.pipe(
+          iter.either(tecNode.indexCombination),
+          E.Either.map(E.Array.filter(notOccurred)),
+          E.Either.map((xs) => {
+            combos = combos.concat(xs);
+            return xs;
+          }),
+        );
+      }),
+      E.Either.all,
+    );
+  }
+  return {
+    either,
+    force: toForce(either),
+  };
 }
