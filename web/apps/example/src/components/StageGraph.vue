@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { DirectedGraph } from "graphology";
 import * as C from "codec";
+import * as E from "effect";
 import Sigma from "sigma";
 import type { NodeDisplayData } from "sigma/types";
 import { random } from "graphology-layout";
@@ -14,7 +15,7 @@ type MyPnumA = {
   tag: "pnum";
   tecNode: C.TecNode.TecNode;
   tecNodeSet: C.TecNode.TecNodeSet;
-  indexCombo: C.help.IndexEnumValueCombo;
+  indexEnumValueCombo: C.help.IndexEnumValueCombo;
 };
 type MyNA = MyEnumA | MyPnumA;
 type MyGraph = DirectedGraph<MyNA>;
@@ -25,7 +26,7 @@ const props = defineProps<{
 }>();
 
 function combineEnumNodeName(enumName: string, enumValue: string) {
-  return `${enumName}_${enumValue}`;
+  return `e_${enumName}_${enumValue}`;
 }
 function makeEnumNodeName(tecEnum: C.TecEnum.TecEnum) {
   return function (tecEnumValue: C.TecEnum.TecEnumValue) {
@@ -45,7 +46,7 @@ const sigmaContainer = useTemplateRef("sigma-container");
 function createMyGraph(): MyGraph {
   const G: MyGraph = new DirectedGraph();
   const findClass = C.help.makeFindClass(props.tecClassAst);
-
+  const findEnum = C.help.makeFindEnum(props.tecEnumAst);
   props.tecEnumAst.tecEnums.forEach((tecEnum) => {
     const namer = makeEnumNodeName(tecEnum);
     const attr = makeEnumNodeAttr(tecEnum);
@@ -55,38 +56,38 @@ function createMyGraph(): MyGraph {
   });
   props.tecNodeAst.tecNodeSets.forEach((tecNodeSet) => {
     const tc = findClass.force(tecNodeSet.tecNodeClass);
-    const iter = C.help.iterateIndexCombo(
-      props.tecEnumAst,
-      tc.tecSignature.indexTypeSet,
-    );
-    tecNodeSet.tecNodeSet.forEach((tecNode) => {
-      const idxCombos = iter.either(tecNode.indexCombination);
-      if (idxCombos._tag === "Left")
-        throw new Error(
-          `Failed to iterate index combo for tecNode: ${JSON.stringify(idxCombos.left)}`,
+
+    const iterator = C.help.iterateNodesInNodeSet(props.tecEnumAst, tc);
+
+    const grouped = iterator.force(tecNodeSet.tecNodeSet);
+
+    E.pipe(
+      grouped,
+      E.Array.zip(tecNodeSet.tecNodeSet),
+      E.Array.forEach(([indexEnumValueCombos, tecNode]) => {
+        const tecEnums = E.Array.map(
+          tc.tecSignature.indexTypeSet,
+          findEnum.force,
         );
-      for (const idxCombo of idxCombos.right) {
-        const uniqueName = `${tc.tecClassName}_${idxCombo.join("-")}`;
-        const att: MyPnumA = {
-          tag: "pnum",
-          tecNode,
-          indexCombo: idxCombo,
-          tecNodeSet: tecNodeSet,
-        };
-        if (!G.hasNode(uniqueName)) {
+        for (const indexEnumValueCombo of indexEnumValueCombos) {
+          const uniqueName = `p_${tc.tecClassName}_${indexEnumValueCombo.join("-")}`;
+          const att: MyPnumA = {
+            tag: "pnum",
+            tecNode,
+            indexEnumValueCombo,
+            tecNodeSet,
+          };
           G.addNode(uniqueName, att);
-          tc.tecSignature.indexTypeSet.forEach((indexType, idx) => {
+
+          indexEnumValueCombo.forEach((indexEnumValue, idx) => {
             G.addDirectedEdge(
-              combineEnumNodeName(indexType, idxCombo[idx]!),
+              makeEnumNodeName(tecEnums[idx]!)(indexEnumValue),
               uniqueName,
             );
           });
-        } else {
-          // overwrite
-          G.setAttribute(uniqueName, att);
         }
-      }
-    });
+      }),
+    );
   });
 
   random.assign(G);
