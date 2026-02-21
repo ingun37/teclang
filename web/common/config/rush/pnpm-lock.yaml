@@ -27,6 +27,9 @@ importers:
       '@sigma/node-border':
         specifier: ~3.0.0
         version: 3.0.0(sigma@3.0.2(graphology-types@0.24.8))
+      '@svgdotjs/svg.js':
+        specifier: ~3.2.5
+        version: 3.2.5
       '@types/sql.js':
         specifier: ~1.4.9
         version: 1.4.9
@@ -642,6 +645,9 @@ packages:
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: '>=9.0.0'
+
+  '@svgdotjs/svg.js@3.2.5':
+    resolution: {integrity: sha512-/VNHWYhNu+BS7ktbYoVGrCmsXDh+chFMaONMwGNdIBcFHrWqk2jY8fNyr3DLdtQUIalvkPfM554ZSFa3dm3nxQ==}
 
   '@tsconfig/node22@22.0.5':
     resolution: {integrity: sha512-hLf2ld+sYN/BtOJjHUWOk568dvjFQkHnLNa6zce25GIH+vxKfvTgm3qpaH6ToF5tu/NN0IH66s+Bb5wElHrLcw==}
@@ -2569,6 +2575,8 @@ snapshots:
       espree: 10.4.0
       estraverse: 5.3.0
       picomatch: 4.0.3
+
+  '@svgdotjs/svg.js@3.2.5': {}
 
   '@tsconfig/node22@22.0.5': {}
 
