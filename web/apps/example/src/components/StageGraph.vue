@@ -2,7 +2,7 @@
 import { DirectedGraph } from "graphology";
 import * as C from "codec";
 import * as E from "effect";
-import { SVG, Element, type Svg } from "@svgdotjs/svg.js";
+import { SVG, Element, type Svg, type NumberAlias } from "@svgdotjs/svg.js";
 import { nonNull } from "@/nonnull.ts";
 
 type MyEnumA = {
@@ -128,14 +128,16 @@ function createOutlinedTextbox(draw: Svg, x: number, y: number, text: string) {
 
   return g;
 }
-
+function resolveNumberAlias(na: NumberAlias): number {
+  if (typeof na === "number") return na;
+  throw new Error("not number alias");
+}
 function visualize() {
   if (sigmaContainer.value === null) throw new Error("sigmaContainer is null");
 
   var draw = SVG()
     .addTo(sigmaContainer.value)
     .size(sheetWidth.value, sheetHeight.value);
-  let offx = 0;
 
   const [enumNodes, pnumNodes] = E.Array.partitionMap(
     graph.value.nodeEntries(),
@@ -145,48 +147,35 @@ function visualize() {
       else return E.Either.right(pair(entry.node, a));
     },
   );
-  if (E.Array.isNonEmptyArray(enumNodes)) {
-    let offy = 50;
-    E.pipe(
-      enumNodes,
-      E.Array.sortWith((x) => x[1].enum.tecEnumName, E.Order.string),
-      E.Array.groupWith(
-        (x, y) => x[1].enum.tecEnumName === y[1].enum.tecEnumName,
-      ),
-      E.Array.forEach((entries) => {
-        for (const entry of entries) {
-          const eA = entry[1];
-          eA.svg = createOutlinedTextbox(draw, offx, offy, eA.value);
-          offy += 30;
-        }
-      }),
+  const hunit = 30;
+  enumNodes.forEach((entry, idx) => {
+    const eA = entry[1];
+    eA.svg = createOutlinedTextbox(
+      draw,
+      0,
+      hunit * idx - hunit * (enumNodes.length / 2),
+      eA.value,
     );
-    offx += 300;
-  }
+  });
 
-  if (E.Array.isNonEmptyArray(pnumNodes)) {
-    let offy = 50;
+  pnumNodes.forEach((entry, idx) => {
+    const eA = entry[1];
 
-    E.pipe(
-      pnumNodes,
-      E.Array.sortWith((x) => x[1].tecNodeSet.tecNodeClass, E.Order.string),
-      E.Array.groupWith(
-        (x, y) => x[1].tecNodeSet.tecNodeClass === y[1].tecNodeSet.tecNodeClass,
-      ),
-      E.Array.forEach((entries) => {
-        for (let i = 0; i < entries.length; i++) {
-          const eA = entries[i]![1];
-          eA.svg = createOutlinedTextbox(
-            draw,
-            offx,
-            offy,
-            `${eA.tecNodeSet.tecNodeClass}_${i}`,
-          );
-
-          offy += 30;
-        }
-      }),
+    eA.svg = createOutlinedTextbox(
+      draw,
+      500,
+      hunit * idx - hunit * (pnumNodes.length / 2),
+      `${eA.tecNodeSet.tecNodeClass}_(${eA.indexEnumValueCombo.join(",")})`,
     );
+  });
+  const maxY = Math.max(
+    ...Array.from(graph.value.nodeEntries())
+      .map((x) => x.attributes.svg!.y())
+      .map(resolveNumberAlias),
+  );
+
+  for (const entry of graph.value.nodeEntries()) {
+    entry.attributes.svg?.dmove(0, maxY + hunit * 2);
   }
 
   for (const edgeEntry of graph.value.directedEdgeEntries()) {
