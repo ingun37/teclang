@@ -2,18 +2,21 @@
 import { DirectedGraph } from "graphology";
 import * as C from "codec";
 import * as E from "effect";
-import { SVG } from "@svgdotjs/svg.js";
+import { SVG, Element, type Svg } from "@svgdotjs/svg.js";
+import { nonNull } from "@/nonnull.ts";
 
 type MyEnumA = {
   tag: "enum";
   enum: C.TecEnum.TecEnum;
   value: C.TecEnum.TecEnumValue;
+  svg?: Element;
 };
 type MyPnumA = {
   tag: "pnum";
   tecNode: C.TecNode.TecNode;
   tecNodeSet: C.TecNode.TecNodeSet;
   indexEnumValueCombo: C.help.IndexEnumValueCombo;
+  svg?: Element;
 };
 type MyNA = MyEnumA | MyPnumA;
 type MyGraph = DirectedGraph<MyNA>;
@@ -97,6 +100,35 @@ const graph = shallowRef<MyGraph>(createMyGraph());
 function pair<A, B>(a: A, b: B): [A, B] {
   return [a, b];
 }
+
+function createOutlinedTextbox(draw: Svg, x: number, y: number, text: string) {
+  const paddingX = 8;
+  const paddingY = 5;
+
+  const g = draw.group();
+
+  const t = g
+    .text(text)
+    .font({ family: "Roboto Mono, ui-monospace, monospace", size: 14 })
+    .fill("#111111");
+
+  // Position text inside the box first
+  t.move(paddingX, paddingY);
+
+  // Then size the box based on the rendered text bbox
+  const tb = t.bbox();
+  const r = g
+    .rect(tb.width + paddingX * 2, tb.height + paddingY * 2)
+    .fill("#ffffff")
+    .stroke({ width: 1.5, color: "#111111" })
+    .radius(4);
+
+  r.back();
+  g.move(x, y);
+
+  return g;
+}
+
 function visualize() {
   if (sigmaContainer.value === null) throw new Error("sigmaContainer is null");
 
@@ -123,7 +155,8 @@ function visualize() {
       ),
       E.Array.forEach((entries) => {
         for (const entry of entries) {
-          draw.text(entry[1].value).attr({ x: offx, y: offy });
+          const eA = entry[1];
+          eA.svg = createOutlinedTextbox(draw, offx, offy, eA.value);
           offy += 30;
         }
       }),
@@ -143,13 +176,31 @@ function visualize() {
       E.Array.forEach((entries) => {
         for (let i = 0; i < entries.length; i++) {
           const eA = entries[i]![1];
-          draw
-            .text(`${eA.tecNodeSet.tecNodeClass}_${i}`)
-            .attr({ x: offx, y: offy });
+          eA.svg = createOutlinedTextbox(
+            draw,
+            offx,
+            offy,
+            `${eA.tecNodeSet.tecNodeClass}_${i}`,
+          );
+
           offy += 30;
         }
       }),
     );
+  }
+
+  for (const edgeEntry of graph.value.directedEdgeEntries()) {
+    const s = nonNull(edgeEntry.sourceAttributes.svg);
+    const t = nonNull(edgeEntry.targetAttributes.svg);
+    const sb = s.bbox();
+    const tb = t.bbox();
+
+    const sx = sb.x + sb.width;
+    const sy = sb.y + sb.height / 2;
+    const tx = tb.x;
+    const ty = tb.y + tb.height / 2;
+
+    draw.line(sx, sy, tx, ty).stroke({ width: 1, color: "#000000" });
   }
 }
 </script>
