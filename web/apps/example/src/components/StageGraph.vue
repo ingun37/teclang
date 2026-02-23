@@ -15,7 +15,6 @@ type MyPnumA = {
   tag: "pnum";
   tecNode: C.TecNode.TecNode;
   tecNodeSet: C.TecNode.TecNodeSet;
-  indexEnumValueCombo: C.help.IndexEnumValueCombo;
   svg?: Element;
 };
 type MyNA = MyEnumA | MyPnumA;
@@ -68,26 +67,24 @@ function createMyGraph(): MyGraph {
     E.pipe(
       grouped,
       E.Array.zip(tecNodeSet.tecNodeSet),
-      E.Array.forEach(([indexEnumValueCombos, tecNode]) => {
+      E.Array.forEach(([indexEnumValueCombos, tecNode], idx) => {
         const tecEnums = E.Array.map(
           tc.tecSignature.indexTypeSet,
           findEnum.force,
         );
+        const pnumName = `p_${tc.tecClassName}_${idx}`;
+        const att: MyPnumA = {
+          tag: "pnum",
+          tecNode,
+          tecNodeSet,
+        };
+        G.addNode(pnumName, att);
         for (const indexEnumValueCombo of indexEnumValueCombos) {
-          const uniqueName = `p_${tc.tecClassName}_${indexEnumValueCombo.join("-")}`;
-          const att: MyPnumA = {
-            tag: "pnum",
-            tecNode,
-            indexEnumValueCombo,
-            tecNodeSet,
-          };
-          G.addNode(uniqueName, att);
-
           indexEnumValueCombo.forEach((indexEnumValue, idx) => {
-            G.addDirectedEdge(
-              makeEnumNodeName(tecEnums[idx]!)(indexEnumValue),
-              uniqueName,
-            );
+            const enode = makeEnumNodeName(tecEnums[idx]!)(indexEnumValue);
+            const edge = `${enode}__${pnumName}`;
+            if (!G.hasDirectedEdge(edge))
+              G.addDirectedEdgeWithKey(edge, enode, pnumName);
           });
         }
       }),
@@ -165,7 +162,7 @@ function visualize() {
       draw,
       500,
       hunit * idx - hunit * (pnumNodes.length / 2),
-      `${eA.tecNodeSet.tecNodeClass}_(${eA.indexEnumValueCombo.join(",")})`,
+      entry[0],
     );
   });
   const maxY = Math.max(
