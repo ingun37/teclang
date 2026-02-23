@@ -70,35 +70,82 @@ test("parse TecNode haskell test log", () => {
     expect(encoded).toStrictEqual(jsonObject);
   }
 });
-const enumAST: lib.TecEnum.TecEnumAST = lib.TecEnum.TecEnumAST.make({
-  tecEnums: [
-    lib.TecEnum.TecEnum.make({
-      tecEnumName: lib.TecEnum.TecEnumName.make("Letter"),
-      tecEnumValues: "ab"
-        .split("")
-        .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
+function createSampleEnum([name, values]: [string, string]) {
+  return lib.TecEnum.TecEnum.make({
+    tecEnumName: lib.TecEnum.TecEnumName.make(name),
+    tecEnumValues: values
+      .split("")
+      .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
+  });
+}
+function createSampleEnumAst(nameValuesPairs: [string, string][]) {
+  return lib.TecEnum.TecEnumAST.make({
+    tecEnums: nameValuesPairs.map(createSampleEnum),
+  });
+}
+function createSampleIndexTypeSet(indices: RNE<string>) {
+  return E.Array.map(indices, (i) => lib.TecClass.TecClassIndex.make(i));
+}
+type RNE<T> = E.Array.NonEmptyReadonlyArray<T>;
+function createSampleClass([name, attribs, indices]: [
+  string,
+  RNE<string>,
+  RNE<string>,
+]) {
+  return lib.TecClass.TecClass.make({
+    tecClassName: lib.TecClass.TecClassName.make(name),
+    tecSignature: lib.TecClass.TecSignature.make({
+      attributeTypeSet: E.Array.map(attribs, (a) =>
+        lib.TecClass.TecClassAttribute.make(a),
+      ),
+      indexTypeSet: createSampleIndexTypeSet(indices),
     }),
-    lib.TecEnum.TecEnum.make({
-      tecEnumName: lib.TecEnum.TecEnumName.make("Number"),
-      tecEnumValues: "12"
-        .split("")
-        .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
-    }),
-    lib.TecEnum.TecEnum.make({
-      tecEnumName: lib.TecEnum.TecEnumName.make("Index"),
-      tecEnumValues: "ij"
-        .split("")
-        .map((l) => lib.TecEnum.TecEnumValue.make(l)) as any,
-    }),
-  ],
-});
+  });
+}
+
+const createSampleClassAst = (classes: [string, RNE<string>, RNE<string>][]) =>
+  lib.TecClass.TecClassAST.make({
+    tecClasses: classes.map(createSampleClass),
+  });
+
+function createSampleIndexSet(indices: RNE<string>) {
+  return E.Array.map(indices, (i) =>
+    i === "_"
+      ? lib.TecNode.TecNodeIndexWildcard.make({})
+      : lib.TecNode.TecNodeIndexInst.make({
+          contents: lib.TecEnum.TecEnumValue.make(i),
+        }),
+  );
+}
+function createSampleNode([indices, attribs]: [RNE<string>, string[]]) {
+  return lib.TecNode.TecNode.make({
+    indexCombination: createSampleIndexSet(indices),
+    tecNodeAttributes: attribs.map((a) =>
+      lib.TecNode.TecNodeTextAttribute.make({ contents: a }),
+    ),
+  });
+}
+
+function createSampleNodeSet(
+  className: string,
+  nodes: RNE<[RNE<string>, string[]]>,
+) {
+  return lib.TecNode.TecNodeSet.make({
+    tecNodeClass: lib.TecClass.TecClassName.make(className),
+    tecNodeSet: E.Array.map(nodes, createSampleNode),
+  });
+}
 
 test("helper", () => {
   const iter = (idxTypes: E.Array.NonEmptyReadonlyArray<string>) =>
     E.Effect.runSync(
-      lib.help.iterateIndexSet(enumAST)(
-        E.Array.map(idxTypes, (it) => lib.TecClass.TecClassIndex.make(it)),
-      ),
+      lib.help.iterateIndexSet(
+        createSampleEnumAst([
+          ["Letter", "ab"],
+          ["Number", "12"],
+          ["Index", "ij"],
+        ]),
+      )(E.Array.map(idxTypes, (it) => lib.TecClass.TecClassIndex.make(it))),
     );
   expect(iter(["Letter"])).toStrictEqual([["a"], ["b"]]);
   expect(iter(["Letter", "Number", "Index"])).toStrictEqual([
@@ -128,34 +175,24 @@ test("everycombination", () => {
   ]);
 });
 
-const indexSet: lib.TecClass.TecClassIndexTypeSet = E.Array.map(
-  enumAST.tecEnums as E.Array.NonEmptyReadonlyArray<lib.TecEnum.TecEnum>,
-  (edef) => lib.TecClass.TecClassIndex.make(edef.tecEnumName),
-);
-
 test("iterateIndexCombo", () => {
-  const run = (x) =>
-    E.Effect.runSync(lib.help.iterateIndexCombo(enumAST, indexSet)(x));
-  expect(
-    run([
-      lib.TecNode.TecNodeIndexInst.make({
-        contents: enumAST.tecEnums[0].tecEnumValues[0],
-      }),
-      lib.TecNode.TecNodeIndexInst.make({
-        contents: enumAST.tecEnums[1].tecEnumValues[0],
-      }),
-      lib.TecNode.TecNodeIndexInst.make({
-        contents: enumAST.tecEnums[2].tecEnumValues[0],
-      }),
-    ]),
-  ).toStrictEqual([["a", "1", "i"]]);
-  expect(
-    run([
-      lib.TecNode.TecNodeIndexWildcard.make({}),
-      lib.TecNode.TecNodeIndexWildcard.make({}),
-      lib.TecNode.TecNodeIndexWildcard.make({}),
-    ]),
-  ).toStrictEqual([
+  const run = (x: lib.TecNode.TecNodeIndexSet) =>
+    E.Effect.runSync(
+      lib.help
+        .iterateIndexCombo(
+          createSampleEnumAst([
+            ["Letter", "ab"],
+            ["Number", "12"],
+            ["Index", "ij"],
+          ]),
+          createSampleIndexTypeSet(["Letter", "Number", "Index"]),
+        )
+        .either(x),
+    );
+  expect(run(createSampleIndexSet(["a", "1", "i"]))).toStrictEqual([
+    ["a", "1", "i"],
+  ]);
+  expect(run(createSampleIndexSet(["_", "_", "_"]))).toStrictEqual([
     ["a", "1", "i"],
     ["a", "1", "j"],
     ["a", "2", "i"],
@@ -166,33 +203,77 @@ test("iterateIndexCombo", () => {
     ["b", "2", "j"],
   ]);
 
-  expect(
-    run([
-      lib.TecNode.TecNodeIndexInst.make({
-        contents: enumAST.tecEnums[0].tecEnumValues[0],
-      }),
-      lib.TecNode.TecNodeIndexInst.make({
-        contents: enumAST.tecEnums[1].tecEnumValues[0],
-      }),
-      lib.TecNode.TecNodeIndexWildcard.make({}),
-    ]),
-  ).toStrictEqual([
+  expect(run(createSampleIndexSet(["a", "1", "_"]))).toStrictEqual([
     ["a", "1", "i"],
     ["a", "1", "j"],
   ]);
 
-  expect(
-    run([
-      lib.TecNode.TecNodeIndexInst.make({
-        contents: enumAST.tecEnums[0].tecEnumValues[0],
-      }),
-      lib.TecNode.TecNodeIndexWildcard.make({}),
-      lib.TecNode.TecNodeIndexInst.make({
-        contents: enumAST.tecEnums[2].tecEnumValues[0],
-      }),
-    ]),
-  ).toStrictEqual([
+  expect(run(createSampleIndexSet(["a", "_", "i"]))).toStrictEqual([
     ["a", "1", "i"],
     ["a", "2", "i"],
   ]);
+});
+function pair<A, B>(a: A, b: B): [A, B] {
+  return [a, b];
+}
+function createIndexEnumValueCombo(
+  values: string,
+): lib.help.IndexEnumValueCombo {
+  const arr = values.split("").map((v) => lib.TecEnum.TecEnumValue.make(v));
+  if (E.Array.isNonEmptyArray(arr)) {
+    return arr;
+  } else throw new Error("Invalid values");
+}
+test("iterate node set", () => {
+  const enumAst = createSampleEnumAst([
+    ["X", "12"],
+    ["Y", "ij"],
+  ]);
+  const sampleClass = createSampleClass(["C", ["A"], ["X", "Y"]]);
+  const iterator = lib.help.iterateNodesInNodeSet(enumAst, sampleClass);
+
+  expect(
+    iterator.force(
+      createSampleNodeSet("C", [pair(["_", "_"], ["a"])]).tecNodeSet,
+    ),
+  ).toStrictEqual(
+    [["1i", "1j", "2i", "2j"]].map(E.Array.map(createIndexEnumValueCombo)),
+  );
+
+  expect(
+    iterator.force(
+      createSampleNodeSet("C", [
+        pair(["1", "_"], ["a"]),
+        pair(["_", "_"], ["a"]),
+      ]).tecNodeSet,
+    ),
+  ).toStrictEqual(
+    [
+      ["1i", "1j"],
+      ["2i", "2j"],
+    ].map(E.Array.map(createIndexEnumValueCombo)),
+  );
+
+  expect(
+    iterator.force(
+      createSampleNodeSet("C", [
+        pair(["_", "_"], ["a"]),
+        pair(["1", "_"], ["a"]),
+      ]).tecNodeSet,
+    ),
+  ).toStrictEqual(
+    [["1i", "1j", "2i", "2j"], []].map(E.Array.map(createIndexEnumValueCombo)),
+  );
+
+  expect(
+    iterator.force(
+      createSampleNodeSet("C", [
+        pair(["2", "j"], ["a"]),
+        pair(["1", "_"], ["a"]),
+        pair(["2", "i"], ["a"]),
+      ]).tecNodeSet,
+    ),
+  ).toStrictEqual(
+    [["2j"], ["1i", "1j"], ["2i"]].map(E.Array.map(createIndexEnumValueCombo)),
+  );
 });

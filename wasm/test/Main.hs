@@ -126,6 +126,12 @@ testClass =
     "f :: A -> B -> C -> D"
   ]
 
+testPnum :: [String]
+testPnum =
+  [
+    "d :: A -> B -> C -> D"
+  ]
+
 testNode :: [String]
 testNode =
   [ """
@@ -160,6 +166,7 @@ main = do
   -- formatTest "out-format.log"
   _ <- testIO testData "out-data.log" :: IO [TecDataAST]
   _ <- testIO testEnum "out-enum.log" :: IO [TecEnumAST]
+  _ <- testIO testPnum "out-pnum.log" :: IO [TecPnumAST]
   _ <- testIO testClass "out-class.log" :: IO [TecClassAST]
   _ <- testIO testNode "out-node.log" :: IO [TecNodeAST]
   return ()

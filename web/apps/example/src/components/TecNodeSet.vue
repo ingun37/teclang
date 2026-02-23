@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import * as C from "codec";
 import * as E from "effect";
-import TecNodesRecurse from "@/components/TecNodesRecurse.vue";
 
 const model = defineModel<C.TecNode.TecNodeSet>({ required: true });
 
@@ -57,7 +56,7 @@ const evaluation = computed<E.Either.Either<Eval, Error>>(() =>
 
     const currentCombos: RNE<RNE<EV>> = yield* E.pipe(
       model.value.tecNodeSet,
-      E.Array.map((tn) => iterateCombo(tn.indexCombination)),
+      E.Array.map((tn) => iterateCombo.either(tn.indexCombination)),
       E.Either.all,
       E.Either.map(E.Array.flatten),
     );

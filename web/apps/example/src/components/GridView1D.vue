@@ -10,24 +10,24 @@ const props = defineProps<{
   tecClass: C.TecClass.TecClass;
   enumAst: C.TecEnum.TecEnumAST;
 }>();
+
 function makeDynamicModel(ev: C.TecEnum.TecEnumValue) {
-  const iterCombo = C.help.iterateIndexCombo(
-    props.enumAst,
-    props.tecClass.tecSignature.indexTypeSet,
-  );
+  const indexEnumValueSets: RNE<C.help.IndexEnumValueCombo[]> = C.help
+    .iterateNodesInNodeSet(props.enumAst, props.tecClass)
+    .force(model.value);
+
   const contains = E.Array.containsWith(C.help.indexEnumValueComboEq);
 
-  for (let i = 0; i < model.value.length; i++) {
+  for (let i = 0; i < indexEnumValueSets.length; i++) {
     const tn = model.value[i]!;
-    if (contains(E.Effect.runSync(iterCombo(tn.indexCombination)), [ev])) {
+    if (contains(indexEnumValueSets[i]!, [ev])) {
       return computed<TN | null>({
         get: () => tn,
         set(newTN: TN | null) {
           if (newTN) model.value = E.Array.replace(model.value, i, newTN);
           else {
-            const newArr = E.Array.remove(model.value, i);
-            if (E.Array.isNonEmptyArray(newArr)) model.value = newArr;
-            else throw new Error("Cannot remove empty grid");
+            const ys = E.Array.remove(model.value, i);
+            if (E.Array.isNonEmptyArray(ys)) model.value = ys;
           }
         },
       });
@@ -36,7 +36,7 @@ function makeDynamicModel(ev: C.TecEnum.TecEnumValue) {
   return computed<TN | null>({
     get: () => null,
     set(newTN) {
-      if (newTN) model.value = E.Array.append(model.value, newTN);
+      if (newTN) model.value = E.Array.prepend(model.value, newTN);
     },
   });
 }

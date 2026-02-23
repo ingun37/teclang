@@ -14,7 +14,7 @@ import TecEncode
 import TecEnum
 import TecError
 import TecNode
-import Data.List(uncons)
+import TecPnum
 
 class (Show a, Generic a, ToJSON a, FromJSON a) => TecAST a where
   decodeTecToCode :: a -> Either TecError String
@@ -70,3 +70,7 @@ instance TecAST TecClassAST where
 instance TecAST TecNodeAST where
   decodeTecToCode = return . setDecls . decodeTecNodeAST
   encodeCodeToTec = getDecls >=> encodeTecNodeAST
+
+instance TecAST TecPnumAST where
+  decodeTecToCode = fmap setDecls . decodeTecPnumAST
+  encodeCodeToTec = getDecls >=> encodeTecPnumAST

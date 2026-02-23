@@ -15,7 +15,8 @@ module MyLib
     TecEnumAST,
     formatHaskell,
     TecClassAST,
-    TecNodeAST
+    TecNodeAST,
+    TecPnumAST,
   )
 where
 
@@ -26,3 +27,4 @@ import TecEnum
 import TecError
 import TecFormat
 import TecNode
+import TecPnum

@@ -15,6 +15,7 @@ line :: Line -> Pattern
 render :: Side -> Article -> Image
 pom :: Size -> Line -> Number
 schematic :: Side -> Image
+pattern :: Pattern -> Image
 pantone :: Fabric -> Article -> Pattern -> Color
 `;
 

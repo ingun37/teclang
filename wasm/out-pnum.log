@@ -1,0 +1,28 @@
+---- Original Code ----
+d :: A -> B -> C -> D
+---- Raw AST ----
+TecPnumAST
+    { tecPnums =
+        [ TecPnum
+            { pnumName = "D"
+            , indexTypeSet =
+                [ "A"
+                , "B"
+                , "C"
+                ]
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "tecPnums": [
+        {
+            "indexTypeSet": [
+                "A",
+                "B",
+                "C"
+            ],
+            "pnumName": "D"
+        }
+    ]
+}
