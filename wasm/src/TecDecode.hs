@@ -3,13 +3,12 @@ module TecDecode
     decodeTecEnumAST,
     decodeTecDataAST,
     decodeTecNodeAST,
+    decodeTecPnumAST,
   )
 where
 
 import Control.Monad (foldM)
 import Data.Char (toLower)
-import Data.Functor ((<&>))
-import Data.List (unsnoc)
 import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
 import Optics.Core
@@ -18,6 +17,7 @@ import TecData
 import TecEnum
 import TecError
 import TecNode
+import TecPnum
 
 lowerFirst :: String -> String
 lowerFirst [] = [] -- Handle empty string case
@@ -118,6 +118,15 @@ decodeTecClass (TecClass tecClassName sig) = do
 
 decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
 decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
+
+decodeTecPnum :: TecPnum -> Either TecError (E.Decl ())
+decodeTecPnum (TecPnum name typeSet) =
+  let abb a = E.TyFun () (getTyCon a)
+      typeSig = foldr abb (getTyCon name) typeSet
+   in return $ E.TypeSig () [getIdent (lowerFirst name)] typeSig
+
+decodeTecPnumAST :: TecPnumAST -> Either TecError [E.Decl ()]
+decodeTecPnumAST (TecPnumAST pnums) = traverse decodeTecPnum pnums
 
 decodeTecNodeIndex :: TecNodeIndex -> E.Pat ()
 decodeTecNodeIndex TecNodeIndexWildcard = E.PWildCard ()

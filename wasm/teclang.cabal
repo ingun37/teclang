@@ -70,6 +70,7 @@ library
         TecError,
         TecData,
         TecClass,
+        TecPnum,
         TecNode
 
     -- LANGUAGE extensions used by modules in this package.

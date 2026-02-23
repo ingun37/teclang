@@ -3,6 +3,7 @@ module TecEncode
     encodeTecClassAST,
     encodeTecEnumAST,
     encodeTecNodeAST,
+    encodeTecPnumAST
   )
 where
 
@@ -16,6 +17,7 @@ import TecData
 import TecEnum
 import TecError
 import TecNode
+import TecPnum
 
 upperFirst :: String -> String
 upperFirst [] = [] -- Handle empty string case
@@ -125,6 +127,23 @@ encodeTecSignature (E.TyFun _ tyCon right) = do
 encodeTecSignature t = do
   attribs <- encodeTecAttributes t
   return $ TecSignature [] attribs
+
+encodeTecPnum :: (Show l) => E.Type l -> Either TecError TecPnum
+encodeTecPnum (E.TyFun _ tyCon right) = do
+  pnum <- encodeTecPnum right
+  c <- getTyCon tyCon
+  return $ over _indexTypeSet (c :) pnum
+encodeTecPnum tyCon = do
+  c <- getTyCon tyCon
+  return $ TecPnum c []
+
+encodeTecPnumAST :: (Show l) => [E.Decl l] -> Either TecError TecPnumAST
+encodeTecPnumAST decls =
+  let f (E.TypeSig _ _ sig) = encodeTecPnum sig
+      f e = Left $ TecErrorUnknownExp (show e)
+   in do
+        tecPnums <- traverse f decls
+        return $ TecPnumAST tecPnums
 
 encodeTecClass :: (Show l) => E.Decl l -> Either TecError TecClass
 encodeTecClass (E.TypeSig _ [ident] sig) = do
