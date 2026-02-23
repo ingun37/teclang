@@ -46,7 +46,7 @@ const sigmaContainer = useTemplateRef("sigma-container");
 const sheetWidth = ref<number>(1000);
 const sheetHeight = ref<number>(2000);
 
-function createMyGraph(): MyGraph {
+const graph = computed<MyGraph>(() => {
   const G: MyGraph = new DirectedGraph();
   const findClass = C.help.makeFindClass(props.tecClassAst);
   const findEnum = C.help.makeFindEnum(props.tecEnumAst);
@@ -92,12 +92,13 @@ function createMyGraph(): MyGraph {
   });
 
   return G;
-}
-const graph = shallowRef<MyGraph>(createMyGraph());
+});
+
 function pair<A, B>(a: A, b: B): [A, B] {
   return [a, b];
 }
 
+const svg = shallowRef<Svg | null>(null);
 function createOutlinedTextbox(draw: Svg, x: number, y: number, text: string) {
   const paddingX = 8;
   const paddingY = 5;
@@ -131,11 +132,14 @@ function resolveNumberAlias(na: NumberAlias): number {
 }
 function visualize() {
   if (sigmaContainer.value === null) throw new Error("sigmaContainer is null");
-
-  var draw = SVG()
-    .addTo(sigmaContainer.value)
-    .size(sheetWidth.value, sheetHeight.value);
-
+  if (svg.value === null)
+    svg.value = SVG()
+      .addTo(sigmaContainer.value)
+      .size(sheetWidth.value, sheetHeight.value);
+  else {
+    svg.value.clear();
+  }
+  const draw = svg.value;
   const [enumNodes, pnumNodes] = E.Array.partitionMap(
     graph.value.nodeEntries(),
     (entry) => {
