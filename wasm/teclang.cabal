@@ -71,7 +71,8 @@ library
         TecData,
         TecClass,
         TecPnum,
-        TecNode
+        TecNode,
+        TecQuery
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:

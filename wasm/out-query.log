@@ -1,0 +1,36 @@
+---- Original Code ----
+foo [A ..] [A, B]
+---- Raw AST ----
+TecQuery
+    { tecQueryFunc = "foo"
+    , tecQueryIndexSeqs =
+        [ TecIndexRange
+            { tecIndexFrom = "A"
+            , tecIndexTo = Nothing
+            }
+        , TecIndexValues
+            { tecIndexValues =
+                [ "A"
+                , "B"
+                ]
+            }
+        ]
+    }
+---- Json encoded ----
+{
+    "tecQueryFunc": "foo",
+    "tecQueryIndexSeqs": [
+        {
+            "tag": "TecIndexRange",
+            "tecIndexFrom": "A",
+            "tecIndexTo": null
+        },
+        {
+            "tag": "TecIndexValues",
+            "tecIndexValues": [
+                "A",
+                "B"
+            ]
+        }
+    ]
+}
