@@ -17,6 +17,7 @@ module MyLib
     TecClassAST,
     TecNodeAST,
     TecPnumAST,
+    TecQuery,
   )
 where
 
@@ -28,3 +29,4 @@ import TecError
 import TecFormat
 import TecNode
 import TecPnum
+import TecQuery

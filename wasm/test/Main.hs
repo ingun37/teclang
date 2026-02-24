@@ -128,8 +128,7 @@ testClass =
 
 testPnum :: [String]
 testPnum =
-  [
-    "d :: A -> B -> C -> D"
+  [ "d :: A -> B -> C -> D"
   ]
 
 testNode :: [String]
@@ -141,6 +140,11 @@ testNode =
     bar B = (B, (-0.1))
     quux _ = Quux
     """
+  ]
+
+testQuery :: [String]
+testQuery =
+  [ "foo [A ..] [A, B]"
   ]
 
 testFormatUnit :: IO.Handle -> String -> IO ()
@@ -164,9 +168,10 @@ formatTest logFilePath = do
 main :: IO ()
 main = do
   -- formatTest "out-format.log"
-  _ <- testIO testData "out-data.log" :: IO [TecDataAST]
+  -- _ <- testIO testData "out-data.log" :: IO [TecDataAST]
   _ <- testIO testEnum "out-enum.log" :: IO [TecEnumAST]
   _ <- testIO testPnum "out-pnum.log" :: IO [TecPnumAST]
   _ <- testIO testClass "out-class.log" :: IO [TecClassAST]
   _ <- testIO testNode "out-node.log" :: IO [TecNodeAST]
+  _ <- testIO testQuery "out-query.log" :: IO [TecQuery]
   return ()

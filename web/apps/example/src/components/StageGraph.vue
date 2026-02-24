@@ -46,6 +46,9 @@ const sigmaContainer = useTemplateRef("sigma-container");
 const sheetWidth = ref<number>(1000);
 const sheetHeight = ref<number>(2000);
 
+// NEW: collapse / expand state
+const showGraph = ref(true);
+
 const graph = computed<MyGraph>(() => {
   const G: MyGraph = new DirectedGraph();
   const findClass = C.help.makeFindClass(props.tecClassAst);
@@ -199,18 +202,32 @@ function visualize() {
   <v-container fluid>
     <v-row>
       <v-col cols="12 ">
-        <div class="d-flex flex-row ga-2">
+        <div class="d-flex flex-row ga-2 align-center">
           <v-btn @click="visualize">visualize</v-btn>
+
+          <!-- checkbox toggle -->
+          <v-checkbox
+            v-model="showGraph"
+            label="Show graph"
+            hide-details
+            density="compact"
+          />
         </div>
       </v-col>
+
       <v-col cols="12">
-        <v-sheet :height="sheetHeight" :width="sheetWidth">
-          <div
-            ref="sigma-container"
-            class="sigma-container"
-            style="width: 100%; height: 100%"
-          ></div>
-        </v-sheet>
+        <!-- NEW: collapsible wrapper -->
+        <v-expand-transition>
+          <div v-show="showGraph">
+            <v-sheet :height="sheetHeight" :width="sheetWidth">
+              <div
+                ref="sigma-container"
+                class="sigma-container"
+                style="width: 100%; height: 100%"
+              ></div>
+            </v-sheet>
+          </div>
+        </v-expand-transition>
       </v-col>
     </v-row>
   </v-container>

@@ -3,7 +3,8 @@ module TecEncode
     encodeTecClassAST,
     encodeTecEnumAST,
     encodeTecNodeAST,
-    encodeTecPnumAST
+    encodeTecPnumAST,
+    encodeTecQuery,
   )
 where
 
@@ -13,11 +14,12 @@ import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
 import Optics.Core
 import TecClass
-import TecData
+import TecData (TecDataAST)
 import TecEnum
 import TecError
 import TecNode
 import TecPnum
+import TecQuery
 
 upperFirst :: String -> String
 upperFirst [] = [] -- Handle empty string case
@@ -54,42 +56,7 @@ encodeDecl (E.PatBind _ (E.PVar _ (E.Ident _ name)) (E.UnGuardedRhs _ expr) _) =
 encodeDecl x = Left $ TecErrorUnknownExp (show x)
 
 encodeTecDataAST :: (Show l) => E.Exp l -> Either TecError TecDataAST
-encodeTecDataAST (E.Var _ (E.UnQual _ (E.Ident _ name))) = return $ TecVar name
-encodeTecDataAST (E.Let _ (E.BDecls _ bindings) expression) = do
-  varKVs <- traverse encodeDecl bindings
-  let varMap = Map.fromList varKVs
-  varMap' <- traverse encodeTecDataAST varMap
-  expression' <- encodeTecDataAST expression
-  return $ TecBinding varMap' expression'
-encodeTecDataAST (E.App _ lhs rhs) = do
-  l <- encodeTecDataAST lhs
-  r <- encodeTecDataAST rhs
-  case l of
-    (TecCon typeName params) -> return $ TecCon typeName (params ++ [r])
-    _ -> Left $ TecError "Unexpected left side"
-encodeTecDataAST (E.Paren _ x) = encodeTecDataAST x
-encodeTecDataAST (E.Con _ (E.UnQual _ (E.Ident _ typeName))) = Right $ TecCon typeName []
-encodeTecDataAST (E.InfixApp _ left (E.QConOp _ (E.UnQual _ (E.Symbol _ op))) right) = do
-  l <- encodeTecDataAST left
-  r <- encodeTecDataAST right
-  return $ TecQuery op l r
-encodeTecDataAST (E.Lit _ (E.Int _ v _)) = Right $ TecInt (fromInteger v)
-encodeTecDataAST (E.Lit _ (E.String _ v _)) = Right $ TecStr v
-encodeTecDataAST (E.EnumFrom _ e) = do
-  f <- encodeTecDataAST e
-  case f of
-    (TecInt i) -> Right $ TecRngInt i Nothing
-    (TecCon label []) -> Right $ TecRngEnum label Nothing
-    _ -> Left $ TecErrorUnknownExp (show e)
-encodeTecDataAST (E.EnumFromTo l from to) = do
-  f <- encodeTecDataAST from
-  t <- encodeTecDataAST to
-  case (f, t) of
-    (TecInt a, TecInt b) -> Right $ TecRngInt a (Just b)
-    (TecCon a [], TecCon b []) -> Right $ TecRngEnum a (Just b)
-    _ -> Left $ TecErrorUnknownExp (show (E.EnumFromTo l from to))
-encodeTecDataAST (E.List _ exps) = traverse encodeTecDataAST exps <&> TecList
-encodeTecDataAST e = Left $ TecErrorUnknownExp (show e)
+encodeTecDataAST _ = Left $ TecError "deprecated"
 
 encodeQualConDecl :: (Show l) => E.QualConDecl l -> Either TecError TecValue
 encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ ident _)) = do
@@ -157,12 +124,12 @@ encodeTecClassAST decls = do
   tecClasses <- traverse encodeTecClass decls
   return $ TecClassAST tecClasses
 
-unfoldrM :: (Monad m) => (a -> m (Maybe (b, a))) -> a -> m [b]
+unfoldrM :: (Monad m) => (a -> m (Maybe (a, b))) -> a -> m [b]
 unfoldrM f seed = do
   res <- f seed
   case res of
     Nothing -> return []
-    Just (val, next) -> do
+    Just (next, val) -> do
       rest <- unfoldrM f next
       return (val : rest)
 
@@ -201,3 +168,28 @@ encodeTecNodeAST :: (Show l) => [E.Decl l] -> Either TecError TecNodeAST
 encodeTecNodeAST decls = do
   nodeSets <- traverse encodeTecNodeSet decls
   return $ TecNodeAST nodeSets
+
+encodeTecIndexValue :: (Show l) => E.Exp l -> Either TecError String
+-- encodeTecIndexValue (E.Lit _ (E.Int _ v _)) = return $ TecIndexInt v
+encodeTecIndexValue (E.Con _ uq) = getUnQual uq
+encodeTecIndexValue e = Left $ TecErrorUnknownExp (show e)
+
+encodeTecIndexSeq :: (Show l) => E.Exp l -> Either TecError TecIndexSeq
+encodeTecIndexSeq (E.EnumFrom _ lit) = do
+  vals <- encodeTecIndexValue lit
+  return $ TecIndexRange vals Nothing
+encodeTecIndexSeq (E.List _ cs) = do
+  vals <- traverse encodeTecIndexValue cs
+  return $ TecIndexValues vals
+encodeTecIndexSeq e = Left $ TecErrorUnknownExp (show e)
+
+encodeTecQuery :: (Show l) => E.Exp l -> Either TecError TecQuery
+encodeTecQuery (E.App _ (E.Var _ uq) r) = do
+  tecQueryFunc <- getUnQual uq
+  tecQueryIndexSeq <- encodeTecIndexSeq r
+  return $ TecQuery {tecQueryFunc, tecQueryIndexSeqs = [tecQueryIndexSeq]}
+encodeTecQuery (E.App _ l r) = do
+  l' <- encodeTecQuery l
+  r' <- encodeTecIndexSeq r
+  return $ over _tecQueryIndexSeqs (++ [r']) l'
+encodeTecQuery e = Left $ TecErrorUnknownExp (show e)

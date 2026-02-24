@@ -4,6 +4,7 @@ module TecDecode
     decodeTecDataAST,
     decodeTecNodeAST,
     decodeTecPnumAST,
+    decodeTecQuery,
   )
 where
 
@@ -13,11 +14,12 @@ import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
 import Optics.Core
 import TecClass
-import TecData
+import TecData (TecDataAST)
 import TecEnum
 import TecError
 import TecNode
 import TecPnum
+import TecQuery
 
 lowerFirst :: String -> String
 lowerFirst [] = [] -- Handle empty string case
@@ -55,30 +57,7 @@ decodeDecl (varName, varExp) =
   return $ E.PatBind () (E.PVar () (getIdent varName)) (E.UnGuardedRhs () varExp) Nothing
 
 decodeTecDataAST :: TecDataAST -> Either TecError (E.Exp ())
-decodeTecDataAST (TecVar varName) = return (E.Var () (E.UnQual () (getIdent varName)))
-decodeTecDataAST (TecBinding varMap exp) = do
-  varMap' <- traverse decodeTecDataAST varMap
-  decls <- traverse decodeDecl (Map.toList varMap')
-  exp' <- decodeTecDataAST exp
-  return (E.Let () (E.BDecls () decls) exp')
-decodeTecDataAST (TecCon typeName params) = do
-  let seed = E.Con () (E.UnQual () (getIdent typeName))
-  foldM (\e p -> decodeTecDataAST p <&> E.App () e) seed params
-decodeTecDataAST (TecList list) = traverse decodeTecDataAST list <&> E.List ()
-decodeTecDataAST (TecQuery op left right) = do
-  l <- decodeTecDataAST left
-  r <- decodeTecDataAST right
-  return $ E.InfixApp () l (E.QConOp () (E.UnQual () (E.Symbol () op))) r
-decodeTecDataAST (TecInt i) = return $ intE i
-decodeTecDataAST (TecStr s) = return $ E.Lit () (E.String () s s)
-decodeTecDataAST (TecRngInt from to) = case to of
-  Nothing -> return $ E.EnumFrom () (intE from)
-  Just to' -> return $ E.EnumFromTo () (intE from) (intE to')
-decodeTecDataAST (TecRngEnum from to) = do
-  f <- decodeTecDataAST (TecCon from [])
-  case to of
-    Nothing -> return $ E.EnumFrom () f
-    Just to' -> decodeTecDataAST (TecCon to' []) <&> E.EnumFromTo () f
+decodeTecDataAST _ = Left $ TecError "deprecated"
 
 decodeType :: String -> Either TecError (E.Type ())
 decodeType name = return $ getTyCon name
@@ -146,3 +125,21 @@ decodeTecNodeSet (TecNodeSet name nodes) = E.FunBind () (map (decodeTecNode name
 
 decodeTecNodeAST :: TecNodeAST -> [E.Decl ()]
 decodeTecNodeAST (TecNodeAST nodeSets) = map decodeTecNodeSet nodeSets
+
+decodeTecIndexValue :: String -> E.Exp ()
+-- decodeTecIndexValue (TecIndexInt v) = E.Lit () (E.Int () v (show v))
+-- decodeTecIndexValue (TecIndexCon c) = getCon c
+decodeTecIndexValue = getCon
+
+decodeTecIndexSeq :: TecIndexSeq -> E.Exp ()
+decodeTecIndexSeq (TecIndexRange {tecIndexFrom, tecIndexTo}) =
+  case tecIndexTo of
+    Nothing -> E.EnumFrom () (decodeTecIndexValue tecIndexFrom)
+    Just toIndexValue -> E.EnumFromTo () (decodeTecIndexValue tecIndexFrom) (decodeTecIndexValue toIndexValue)
+decodeTecIndexSeq (TecIndexValues {tecIndexValues}) =
+  E.List () (map decodeTecIndexValue tecIndexValues)
+
+decodeTecQuery :: TecQuery -> Either TecError (E.Exp ())
+decodeTecQuery (TecQuery {tecQueryFunc, tecQueryIndexSeqs}) =
+  let bab b a = E.App () b (decodeTecIndexSeq a)
+   in return $ foldl bab (E.Var () (getUnqual tecQueryFunc)) tecQueryIndexSeqs

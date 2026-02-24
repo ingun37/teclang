@@ -15,6 +15,7 @@ import TecEnum
 import TecError
 import TecNode
 import TecPnum
+import TecQuery
 
 class (Show a, Generic a, ToJSON a, FromJSON a) => TecAST a where
   decodeTecToCode :: a -> Either TecError String
@@ -74,3 +75,13 @@ instance TecAST TecNodeAST where
 instance TecAST TecPnumAST where
   decodeTecToCode = fmap setDecls . decodeTecPnumAST
   encodeCodeToTec = getDecls >=> encodeTecPnumAST
+
+instance TecAST TecQuery where
+  decodeTecToCode t = do
+    e <- decodeTecQuery t
+    return $ E.prettyPrint e
+  encodeCodeToTec code = do
+    let parseResult = E.parseExp code
+    case parseResult of
+      E.ParseOk e -> encodeTecQuery e
+      x -> Left $ TecError (show x)

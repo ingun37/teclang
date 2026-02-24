@@ -2,74 +2,73 @@ import { expect, test } from "vitest";
 import * as fs from "node:fs";
 import * as lib from "../src/index.js";
 import * as E from "effect";
-test("parse TecEnum haskell test log", () => {
-  const content = fs.readFileSync(
-    "/Users/ingun/projects/teclang/wasm/out-enum.log",
-    "utf-8",
-  );
-  const sections = content.split("---- Json encoded ----");
 
-  for (let i = 1; i < sections.length; i++) {
-    const section = sections[i];
-    // Find the end of the JSON object. It starts with { and we want to find the matching } or the next ----
+function forEachJsonSection(
+  filePath: string,
+  onJson: (json: unknown) => void,
+  header = "---- Json encoded ----",
+) {
+  const content = fs.readFileSync(filePath, "utf-8");
+  const sections = content.split(header);
+
+  for (const section of sections.slice(1)) {
     const nextHeaderIndex = section.indexOf("----");
     const jsonStr =
       nextHeaderIndex === -1
         ? section.trim()
         : section.substring(0, nextHeaderIndex).trim();
+
     expect(jsonStr).not.toBeNull();
+
     const jsonObject = JSON.parse(jsonStr);
-    const decoded = lib.jsonToTecEnumAST(jsonObject);
-    const encoded = lib.tecEnumASTToJson(decoded);
-    expect(encoded).toStrictEqual(jsonObject);
+    onJson(jsonObject);
   }
+}
+
+function roundtripFromHaskellLog<T>(
+  filePath: string,
+  decode: (json: unknown) => T,
+  encode: (value: T) => unknown,
+) {
+  forEachJsonSection(filePath, (jsonObject) => {
+    const decoded = decode(jsonObject);
+    const encoded = encode(decoded);
+    expect(encoded).toStrictEqual(jsonObject);
+  });
+}
+
+test("parse TecEnum haskell test log", () => {
+  roundtripFromHaskellLog(
+    "/Users/ingun/projects/teclang/wasm/out-enum.log",
+    lib.jsonToTecEnumAST,
+    lib.tecEnumASTToJson,
+  );
 });
 
 test("parse TecClass haskell test log", () => {
-  const content = fs.readFileSync(
+  roundtripFromHaskellLog(
     "/Users/ingun/projects/teclang/wasm/out-class.log",
-    "utf-8",
+    lib.jsonToTecClassAST,
+    lib.tecClassASTToJson,
   );
-  const sections = content.split("---- Json encoded ----");
-
-  for (let i = 1; i < sections.length; i++) {
-    const section = sections[i];
-    // Find the end of the JSON object. It starts with { and we want to find the matching } or the next ----
-    const nextHeaderIndex = section.indexOf("----");
-    const jsonStr =
-      nextHeaderIndex === -1
-        ? section.trim()
-        : section.substring(0, nextHeaderIndex).trim();
-    expect(jsonStr).not.toBeNull();
-    const jsonObject = JSON.parse(jsonStr);
-    const decoded = lib.jsonToTecClassAST(jsonObject);
-    const encoded = lib.tecClassASTToJson(decoded);
-    expect(encoded).toStrictEqual(jsonObject);
-  }
 });
 
 test("parse TecNode haskell test log", () => {
-  const content = fs.readFileSync(
+  roundtripFromHaskellLog(
     "/Users/ingun/projects/teclang/wasm/out-node.log",
-    "utf-8",
+    lib.jsonToTecNodeAST,
+    lib.tecNodeASTToJson,
   );
-  const sections = content.split("---- Json encoded ----");
-
-  for (let i = 1; i < sections.length; i++) {
-    const section = sections[i];
-    // Find the end of the JSON object. It starts with { and we want to find the matching } or the next ----
-    const nextHeaderIndex = section.indexOf("----");
-    const jsonStr =
-      nextHeaderIndex === -1
-        ? section.trim()
-        : section.substring(0, nextHeaderIndex).trim();
-    expect(jsonStr).not.toBeNull();
-    const jsonObject = JSON.parse(jsonStr);
-    const decoded = lib.jsonToTecNodeAST(jsonObject);
-    const encoded = lib.tecNodeASTToJson(decoded);
-    expect(encoded).toStrictEqual(jsonObject);
-  }
 });
+
+test("parse TecQuery haskell test log", () => {
+  roundtripFromHaskellLog(
+    "/Users/ingun/projects/teclang/wasm/out-query.log",
+    lib.jsonToTecQueryAST,
+    lib.tecQueryASTToJson,
+  );
+});
+
 function createSampleEnum([name, values]: [string, string]) {
   return lib.TecEnum.TecEnum.make({
     tecEnumName: lib.TecEnum.TecEnumName.make(name),
