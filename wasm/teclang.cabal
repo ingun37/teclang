@@ -72,7 +72,8 @@ library
         TecClass,
         TecPnum,
         TecNode,
-        TecQuery
+        TecQuery,
+        TecCommonEncode
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -90,7 +91,8 @@ library
         containers,
         mtl,
         transformers,
-        optics-core
+        optics-core,
+        optics-th
         
     -- Directories containing source files.
     hs-source-dirs:   src
