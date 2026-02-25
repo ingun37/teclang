@@ -121,7 +121,6 @@ encodeTecPnumTable (ts, fb) =
           do
             _tecIndexTypes <- NE.init <$> CE.encodeTyFun funcSig
             _tecMatches <- traverse encodeTecMatch matches
-
             return $
               TecPnumTable
                 { _tecIndexTypes,

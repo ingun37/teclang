@@ -13,6 +13,7 @@ import Data.Aeson
   )
 import GHC.Generics (Generic)
 import Optics.TH
+import Data.List.NonEmpty qualified as NE
 
 data TecIndexPattern = TecIndexValue String | TecIndexAll deriving (Show, Generic)
 
@@ -31,10 +32,11 @@ instance ToJSON TecMatch where
   toEncoding = genericToEncoding defaultOptions
 
 instance FromJSON TecMatch
+makeLenses ''TecMatch
 
 data TecPnumTable = TecPnumTable
   { _tecIndexTypes :: [String],
-    _tecMatches :: [TecMatch]
+    _tecMatches ::  [TecMatch]
   }
   deriving (Show, Generic)
 
@@ -42,6 +44,7 @@ instance ToJSON TecPnumTable where
   toEncoding = genericToEncoding defaultOptions
 
 instance FromJSON TecPnumTable
+makeLenses ''TecPnumTable
 
 data TecPnum = TecPnum
   { _tecPnumName :: String,

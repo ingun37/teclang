@@ -73,7 +73,7 @@ instance TecAST TecNodeAST where
   encodeCodeToTec = getDecls >=> encodeTecNodeAST
 
 instance TecAST TecPnumAST where
-  decodeTecToCode = fmap setDecls . decodeTecPnumAST
+  decodeTecToCode = return . setDecls . decodeTecPnumAST
   encodeCodeToTec = getDecls >=> encodeTecPnumAST
 
 instance TecAST TecQuery where

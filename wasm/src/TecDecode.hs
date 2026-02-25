@@ -10,12 +10,19 @@ where
 
 import Control.Monad (foldM)
 import Data.Char (toLower)
+import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
+import Data.Maybe qualified as Maybe
 import Language.Haskell.Exts qualified as E
 import Optics.Core
 import TecClass
+import TecCommonEncode qualified as CE
 import TecData (TecDataAST)
 import TecEnum
+  ( TecEnum (TecEnum),
+    TecEnumAST (TecEnumAST),
+    TecValue (..),
+  )
 import TecError
 import TecNode
 import TecPnum
@@ -98,12 +105,6 @@ decodeTecClass (TecClass tecClassName sig) = do
 decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
 decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
 
-decodeTecPnum :: TecPnum -> Either TecError [E.Decl ()]
-decodeTecPnum pnum = Left $ TecError "unimplemented"
-
-decodeTecPnumAST :: TecPnumAST -> Either TecError [E.Decl ()]
-decodeTecPnumAST (TecPnumAST pnums) = concat <$> traverse decodeTecPnum pnums
-
 decodeTecNodeIndex :: TecNodeIndex -> E.Pat ()
 decodeTecNodeIndex TecNodeIndexWildcard = E.PWildCard ()
 decodeTecNodeIndex (TecNodeIndexInst t) = E.PApp () (getUnqual t) []
@@ -140,3 +141,34 @@ decodeTecQuery :: TecQuery -> Either TecError (E.Exp ())
 decodeTecQuery (TecQuery {tecQueryFunc, tecQueryIndexSeqs}) =
   let bab b a = E.App () b (decodeTecIndexSeq a)
    in return $ foldl bab (E.Var () (getUnqual tecQueryFunc)) tecQueryIndexSeqs
+
+decodeTecIndexPattern :: TecIndexPattern -> E.Pat ()
+decodeTecIndexPattern TecIndexAll = E.PWildCard ()
+decodeTecIndexPattern (TecIndexValue t) = E.PApp () (CE.deUQ t) []
+
+decodeTecMatch :: String -> TecMatch -> E.Match ()
+decodeTecMatch pnumName tecMatch =
+  let funcName = CE.deIdent (lowerFirst pnumName)
+      returnType = E.UnGuardedRhs () (E.Con () (CE.deUQ (tecMatch ^. tecEnumValue)))
+   in E.Match () funcName (map decodeTecIndexPattern (tecMatch ^. tecIndexPatterns)) returnType Nothing
+
+decodeTecPnumTable :: String -> TecPnumTable -> [E.Decl ()]
+decodeTecPnumTable pnumName pnumTable =
+  let abb a = E.TyFun () (CE.deTyCon a)
+      tyFun = foldr abb (CE.deTyCon pnumName) (pnumTable ^. tecIndexTypes)
+      tySig = E.TypeSig () [CE.deIdent (lowerFirst pnumName)] tyFun
+      fBind = E.FunBind () (map (decodeTecMatch pnumName) (pnumTable ^. tecMatches))
+   in [tySig, fBind]
+
+decodeTecPnum :: TecPnum -> [E.Decl ()]
+decodeTecPnum pnum =
+  let vs = pnum ^. tecEnumValues
+      valueQCDs = map CE.deQCD vs
+      name = pnum ^. tecPnumName
+      dataDecl = E.DataDecl () (E.DataType ()) Nothing (E.DHead () (CE.deIdent name)) valueQCDs []
+      tableDecls = fmap (decodeTecPnumTable name) (pnum ^. tecPnumTable)
+      tableDecls' = Maybe.fromMaybe [] tableDecls
+   in dataDecl : tableDecls'
+
+decodeTecPnumAST :: TecPnumAST -> [E.Decl ()]
+decodeTecPnumAST (TecPnumAST pnums) = concatMap decodeTecPnum pnums
