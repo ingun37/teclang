@@ -85,3 +85,11 @@ instance TecAST TecQuery where
     case parseResult of
       E.ParseOk e -> encodeTecQuery e
       x -> Left $ TecError (show x)
+
+instance TecAST () where
+  decodeTecToCode _ = tecError "dummy"
+  encodeCodeToTec code = do
+    decls <- getDecls code
+    case decls of
+      [] -> tecErr "no decls"
+      xs -> unknownExps xs

@@ -68,6 +68,10 @@ failIfLeft b =
       putStrLn "\n\n---- Unknown Expression ----\n\n"
       Simple.pPrintString expShow
       fail "test failed"
+    (Left (ErrTec (TecErrorUnknownExps expShows))) -> do
+      putStrLn "\n\n---- Unknown Expressions ----\n\n"
+      forM_ expShows Simple.pPrintString
+      fail "test failed"
     (Left e) -> do
       Simple.pPrint e
       fail "test failed"
@@ -178,14 +182,22 @@ formatTest :: FilePath -> IO ()
 formatTest logFilePath = do
   logHandle <- IO.openFile logFilePath IO.WriteMode
   traverse_ (testFormatUnit logHandle) formatTestData
-
+testDummy :: [String]
+testDummy =
+  [ """
+    foo A = B
+    bar X = Y
+    foo B = C
+    """
+  ]
 main :: IO ()
 main = do
   -- formatTest "out-format.log"
   -- _ <- testIO testData "out-data.log" :: IO [TecDataAST]
-  -- _ <- testIO testEnum "out-enum.log" :: IO [TecEnumAST]
+  _ <- testIO testEnum "out-enum.log" :: IO [TecEnumAST]
   _ <- testIO testPnum "out-pnum.log" :: IO [TecPnumAST]
-  -- _ <- testIO testClass "out-class.log" :: IO [TecClassAST]
-  -- _ <- testIO testNode "out-node.log" :: IO [TecNodeAST]
-  -- _ <- testIO testQuery "out-query.log" :: IO [TecQuery]
+  _ <- testIO testClass "out-class.log" :: IO [TecClassAST]
+  _ <- testIO testNode "out-node.log" :: IO [TecNodeAST]
+  _ <- testIO testQuery "out-query.log" :: IO [TecQuery]
+  -- _ <- testIO testDummy "out-dummy.log" :: IO [()]
   return ()

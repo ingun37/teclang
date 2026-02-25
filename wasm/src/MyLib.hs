@@ -2,12 +2,7 @@
 
 module MyLib
   ( TecDataAST,
-    TecError
-      ( TecError,
-        TecErrorUnknownExp,
-        TecErrorWithWholeExpShow,
-        TecErrorFormatFail
-      ),
+    TecError (..),
     tecError,
     TecAST,
     encodeCodeToTec,
