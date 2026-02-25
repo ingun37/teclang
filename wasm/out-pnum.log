@@ -1,14 +1,37 @@
 ---- Original Code ----
-d :: A -> B -> C -> D
+data E = E0 | E1 | E2
+e :: X -> Y -> E
+e X0 Y0 = E0
+e _ _ = E1
 ---- Raw AST ----
 TecPnumAST
     { tecPnums =
         [ TecPnum
-            { pnumName = "D"
-            , indexTypeSet =
-                [ "A"
-                , "B"
-                , "C"
+            { _tecPnumName = "E"
+            , _tecEnumValues =
+                [ "E0"
+                , "E1"
+                , "E2"
+                ]
+            , _tecIndexTypes =
+                [ "X"
+                , "Y"
+                ]
+            , _tecMatches =
+                [ TecMatch
+                    { _tecIndexPatterns =
+                        [ TecIndexValue "X0"
+                        , TecIndexValue "Y0"
+                        ]
+                    , _tecEnumValue = "E0"
+                    }
+                , TecMatch
+                    { _tecIndexPatterns =
+                        [ TecIndexAll
+                        , TecIndexAll
+                        ]
+                    , _tecEnumValue = "E1"
+                    }
                 ]
             }
         ]
@@ -17,12 +40,42 @@ TecPnumAST
 {
     "tecPnums": [
         {
-            "indexTypeSet": [
-                "A",
-                "B",
-                "C"
+            "_tecEnumValues": [
+                "E0",
+                "E1",
+                "E2"
             ],
-            "pnumName": "D"
+            "_tecIndexTypes": [
+                "X",
+                "Y"
+            ],
+            "_tecMatches": [
+                {
+                    "_tecEnumValue": "E0",
+                    "_tecIndexPatterns": [
+                        {
+                            "contents": "X0",
+                            "tag": "TecIndexValue"
+                        },
+                        {
+                            "contents": "Y0",
+                            "tag": "TecIndexValue"
+                        }
+                    ]
+                },
+                {
+                    "_tecEnumValue": "E1",
+                    "_tecIndexPatterns": [
+                        {
+                            "tag": "TecIndexAll"
+                        },
+                        {
+                            "tag": "TecIndexAll"
+                        }
+                    ]
+                }
+            ],
+            "_tecPnumName": "E"
         }
     ]
 }

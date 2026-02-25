@@ -1,4 +1,6 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE TemplateHaskell #-}
+{- HLINT ignore "Use newtype instead of data" -}
 
 module TecPnum where
 
@@ -9,17 +11,35 @@ import Data.Aeson
     genericToEncoding,
   )
 import GHC.Generics (Generic)
-import Optics.Core
+import Optics.TH
 
-data TecPnum = TecPnum
-  { pnumName :: String,
-    indexTypeSet :: [String]
+data TecIndexPattern = TecIndexValue String | TecIndexAll deriving (Show, Generic)
+
+instance ToJSON TecIndexPattern where
+  toEncoding = genericToEncoding defaultOptions
+
+instance FromJSON TecIndexPattern
+
+data TecMatch = TecMatch
+  { _tecIndexPatterns :: [TecIndexPattern],
+    _tecEnumValue :: String
   }
   deriving (Show, Generic)
 
-_indexTypeSet :: Lens' TecPnum [String]
-_indexTypeSet = lens indexTypeSet (\(TecPnum x _) xs' -> TecPnum x xs')
+instance ToJSON TecMatch where
+  toEncoding = genericToEncoding defaultOptions
 
+instance FromJSON TecMatch
+
+data TecPnum = TecPnum
+  { _tecPnumName :: String,
+    _tecEnumValues :: [String],
+    _tecIndexTypes :: [String],
+    _tecMatches :: [TecMatch]
+  }
+  deriving (Show, Generic)
+
+makeLenses ''TecPnum
 
 instance ToJSON TecPnum where
   toEncoding = genericToEncoding defaultOptions

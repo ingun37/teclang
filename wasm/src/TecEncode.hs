@@ -1,3 +1,5 @@
+{-# LANGUAGE GADTs #-}
+
 module TecEncode
   ( encodeTecDataAST,
     encodeTecClassAST,
@@ -9,11 +11,14 @@ module TecEncode
 where
 
 import Data.Char (toUpper)
+import Data.List qualified as List
+import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
 import Language.Haskell.Exts qualified as E
 import Optics.Core
 import TecClass
+import TecCommonEncode qualified as CE
 import TecData (TecDataAST)
 import TecEnum
 import TecError
@@ -58,10 +63,8 @@ encodeDecl x = Left $ TecErrorUnknownExp (show x)
 encodeTecDataAST :: (Show l) => E.Exp l -> Either TecError TecDataAST
 encodeTecDataAST _ = Left $ TecError "deprecated"
 
-encodeQualConDecl :: (Show l) => E.QualConDecl l -> Either TecError TecValue
-encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ ident _)) = do
-  name <- getIdent ident
-  return $ TecValue name
+encodeQualConDecl :: (Show l) => E.QualConDecl l -> Either TecError String
+encodeQualConDecl (E.QualConDecl _ Nothing Nothing (E.ConDecl _ ident _)) = getIdent ident
 encodeQualConDecl x = Left $ TecErrorUnknownExp (show x)
 
 safeLast :: [a] -> Maybe a
@@ -70,7 +73,7 @@ safeLast = foldl (\_ x -> Just x) Nothing
 encodeTecEnum :: (Show l) => E.Decl l -> Either TecError TecEnum
 encodeTecEnum (E.DataDecl _ (E.DataType _) Nothing (E.DHead _ (E.Ident _ name)) decls []) = do
   paramTypes <- traverse encodeQualConDecl decls
-  return $ TecEnum name paramTypes
+  return $ TecEnum name (map TecValue paramTypes)
 encodeTecEnum x = Left $ TecErrorUnknownExp (show x)
 
 encodeTecEnumAST :: (Show l) => [E.Decl l] -> Either TecError TecEnumAST
@@ -95,22 +98,81 @@ encodeTecSignature t = do
   attribs <- encodeTecAttributes t
   return $ TecSignature [] attribs
 
-encodeTecPnum :: (Show l) => E.Type l -> Either TecError TecPnum
-encodeTecPnum (E.TyFun _ tyCon right) = do
-  pnum <- encodeTecPnum right
-  c <- getTyCon tyCon
-  return $ over _indexTypeSet (c :) pnum
-encodeTecPnum tyCon = do
-  c <- getTyCon tyCon
-  return $ TecPnum c []
+encodeTecIndexPattern :: (Show l) => E.Pat l -> TecEth TecIndexPattern
+encodeTecIndexPattern (E.PApp _ unqual []) = TecIndexValue <$> getUnQual unqual
+encodeTecIndexPattern (E.PWildCard _) = return TecIndexAll
+encodeTecIndexPattern pat = unknownExp pat
+
+encodeTecMatch :: (Show l) => E.Match l -> TecEth TecMatch
+encodeTecMatch (E.Match _ _ apps (E.UnGuardedRhs _ (E.Con _ uq)) _) =
+  let
+   in do
+        _tecIndexPatterns <- traverse encodeTecIndexPattern apps
+        _tecEnumValue <- CE.encodeUQ uq
+        return TecMatch {_tecIndexPatterns, _tecEnumValue}
+encodeTecMatch e = unknownExp e
+
+encodeTecPnum :: (Show l) => (E.Decl l, (E.Decl l, E.Decl l)) -> TecEth TecPnum
+encodeTecPnum (dd, (ts, fb)) = case dd of
+  E.DataDecl _ _ Nothing (E.DHead _ enumNameIdent) enumValues _ ->
+    case ts of
+      (E.TypeSig _ _ funcSig) ->
+        case fb of
+          (E.FunBind _ matches) ->
+            do
+              _tecPnumName <- getIdent enumNameIdent
+              _tecEnumValues <- traverse CE.encodeQCD enumValues
+              _tecIndexTypes <- NE.init <$> CE.encodeTyFun funcSig
+              _tecMatches <- traverse encodeTecMatch matches
+              return $
+                TecPnum
+                  { _tecPnumName,
+                    _tecEnumValues,
+                    _tecIndexTypes,
+                    _tecMatches
+                  }
+          _ -> unknownExp fb
+      _ -> unknownExp dd
+  _ -> unknownExp ts
+
+peekFuncName :: (Show l) => E.Decl l -> TecEth String
+peekFuncName (E.TypeSig _ [E.Ident _ name] _) = return name
+peekFuncName (E.FunBind _ ((E.Match _ (E.Ident _ name) _ _ _) : _)) = return name
+peekFuncName e = unknownExp e
+
+peekDataName :: (Show l) => E.Decl l -> TecEth String
+peekDataName (E.TypeSig _ _ sig) = NE.last <$> CE.encodeTyFun sig
+peekDataName (E.DataDecl _ _ _ (E.DHead _ (E.Ident _ name)) _ _) = return name
+peekDataName e = unknownExp e
 
 encodeTecPnumAST :: (Show l) => [E.Decl l] -> Either TecError TecPnumAST
 encodeTecPnumAST decls =
-  let f (E.TypeSig _ _ sig) = encodeTecPnum sig
-      f e = Left $ TecErrorUnknownExp (show e)
+  let isFunBind (E.FunBind {}) = True
+      isFunBind _ = False
+      isTypeSig (E.TypeSig {}) = True
+      isTypeSig _ = False
+      isDataDecl (E.DataDecl {}) = True
+      isDataDecl _ = False
+      hasFuncName s = fmap (s ==) . peekFuncName
+      hasDataName s = fmap (s ==) . peekDataName . fst
+      (dataDecls, rest) = List.partition isDataDecl decls
+      (typeSigs, rest') = List.partition isTypeSig rest
+      (funBinds, _) = List.partition isFunBind rest'
+      matchFunc ts = do
+        n <- peekFuncName ts
+        fb <- findMOf folded (hasFuncName n) funBinds
+        fb' <- maybe (tecErr $ "Failed to find FuncBind of " ++ n) return fb
+        return (ts, fb')
    in do
-        tecPnums <- traverse f decls
-        return $ TecPnumAST tecPnums
+        funcs <- traverse matchFunc typeSigs
+        let matchData dd = do
+              n <- peekDataName dd
+              fun <- findMOf folded (hasDataName n) funcs
+              fun' <- maybe (tecErr $ "Failed to find TypeSig of " ++ n) return fun
+              return (dd, fun')
+        pairs <- traverse matchData dataDecls
+        tecPnums <- traverse encodeTecPnum pairs
+        return $ TecPnumAST {tecPnums}
 
 encodeTecClass :: (Show l) => E.Decl l -> Either TecError TecClass
 encodeTecClass (E.TypeSig _ [ident] sig) = do

@@ -98,14 +98,11 @@ decodeTecClass (TecClass tecClassName sig) = do
 decodeTecClassAST :: TecClassAST -> Either TecError [E.Decl ()]
 decodeTecClassAST (TecClassAST tecClasses) = traverse decodeTecClass tecClasses
 
-decodeTecPnum :: TecPnum -> Either TecError (E.Decl ())
-decodeTecPnum (TecPnum name typeSet) =
-  let abb a = E.TyFun () (getTyCon a)
-      typeSig = foldr abb (getTyCon name) typeSet
-   in return $ E.TypeSig () [getIdent (lowerFirst name)] typeSig
+decodeTecPnum :: TecPnum -> Either TecError [E.Decl ()]
+decodeTecPnum pnum = Left $ TecError "unimplemented"
 
 decodeTecPnumAST :: TecPnumAST -> Either TecError [E.Decl ()]
-decodeTecPnumAST (TecPnumAST pnums) = traverse decodeTecPnum pnums
+decodeTecPnumAST (TecPnumAST pnums) = concat <$> traverse decodeTecPnum pnums
 
 decodeTecNodeIndex :: TecNodeIndex -> E.Pat ()
 decodeTecNodeIndex TecNodeIndexWildcard = E.PWildCard ()

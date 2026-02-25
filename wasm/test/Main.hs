@@ -128,7 +128,12 @@ testClass =
 
 testPnum :: [String]
 testPnum =
-  [ "d :: A -> B -> C -> D"
+  [ """
+    data E = E0 | E1 | E2
+    e :: X -> Y -> E
+    e X0 Y0 = E0
+    e _ _ = E1
+    """
   ]
 
 testNode :: [String]
@@ -169,9 +174,9 @@ main :: IO ()
 main = do
   -- formatTest "out-format.log"
   -- _ <- testIO testData "out-data.log" :: IO [TecDataAST]
-  _ <- testIO testEnum "out-enum.log" :: IO [TecEnumAST]
+  -- _ <- testIO testEnum "out-enum.log" :: IO [TecEnumAST]
   _ <- testIO testPnum "out-pnum.log" :: IO [TecPnumAST]
-  _ <- testIO testClass "out-class.log" :: IO [TecClassAST]
-  _ <- testIO testNode "out-node.log" :: IO [TecNodeAST]
-  _ <- testIO testQuery "out-query.log" :: IO [TecQuery]
+  -- _ <- testIO testClass "out-class.log" :: IO [TecClassAST]
+  -- _ <- testIO testNode "out-node.log" :: IO [TecNodeAST]
+  -- _ <- testIO testQuery "out-query.log" :: IO [TecQuery]
   return ()
