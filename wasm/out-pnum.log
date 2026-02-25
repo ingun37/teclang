@@ -1,4 +1,6 @@
 ---- Original Code ----
+data X = X0 | X1
+data Y = Y0 | Y1
 data E = E0 | E1 | E2
 e :: X -> Y -> E
 e X0 Y0 = E0
@@ -7,32 +9,52 @@ e _ _ = E1
 TecPnumAST
     { tecPnums =
         [ TecPnum
+            { _tecPnumName = "X"
+            , _tecEnumValues =
+                [ "X0"
+                , "X1"
+                ]
+            , _tecPnumTable = Nothing
+            }
+        , TecPnum
+            { _tecPnumName = "Y"
+            , _tecEnumValues =
+                [ "Y0"
+                , "Y1"
+                ]
+            , _tecPnumTable = Nothing
+            }
+        , TecPnum
             { _tecPnumName = "E"
             , _tecEnumValues =
                 [ "E0"
                 , "E1"
                 , "E2"
                 ]
-            , _tecIndexTypes =
-                [ "X"
-                , "Y"
-                ]
-            , _tecMatches =
-                [ TecMatch
-                    { _tecIndexPatterns =
-                        [ TecIndexValue "X0"
-                        , TecIndexValue "Y0"
+            , _tecPnumTable = Just
+                ( TecPnumTable
+                    { _tecIndexTypes =
+                        [ "X"
+                        , "Y"
                         ]
-                    , _tecEnumValue = "E0"
-                    }
-                , TecMatch
-                    { _tecIndexPatterns =
-                        [ TecIndexAll
-                        , TecIndexAll
+                    , _tecMatches =
+                        [ TecMatch
+                            { _tecIndexPatterns =
+                                [ TecIndexValue "X0"
+                                , TecIndexValue "Y0"
+                                ]
+                            , _tecEnumValue = "E0"
+                            }
+                        , TecMatch
+                            { _tecIndexPatterns =
+                                [ TecIndexAll
+                                , TecIndexAll
+                                ]
+                            , _tecEnumValue = "E1"
+                            }
                         ]
-                    , _tecEnumValue = "E1"
                     }
-                ]
+                )
             }
         ]
     }
@@ -41,41 +63,59 @@ TecPnumAST
     "tecPnums": [
         {
             "_tecEnumValues": [
+                "X0",
+                "X1"
+            ],
+            "_tecPnumName": "X",
+            "_tecPnumTable": null
+        },
+        {
+            "_tecEnumValues": [
+                "Y0",
+                "Y1"
+            ],
+            "_tecPnumName": "Y",
+            "_tecPnumTable": null
+        },
+        {
+            "_tecEnumValues": [
                 "E0",
                 "E1",
                 "E2"
             ],
-            "_tecIndexTypes": [
-                "X",
-                "Y"
-            ],
-            "_tecMatches": [
-                {
-                    "_tecEnumValue": "E0",
-                    "_tecIndexPatterns": [
-                        {
-                            "contents": "X0",
-                            "tag": "TecIndexValue"
-                        },
-                        {
-                            "contents": "Y0",
-                            "tag": "TecIndexValue"
-                        }
-                    ]
-                },
-                {
-                    "_tecEnumValue": "E1",
-                    "_tecIndexPatterns": [
-                        {
-                            "tag": "TecIndexAll"
-                        },
-                        {
-                            "tag": "TecIndexAll"
-                        }
-                    ]
-                }
-            ],
-            "_tecPnumName": "E"
+            "_tecPnumName": "E",
+            "_tecPnumTable": {
+                "_tecIndexTypes": [
+                    "X",
+                    "Y"
+                ],
+                "_tecMatches": [
+                    {
+                        "_tecEnumValue": "E0",
+                        "_tecIndexPatterns": [
+                            {
+                                "contents": "X0",
+                                "tag": "TecIndexValue"
+                            },
+                            {
+                                "contents": "Y0",
+                                "tag": "TecIndexValue"
+                            }
+                        ]
+                    },
+                    {
+                        "_tecEnumValue": "E1",
+                        "_tecIndexPatterns": [
+                            {
+                                "tag": "TecIndexAll"
+                            },
+                            {
+                                "tag": "TecIndexAll"
+                            }
+                        ]
+                    }
+                ]
+            }
         }
     ]
 }

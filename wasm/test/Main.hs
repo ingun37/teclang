@@ -129,6 +129,8 @@ testClass =
 testPnum :: [String]
 testPnum =
   [ """
+    data X = X0 | X1
+    data Y = Y0 | Y1
     data E = E0 | E1 | E2
     e :: X -> Y -> E
     e X0 Y0 = E0

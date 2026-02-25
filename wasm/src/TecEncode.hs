@@ -112,28 +112,37 @@ encodeTecMatch (E.Match _ _ apps (E.UnGuardedRhs _ (E.Con _ uq)) _) =
         return TecMatch {_tecIndexPatterns, _tecEnumValue}
 encodeTecMatch e = unknownExp e
 
-encodeTecPnum :: (Show l) => (E.Decl l, (E.Decl l, E.Decl l)) -> TecEth TecPnum
-encodeTecPnum (dd, (ts, fb)) = case dd of
-  E.DataDecl _ _ Nothing (E.DHead _ enumNameIdent) enumValues _ ->
-    case ts of
-      (E.TypeSig _ _ funcSig) ->
-        case fb of
-          (E.FunBind _ matches) ->
-            do
-              _tecPnumName <- getIdent enumNameIdent
-              _tecEnumValues <- traverse CE.encodeQCD enumValues
-              _tecIndexTypes <- NE.init <$> CE.encodeTyFun funcSig
-              _tecMatches <- traverse encodeTecMatch matches
-              return $
-                TecPnum
-                  { _tecPnumName,
-                    _tecEnumValues,
-                    _tecIndexTypes,
-                    _tecMatches
-                  }
-          _ -> unknownExp fb
-      _ -> unknownExp dd
-  _ -> unknownExp ts
+encodeTecPnumTable :: (Show l) => (E.Decl l, E.Decl l) -> TecEth TecPnumTable
+encodeTecPnumTable (ts, fb) =
+  case ts of
+    (E.TypeSig _ _ funcSig) ->
+      case fb of
+        (E.FunBind _ matches) ->
+          do
+            _tecIndexTypes <- NE.init <$> CE.encodeTyFun funcSig
+            _tecMatches <- traverse encodeTecMatch matches
+
+            return $
+              TecPnumTable
+                { _tecIndexTypes,
+                  _tecMatches
+                }
+        _ -> unknownExp fb
+    _ -> unknownExp ts
+
+encodeTecPnum :: (Show l) => (E.Decl l, Maybe (E.Decl l, E.Decl l)) -> TecEth TecPnum
+encodeTecPnum (dd, ts_fb) = case dd of
+  E.DataDecl _ _ Nothing (E.DHead _ enumNameIdent) enumValues _ -> do
+    _tecPnumName <- getIdent enumNameIdent
+    _tecEnumValues <- traverse CE.encodeQCD enumValues
+    _tecPnumTable <- traverse encodeTecPnumTable ts_fb
+    return $
+      TecPnum
+        { _tecPnumName,
+          _tecEnumValues,
+          _tecPnumTable
+        }
+  _ -> unknownExp dd
 
 peekFuncName :: (Show l) => E.Decl l -> TecEth String
 peekFuncName (E.TypeSig _ [E.Ident _ name] _) = return name
@@ -168,8 +177,7 @@ encodeTecPnumAST decls =
         let matchData dd = do
               n <- peekDataName dd
               fun <- findMOf folded (hasDataName n) funcs
-              fun' <- maybe (tecErr $ "Failed to find TypeSig of " ++ n) return fun
-              return (dd, fun')
+              return (dd, fun)
         pairs <- traverse matchData dataDecls
         tecPnums <- traverse encodeTecPnum pairs
         return $ TecPnumAST {tecPnums}

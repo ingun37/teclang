@@ -1,5 +1,6 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE TemplateHaskell #-}
+
 {- HLINT ignore "Use newtype instead of data" -}
 
 module TecPnum where
@@ -31,11 +32,21 @@ instance ToJSON TecMatch where
 
 instance FromJSON TecMatch
 
+data TecPnumTable = TecPnumTable
+  { _tecIndexTypes :: [String],
+    _tecMatches :: [TecMatch]
+  }
+  deriving (Show, Generic)
+
+instance ToJSON TecPnumTable where
+  toEncoding = genericToEncoding defaultOptions
+
+instance FromJSON TecPnumTable
+
 data TecPnum = TecPnum
   { _tecPnumName :: String,
     _tecEnumValues :: [String],
-    _tecIndexTypes :: [String],
-    _tecMatches :: [TecMatch]
+    _tecPnumTable :: Maybe TecPnumTable
   }
   deriving (Show, Generic)
 
