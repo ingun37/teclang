@@ -6,11 +6,13 @@ export interface HaskellWasm {
   decodeHaskellClass(jsonStr: string): Promise<string>;
   decodeHaskellNode(jsonStr: string): Promise<string>;
   decodeHaskellQuery(jsonStr: string): Promise<string>;
+  decodeHaskellPnum(jsonStr: string): Promise<string>;
   encodeHaskellData(jsonStr: string): Promise<string>;
   encodeHaskellEnum(jsonStr: string): Promise<string>;
   encodeHaskellClass(jsonStr: string): Promise<string>;
   encodeHaskellNode(jsonStr: string): Promise<string>;
   encodeHaskellQuery(jsonStr: string): Promise<string>;
+  encodeHaskellPnum(jsonStr: string): Promise<string>;
   // formatHaskell(jsonStr: string): Promise<string>;
 }
 export async function loadTecLangWasm() {

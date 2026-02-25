@@ -45,6 +45,9 @@
           :tec-node-ast="tecNodeAst"
         />
       </v-col>
+      <v-col cols="12">
+        <StagePnum />
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -54,6 +57,7 @@ import * as C from "codec";
 import StageInput from "@/components/StageInput.vue";
 import StageEnum from "@/components/StageEnum.vue";
 import StageClass from "@/components/StageClass.vue";
+import StagePnum from "@/components/StagePnum.vue";
 const tecEnumAst = ref<C.TecEnum.TecEnumAST | null>(null);
 const tecClassAst = ref<C.TecClass.TecClassAST | null>(null);
 const tecNodeAst = ref<C.TecNode.TecNodeAST | null>(null);

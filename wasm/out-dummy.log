@@ -1,0 +1,4 @@
+---- Original Code ----
+foo A = B
+bar X = Y
+foo B = C

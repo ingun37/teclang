@@ -25,6 +25,7 @@ declare module 'vue' {
     StageEnum: typeof import('./components/StageEnum.vue')['default']
     StageGraph: typeof import('./components/StageGraph.vue')['default']
     StageInput: typeof import('./components/StageInput.vue')['default']
+    StagePnum: typeof import('./components/StagePnum.vue')['default']
     StageSql: typeof import('./components/StageSql.vue')['default']
     TecClass: typeof import('./components/TecClass.vue')['default']
     TecClassAST: typeof import('./components/TecClassAST.vue')['default']
@@ -35,6 +36,9 @@ declare module 'vue' {
     TecNodeIndex: typeof import('./components/TecNodeIndex.vue')['default']
     TecNodeNullable: typeof import('./components/TecNodeNullable.vue')['default']
     TecNodeSet: typeof import('./components/TecNodeSet.vue')['default']
+    TecPnum: typeof import('./components/TecPnum.vue')['default']
+    TecPnumAst: typeof import('./components/TecPnumAst.vue')['default']
+    TecPnumTable: typeof import('./components/TecPnumTable.vue')['default']
     TecSignature: typeof import('./components/TecSignature.vue')['default']
   }
 }
