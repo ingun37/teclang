@@ -2,12 +2,14 @@ import * as TecEnum from "./TecEnum.js";
 import * as TecClass from "./TecClass.js";
 import * as TecNode from "./TecNode.js";
 import * as TecQuery from "./TecQuery.js";
+import * as TecPnum from "./TecPnum.js";
 import { Schema as S } from "effect";
 
 export * as TecEnum from "./TecEnum.js";
 export * as TecClass from "./TecClass.js";
 export * as TecNode from "./TecNode.js";
 export * as TecQuery from "./TecQuery.js";
+export * as TecPnum from "./TecPnum.js";
 export * as help from "./helper.js";
 
 export function jsonToTecEnumAST(json: any): TecEnum.TecEnumAST {
@@ -35,4 +37,11 @@ export function jsonToTecQueryAST(json: any): TecQuery.TecQuery {
 }
 export function tecQueryASTToJson(decoded: TecQuery.TecQuery): any {
   return S.encodeUnknownSync(TecQuery.TecQuery)(decoded);
+}
+
+export function jsonToTecPnumAST(json: any): TecPnum.TecPnumAST {
+  return S.decodeUnknownSync(TecPnum.TecPnumAST)(json);
+}
+export function tecPnumASTToJson(decoded: TecPnum.TecPnumAST): any {
+  return S.encodeUnknownSync(TecPnum.TecPnumAST)(decoded);
 }

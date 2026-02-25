@@ -69,6 +69,14 @@ test("parse TecQuery haskell test log", () => {
   );
 });
 
+test("parse TecPnum haskell test log", () => {
+  roundtripFromHaskellLog(
+    "/Users/ingun/projects/teclang/wasm/out-pnum.log",
+    lib.jsonToTecPnumAST,
+    lib.tecPnumASTToJson,
+  );
+});
+
 function createSampleEnum([name, values]: [string, string]) {
   return lib.TecEnum.TecEnum.make({
     tecEnumName: lib.TecEnum.TecEnumName.make(name),
