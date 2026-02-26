@@ -38,6 +38,28 @@ const deleteIndexType = (index: number) => {
     }),
   );
 };
+type RNE<T> = E.Array.NonEmptyReadonlyArray<T>;
+
+const optionsForEachIndexType = computed(
+  (): E.Either.Either<RNE<RNE<string>>, Error> => {
+    return E.pipe(
+      model.value._tecIndexTypes,
+      E.Array.map((indexType) => {
+        return E.pipe(
+          props.pnumAst.tecPnums,
+          E.Array.findFirst((pnum) => pnum._tecPnumName === indexType),
+          E.Either.fromOption(
+            () => new Error("Failed to find enum: " + indexType),
+          ),
+          E.Either.map((pnum) => {
+            return pnum._tecEnumValues;
+          }),
+        );
+      }),
+      E.Either.all,
+    );
+  },
+);
 </script>
 
 <template>
@@ -54,6 +76,21 @@ const deleteIndexType = (index: number) => {
       ></v-select>
       <v-btn @click="addIndexType">Add index type</v-btn>
     </div>
+    <v-alert
+      v-if="E.Either.isLeft(optionsForEachIndexType)"
+      type="error"
+      title="Error"
+      :text="optionsForEachIndexType.left.toString()"
+    ></v-alert>
+    <TecMatch
+      v-else
+      v-for="(_, i) in model._tecMatches"
+      v-model="model._tecMatches[i]!"
+      :pnum-ast="props.pnumAst"
+      :pnum="thisPnum"
+      :pnum-table="model"
+      :enum-values-for-each-index-type="optionsForEachIndexType.right"
+    ></TecMatch>
   </div>
 </template>
 
