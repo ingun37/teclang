@@ -8,7 +8,7 @@ const model = defineModel<C.TecPnum.TecPnumAST>({ required: true });
   <v-container fluid>
     <v-row>
       <v-col cols="12" v-for="i in model.tecPnums.length">
-        <TecPnum v-model="model.tecPnums[i - 1]!" />
+        <TecPnum v-model="model.tecPnums[i - 1]!" :pnum-ast="model" />
       </v-col>
     </v-row>
   </v-container>

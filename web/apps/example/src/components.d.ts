@@ -31,6 +31,7 @@ declare module 'vue' {
     TecClassAST: typeof import('./components/TecClassAST.vue')['default']
     TecEnum: typeof import('./components/TecEnum.vue')['default']
     TecEnumAST: typeof import('./components/TecEnumAST.vue')['default']
+    TecMatch: typeof import('./components/TecMatch.vue')['default']
     TecNode: typeof import('./components/TecNode.vue')['default']
     TecNodeAST: typeof import('./components/TecNodeAST.vue')['default']
     TecNodeIndex: typeof import('./components/TecNodeIndex.vue')['default']

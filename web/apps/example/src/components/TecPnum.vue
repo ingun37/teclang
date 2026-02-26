@@ -4,6 +4,7 @@ import * as E from "effect";
 import TecPnumTable from "@/components/TecPnumTable.vue";
 
 const model = defineModel<C.TecPnum.TecPnum>({ required: true });
+const props = defineProps<{ pnumAst: C.TecPnum.TecPnumAST }>();
 function lensOver(f: (x: C.TecPnum.TecPnum) => C.TecPnum.TecPnum) {
   model.value = f(model.value);
 }
@@ -40,6 +41,8 @@ const deleteEnumValue = (index: number) => {
         <TecPnumTable
           v-if="model._tecPnumTable"
           v-model="model._tecPnumTable"
+          :pnum-ast="pnumAst"
+          :this-pnum="model"
         />
       </div>
     </v-card-text>
