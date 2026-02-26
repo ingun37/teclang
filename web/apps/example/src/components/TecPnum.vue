@@ -26,18 +26,18 @@ const deleteEnumValue = (index: number) => {
   <v-card>
     <v-card-title>{{ model._tecPnumName }}</v-card-title>
     <v-card-text>
-      <div class="d-flex flex-row ga-2">
-        <div class="d-flex flex-column ga-2">
-          <v-text-field
-            v-for="(_, i) in model._tecEnumValues"
-            :key="i"
-            v-model="model._tecEnumValues[i]"
-            append-inner-icon="mdi-delete"
-            :disabled="model._tecEnumValues.length <= 1"
-            @click:append-inner="deleteEnumValue(i)"
-          ></v-text-field>
-          <v-btn @click="addEnumValue">Add Enum Value</v-btn>
-        </div>
+      <div class="d-flex flex-column ga-2 align-start">
+        <v-text-field
+          v-for="(_, i) in model._tecEnumValues"
+          :key="i"
+          v-model="model._tecEnumValues[i]"
+          append-inner-icon="mdi-delete"
+          :disabled="model._tecEnumValues.length <= 1"
+          @click:append-inner="deleteEnumValue(i)"
+          width="10rem"
+        ></v-text-field>
+        <v-btn @click="addEnumValue">Add Enum Value</v-btn>
+        <v-divider width="100%"></v-divider>
         <TecPnumTable
           v-if="model._tecPnumTable"
           v-model="model._tecPnumTable"

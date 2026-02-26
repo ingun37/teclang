@@ -44,7 +44,12 @@ function itemProps(pattern: C.TecPnum.TecIndexPattern) {
       v-model="model._tecIndexPatterns[i]"
       :items="optionsForEachIndexType[i]"
       :item-props="itemProps"
-      append-inner-icon="mdi-delete"
+      width="10rem"
+    ></v-select>
+    <v-select
+      v-model="model._tecEnumValue"
+      :items="pnum._tecEnumValues"
+      width="10rem"
     ></v-select>
   </div>
 </template>

@@ -63,7 +63,7 @@ const optionsForEachIndexType = computed(
 </script>
 
 <template>
-  <div class="d-flex flex-column ga-2">
+  <div class="d-flex flex-column ga-2 align-start">
     <div class="d-flex flex-row ga-2">
       <v-select
         v-for="(_, i) in model._tecIndexTypes"
@@ -73,6 +73,7 @@ const optionsForEachIndexType = computed(
         append-inner-icon="mdi-delete"
         :disabled="model._tecIndexTypes.length <= 1"
         @click:append-inner="deleteIndexType(i)"
+        width="10rem"
       ></v-select>
       <v-btn @click="addIndexType">Add index type</v-btn>
     </div>
